@@ -1,11 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 
-import authRoutes from "./routes/auth.route.js"
+import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
+import postRoutes from "./routes/post.route.js";
 
-import {v2 as cloudinary} from "cloudinary"
-import {connectDB} from "./config/connectDB.js"
+import {v2 as cloudinary} from "cloudinary";
+import {connectDB} from "./config/connectDB.js";
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -24,8 +25,9 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
-app.use((err, req, res, next) => {
+app.use((res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
 });
 

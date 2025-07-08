@@ -34,9 +34,9 @@ const userSchema = await mongoose.Schema({
     ],
     following: [
         {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: [] // New users have zero followers set default to empty array
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: [] // New users have zero followers set default to empty array
         },
     ],
 
@@ -59,6 +59,14 @@ const userSchema = await mongoose.Schema({
         type: "String",
         default: "",
     },
+
+    likedPosts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post",
+            default: [] // New users have zero liked posts set default to empty array
+        },  
+    ]
 
 
 }, {timestamps: true})
