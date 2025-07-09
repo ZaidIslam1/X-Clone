@@ -1,26 +1,26 @@
 import mongoose from "mongoose";
 
-const userSchema = await mongoose.Schema({
+const userSchema = new mongoose.Schema({
 
     fullName: {
-        type: "String",
+        type: String,
         required: true
     },
 
     username: {
-        type: "String",
+        type: String,
         required: true,
         unique: true,
     },
 
     password: {
-        type: "String",
+        type: String,
         required: true,
         minLength: 6
     },
 
     email: {
-        type: "String",
+        type: String,
         required: true,
         unique: true,
     },
@@ -29,34 +29,32 @@ const userSchema = await mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            default: [] // New users have zero followers set default to empty array
         },
     ],
     following: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            default: [] // New users have zero followers set default to empty array
         },
     ],
 
     profileImg: {
-        type: "String",
+        type: String,
         default: "",
     },
 
     coverImg: {
-        type: "String",
+        type: String,
         default: "",
     },
 
     bio: {
-        type: "String",
+        type: String,
         default: "",
     },
 
     link: {
-        type: "String",
+        type: String,
         default: "",
     },
 
@@ -64,12 +62,11 @@ const userSchema = await mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post",
-            default: [] // New users have zero liked posts set default to empty array
         },  
     ]
 
 
-}, {timestamps: true})
+}, {timestamps: true, default: { followers: [], following: [], likedPosts: [] }})
 
 const User = mongoose.model("User", userSchema);
 

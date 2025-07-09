@@ -116,9 +116,6 @@ export const commentPost = async (req, res, next) => {
         if (!post) {
             return res.status(404).json({error: "Post not found"});
         }
-        if (!post.user || post.user.toString() !== userId.toString()) {
-            return res.status(403).json({error: "You are not authorized to comment on this post"});
-        }
         const comment = {
             text,
             user: userId
