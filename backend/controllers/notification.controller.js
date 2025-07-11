@@ -6,17 +6,14 @@ export const getNotifications = async (req, res, next) => {
         const notifications = await Notification.find({to: userId})
             .sort({createdAt: -1})
             .populate("from", "username profileImg")
-
         if (!notifications || notifications.length === 0) {
             return res.status(404).json({ error: "No notifications found" });
         }
-
         await Notification.updateMany(
             { to: userId},
             { read: true }
         );
         res.status(200).json(notifications);
-
     } catch (error) {
         console.log("Error in getNotifications", error.message);
         next(error);
