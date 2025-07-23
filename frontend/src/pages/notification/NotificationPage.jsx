@@ -5,15 +5,19 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { BiSolidCommentDots } from "react-icons/bi";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const NotificationPage = () => {
+    const queryClient = useQueryClient();
+
     const { data: notifications, isLoading } = useQuery({
         queryKey: ["notifications"],
         queryFn: async () => {
             try {
                 const res = await fetch("/api/notifications/", { method: "GET" });
                 const data = await res.json();
+                if (data.error) return null;
                 if (!res.ok) throw new Error(data.error);
                 return data;
             } catch (error) {
@@ -21,9 +25,23 @@ const NotificationPage = () => {
             }
         },
     });
-    const deleteNotifications = () => {
-        alert("All notifications deleted");
-    };
+
+    const { mutate: deleteNotifications, isPending: notificationPending } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch("/api/notifications/", { method: "DELETE" });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        onSuccess: () => {
+            queryClient.setQueryData(["notifications"], []);
+            toast.success("All notifications deleted");
+        },
+    });
 
     return (
         <>
