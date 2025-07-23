@@ -8,15 +8,31 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { formatDistanceToNowStrict } from "date-fns";
 
 const Post = ({ post }) => {
     const queryClient = useQueryClient();
 
     const [comment, setComment] = useState("");
-    const postOwner = post.user;
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-
+    const postOwner = post.user;
     const isLiked = post.likes.includes(authUser._id);
+    const isMyPost = authUser._id === post.user._id;
+    const formattedDate = formatDistanceToNowStrict(new Date(post.createdAt))
+        .replace(" seconds", "s")
+        .replace(" second", "s")
+        .replace(" minutes", "m")
+        .replace(" minute", "m")
+        .replace(" hours", "h")
+        .replace(" hour", "h")
+        .replace(" days", "d")
+        .replace(" day", "d")
+        .replace(" weeks", "w")
+        .replace(" week", "w")
+        .replace(" months", "mo")
+        .replace(" month", "mo")
+        .replace(" years", "y")
+        .replace(" year", "y");
 
     const { mutate: deletePost, isPending: deletePending } = useMutation({
         mutationFn: async () => {
@@ -37,6 +53,61 @@ const Post = ({ post }) => {
                 return oldData.filter((p) => p._id !== post._id);
             });
             toast.success("Post deleted successfully");
+        },
+    });
+
+    const { mutate: commentPost, isPending: commentPending } = useMutation({
+        mutationFn: async (text) => {
+            try {
+                const res = await fetch(`/api/posts/comment/${post._id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        text,
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        onSuccess: (updatedPost) => {
+            queryClient.setQueryData(["posts"], (oldData) => {
+                return oldData.map((p) => {
+                    if (p._id === post._id) {
+                        return { ...p, comments: updatedPost.comments };
+                    }
+                    return p;
+                });
+            });
+        },
+    });
+
+    const { mutate: deleteComment, isPending: deleteCommentPending } = useMutation({
+        mutationFn: async (commentId) => {
+            try {
+                const res = await fetch(`/api/posts/comment/${post._id}/${commentId}`, {
+                    method: "DELETE",
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+
+        onSuccess: (updatedPost) => {
+            queryClient.setQueryData(["posts"], (oldData) => {
+                return oldData.map((p) => {
+                    if (p._id === post._id) {
+                        return { ...p, comments: updatedPost.comments };
+                    }
+                    return p;
+                });
+            });
         },
     });
 
@@ -67,18 +138,19 @@ const Post = ({ post }) => {
         },
     });
 
-    const isMyPost = authUser._id === post.user._id;
-
-    const formattedDate = "1h";
-
-    const isCommenting = false;
-
     const handleDeletePost = () => {
         deletePost();
     };
 
     const handlePostComment = (e) => {
         e.preventDefault();
+        if (!comment.trim()) return;
+        commentPost(comment);
+        setComment(""); // optionally clear after posting
+    };
+
+    const handleDeleteComment = (commentId) => {
+        deleteComment(commentId);
     };
 
     const handleLikePost = () => {
@@ -155,47 +227,78 @@ const Post = ({ post }) => {
                                                 No comments yet 🤔 Be the first one 😉
                                             </p>
                                         )}
-                                        {post.comments.map((comment) => (
-                                            <div
-                                                key={comment._id}
-                                                className="flex gap-2 items-start"
-                                            >
-                                                <div className="avatar">
-                                                    <div className="w-8 rounded-full">
-                                                        <img
-                                                            src={
-                                                                comment.user.profileImg ||
-                                                                "/avatar-placeholder.png"
+                                        {post.comments.map((comment) => {
+                                            const isMyComment = comment.user._id === authUser._id;
+
+                                            return (
+                                                <div
+                                                    key={comment._id}
+                                                    className="flex justify-between items-center gap-2"
+                                                    style={{ minHeight: "2.5rem" }} // ensures enough height for vertical alignment
+                                                >
+                                                    <div className="flex gap-2 items-start">
+                                                        <div className="avatar">
+                                                            <div className="w-8 rounded-full">
+                                                                <img
+                                                                    src={
+                                                                        comment.user.profileImg ||
+                                                                        "/avatar-placeholder.png"
+                                                                    }
+                                                                    alt={`${comment.user.fullName}'s avatar`}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <div className="flex items-center gap-1">
+                                                                <span className="font-bold">
+                                                                    {comment.user.fullName}
+                                                                </span>
+                                                                <span className="text-gray-700 text-sm">
+                                                                    @{comment.user.username}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-sm">
+                                                                {comment.text}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {isMyComment && (
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDeleteComment(comment._id)
                                                             }
-                                                        />
-                                                    </div>
+                                                            className="text-gray-400 hover:text-red-500 ml-4 p-0"
+                                                            aria-label="Delete comment"
+                                                            style={{
+                                                                border: "none",
+                                                                background: "transparent",
+                                                            }}
+                                                        >
+                                                            {deleteCommentPending ? (
+                                                                <LoadingSpinner size="sm" />
+                                                            ) : (
+                                                                <FaTrash className="w-3 h-3" />
+                                                            )}
+                                                        </button>
+                                                    )}
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <div className="flex items-center gap-1">
-                                                        <span className="font-bold">
-                                                            {comment.user.fullName}
-                                                        </span>
-                                                        <span className="text-gray-700 text-sm">
-                                                            @{comment.user.username}
-                                                        </span>
-                                                    </div>
-                                                    <div className="text-sm">{comment.text}</div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     <form
                                         className="flex gap-2 items-center mt-4 border-t border-gray-600 pt-2"
                                         onSubmit={handlePostComment}
                                     >
                                         <textarea
+                                            data-gramm="false"
                                             className="textarea w-full p-1 rounded text-md resize-none border focus:outline-none  border-gray-800"
                                             placeholder="Add a comment..."
                                             value={comment}
                                             onChange={(e) => setComment(e.target.value)}
                                         />
                                         <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                                            {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
+                                            {commentPending ? <LoadingSpinner size="sm" /> : "Post"}
                                         </button>
                                     </form>
                                 </div>

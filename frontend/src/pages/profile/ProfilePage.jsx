@@ -11,7 +11,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
@@ -45,6 +45,13 @@ const ProfilePage = () => {
             } catch (error) {
                 throw new Error(error);
             }
+        },
+    });
+
+    const { mutate: updateProfilePic, isPending: profilePicPending } = useMutation({
+        mutationFn: async () => {
+            try {
+            } catch (error) {}
         },
     });
 
@@ -201,18 +208,25 @@ const ProfilePage = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <div className="flex gap-1 items-center">
+                                    <Link
+                                        to={`/profile/${user?.username}/following`}
+                                        className="flex gap-1 items-center hover:underline cursor-pointer"
+                                    >
                                         <span className="font-bold text-xs">
                                             {user?.following.length}
                                         </span>
                                         <span className="text-slate-500 text-xs">Following</span>
-                                    </div>
-                                    <div className="flex gap-1 items-center">
+                                    </Link>
+
+                                    <Link
+                                        to={`/profile/${user?.username}/followers`}
+                                        className="flex gap-1 items-center hover:underline cursor-pointer"
+                                    >
                                         <span className="font-bold text-xs">
                                             {user?.followers.length}
                                         </span>
                                         <span className="text-slate-500 text-xs">Followers</span>
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="flex w-full border-b border-gray-700 mt-4">

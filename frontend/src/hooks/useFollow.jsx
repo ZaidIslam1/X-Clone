@@ -1,38 +1,54 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useState } from "react";
+
 const useFollow = () => {
     const queryClient = useQueryClient();
-    const { mutate: followUnfollow, isPending } = useMutation({
-        mutationFn: async (userId) => {
-            try {
-                const res = await fetch(`/api/users/follow/${userId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                });
-                const data = await res.json();
-                if (data.error) return null;
-                if (!res.ok) throw new Error(data.error);
-                return data;
-            } catch (error) {
-                throw new Error(error.message);
-            }
-        },
 
-        onSuccess: (data) => {
-            Promise.all([
+    const mutation = useMutation({
+        mutationFn: async (userId) => {
+            const res = await fetch(`/api/users/follow/${userId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Failed to follow/unfollow");
+            return data;
+        },
+        onSuccess: async (data) => {
+            const targetUsername = data.user.username;
+            const currentUsername = queryClient.getQueryData(["authUser"])?.username;
+
+            const promises = [
                 queryClient.invalidateQueries({ queryKey: ["suggested"] }),
                 queryClient.invalidateQueries({ queryKey: ["authUser"] }),
                 queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
                 queryClient.invalidateQueries({ queryKey: ["posts"] }),
-            ]);
+                targetUsername
+                    ? queryClient.invalidateQueries({ queryKey: ["followers", targetUsername] })
+                    : null,
+                targetUsername
+                    ? queryClient.invalidateQueries({ queryKey: ["following", targetUsername] })
+                    : null,
+                currentUsername
+                    ? queryClient.invalidateQueries({ queryKey: ["followers", currentUsername] })
+                    : null,
+                currentUsername
+                    ? queryClient.invalidateQueries({ queryKey: ["following", currentUsername] })
+                    : null,
+            ].filter(Boolean); // remove nulls
+
+            await Promise.all(promises);
         },
-        onError: () => {
-            toast.error(error.message);
+
+        onError: (error) => {
+            toast.error(error.message || "Something went wrong");
         },
     });
 
-    return { followUnfollow, isPending };
+    return {
+        followUnfollow: mutation.mutate,
+        isPending: mutation.isLoading,
+    };
 };
 
 export default useFollow;

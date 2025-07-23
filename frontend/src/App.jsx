@@ -6,6 +6,7 @@ import Sidebar from "./components/common/Sidebar.jsx";
 import RightPanel from "./components/common/RightPanel.jsx";
 import NotificationPage from "./pages/notification/NotificationPage.jsx";
 import ProfilePage from "./pages/profile/ProfilePage.jsx";
+import FollowersFollowingPage from "./pages/profile/FollowersFollowingPage.jsx";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
 
@@ -42,6 +43,10 @@ function App() {
                 <Route
                     path="/notifications"
                     element={authUser ? <NotificationPage /> : <Navigate to="/login" />}
+                />
+                <Route
+                    path="/profile/:username/:tab"
+                    element={authUser ? <FollowersFollowingPage /> : <Navigate to="/login" />}
                 />
                 <Route
                     path="/profile/:username"

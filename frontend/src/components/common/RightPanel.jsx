@@ -22,14 +22,17 @@ const RightPanel = () => {
 
     const { followUnfollow, isPending } = useFollow();
 
-    if (suggestedUsers?.length === 0) return <div className="md:w-64 w-0"></div>;
+    const noSuggestions = !isLoading && (!suggestedUsers || suggestedUsers.length === 0);
 
     return (
-        <div className="hidden lg:block my-4 mx-2">
-            <div className="bg-[#16181C] p-4 rounded-md sticky top-2">
+        <div className="hidden lg:block my-4 mx-2 md:w-64 w-64">
+            <div
+                className={`bg-[#16181C] p-4 rounded-md sticky top-2 flex flex-col ${
+                    noSuggestions ? "min-h-[150px]" : ""
+                }`}
+            >
                 <p className="font-bold">Who to follow</p>
-                <div className="flex flex-col gap-4 mt-4">
-                    {/* item */}
+                <div className="flex flex-col gap-4 mt-4 flex-grow">
                     {isLoading && (
                         <>
                             <RightPanelSkeleton />
@@ -38,8 +41,10 @@ const RightPanel = () => {
                             <RightPanelSkeleton />
                         </>
                     )}
+
                     {!isLoading &&
-                        suggestedUsers?.map((user) => (
+                        suggestedUsers?.length > 0 &&
+                        suggestedUsers.map((user) => (
                             <Link
                                 to={`/profile/${user.username}`}
                                 className="flex items-center justify-between gap-4"
@@ -50,6 +55,7 @@ const RightPanel = () => {
                                         <div className="w-8 rounded-full">
                                             <img
                                                 src={user.profileImg || "/avatar-placeholder.png"}
+                                                alt={`${user.fullName}'s avatar`}
                                             />
                                         </div>
                                     </div>
@@ -66,7 +72,8 @@ const RightPanel = () => {
                                     <button
                                         className="btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm"
                                         onClick={(e) => {
-                                            e.preventDefault(), followUnfollow(user._id);
+                                            e.preventDefault();
+                                            followUnfollow(user._id);
                                         }}
                                     >
                                         {isPending ? <LoadingSpinner size="sm" /> : "Follow"}
@@ -74,9 +81,16 @@ const RightPanel = () => {
                                 </div>
                             </Link>
                         ))}
+
+                    {noSuggestions && (
+                        <p className="text-gray-500 text-center mt-auto mb-auto">
+                            No suggested users to follow right now.
+                        </p>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
+
 export default RightPanel;
