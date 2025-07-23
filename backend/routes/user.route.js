@@ -1,11 +1,19 @@
-import { Router} from "express";
-import { getProfile, getSuggestedUsers, followUnfollowUser, updateUserProfile } from "../controllers/user.controller.js";
+import { Router } from "express";
+import {
+    getProfile,
+    getSuggestedUsers,
+    followUnfollowUser,
+    updateUserProfile,
+    getFollowers,
+    getFollowing,
+} from "../controllers/user.controller.js";
 import { protectRoute } from "../lib/middleware/protectRoute.js";
 import User from "../models/user.model.js";
 const router = Router();
 
 router.use(protectRoute);
-
+router.get("/:username/followers", getFollowers);
+router.get("/:username/following", getFollowing);
 router.get("/profile/:username", getProfile);
 router.get("/suggested", getSuggestedUsers);
 router.post("/follow/:id", followUnfollowUser);
@@ -19,7 +27,7 @@ router.get("/all", async (req, res, next) => {
     } catch (error) {
         console.log("Error in fetching all users", error.message);
         next(error);
-    }   
-})
+    }
+});
 
 export default router;

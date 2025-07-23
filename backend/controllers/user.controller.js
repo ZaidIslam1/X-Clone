@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
 
 export const getProfile = async (req, res, next) => {
@@ -9,7 +9,7 @@ export const getProfile = async (req, res, next) => {
         if (!username) {
             return res.status(400).json({ error: "Username is required" });
         }
-        const user = await User.findOne({username}).select("-password -__v");
+        const user = await User.findOne({ username }).select("-password -__v");
         if (!user || user.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }
@@ -17,46 +17,48 @@ export const getProfile = async (req, res, next) => {
     } catch (error) {
         console.log("Error in getProfile", error.message);
         next(error);
-        
     }
-}
+};
 
 export const getSuggestedUsers = async (req, res, next) => {
     try {
         const currentUserId = req.user._id;
-        const userFollowedByMe = await User.findById(currentUserId).select("following")
-        
+        const userFollowedByMe = await User.findById(currentUserId).select("following");
+
         const users = await User.aggregate([
             {
                 $match: {
-                    _id: { $ne: currentUserId }
-                }
+                    _id: { $ne: currentUserId },
+                },
             },
             {
-                $sample: { size: 10 }
-            }
+                $sample: { size: 10 },
+            },
         ]);
-        
-        const filteredUsers = users.filter(user => 
-            !userFollowedByMe.following.some(followingId => followingId.toString() === user._id.toString())
+
+        const filteredUsers = users.filter(
+            (user) =>
+                !userFollowedByMe.following.some(
+                    (followingId) => followingId.toString() === user._id.toString()
+                )
         );
         const suggestedUsers = filteredUsers.slice(0, 4);
-        suggestedUsers.forEach(user => { user.password = undefined; user.__v = undefined; });
+        suggestedUsers.forEach((user) => {
+            user.password = undefined;
+            user.__v = undefined;
+        });
         if (suggestedUsers.length === 0) {
             return res.status(404).json({ error: "No suggested users found" });
         }
 
         res.status(200).json(suggestedUsers);
-
     } catch (error) {
         console.log("Error in getSuggestedUsers", error.message);
         next(error);
-        
     }
-}
+};
 
 export const followUnfollowUser = async (req, res, next) => {
-
     try {
         const { id } = req.params; // User ID to follow/unfollow
         const currentUserId = req.user._id; // ID of the authenticated user
@@ -76,26 +78,25 @@ export const followUnfollowUser = async (req, res, next) => {
         }
 
         const isFollowing = currentUser.following.includes(id);
-        if (!isFollowing){
+        if (!isFollowing) {
             // Follow user
-            await User.findByIdAndUpdate(id, {$push :{followers: currentUserId}});
-            await User.findByIdAndUpdate(currentUserId, {$push: {following: id}})
+            await User.findByIdAndUpdate(id, { $push: { followers: currentUserId } });
+            await User.findByIdAndUpdate(currentUserId, { $push: { following: id } });
 
             const newNotification = new Notification({
-                type: 'follow',
-                from: currentUserId, 
+                type: "follow",
+                from: currentUserId,
                 to: otherUser._id,
-
             });
 
-            await newNotification.save()
+            await newNotification.save();
 
             res.status(200).json({
                 message: "User followed successfully",
                 user: {
                     _id: otherUser._id,
                     fullName: otherUser.fullName,
-                    username: otherUser.username,                
+                    username: otherUser.username,
                     email: otherUser.email,
                     profileImg: otherUser.profileImg,
                     coverImg: otherUser.coverImg,
@@ -104,21 +105,20 @@ export const followUnfollowUser = async (req, res, next) => {
                     followers: otherUser.followers,
                     following: otherUser.following,
                     createdAt: otherUser.createdAt,
-                    updatedAt: otherUser.updatedAt
-                }
-
+                    updatedAt: otherUser.updatedAt,
+                },
+                isFollowing,
             });
         } else {
             // Unfollow user
-            await User.findByIdAndUpdate(id, {$pull :{followers: currentUserId}});
-            await User.findByIdAndUpdate(currentUserId, {$pull: {following: 
-            id}})
+            await User.findByIdAndUpdate(id, { $pull: { followers: currentUserId } });
+            await User.findByIdAndUpdate(currentUserId, { $pull: { following: id } });
             res.status(200).json({
                 message: "User unfollowed successfully",
                 user: {
                     _id: otherUser._id,
                     fullName: otherUser.fullName,
-                    username: otherUser.username,                
+                    username: otherUser.username,
                     email: otherUser.email,
                     profileImg: otherUser.profileImg,
                     coverImg: otherUser.coverImg,
@@ -127,18 +127,16 @@ export const followUnfollowUser = async (req, res, next) => {
                     followers: otherUser.followers,
                     following: otherUser.following,
                     createdAt: otherUser.createdAt,
-                    updatedAt: otherUser.updatedAt
-                }
+                    updatedAt: otherUser.updatedAt,
+                },
+                isFollowing,
             });
         }
-
-
     } catch (error) {
         console.log("Error in followUnfollowUser", error.message);
         next(error);
-        
     }
-}
+};
 
 export const updateUserProfile = async (req, res, next) => {
     const { fullName, username, email, currentPassword, newPassword, bio, link } = req.body;
@@ -150,8 +148,14 @@ export const updateUserProfile = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        if ((currentPassword && !newPassword) || (!currentPassword && newPassword) || (newPassword && newPassword.trim() === "")) {
-            return res.status(400).json({ error: "New password is required when current password is provided" });
+        if (
+            (currentPassword && !newPassword) ||
+            (!currentPassword && newPassword) ||
+            (newPassword && newPassword.trim() === "")
+        ) {
+            return res
+                .status(400)
+                .json({ error: "New password is required when current password is provided" });
         }
         if (currentPassword && newPassword) {
             const isMatch = await bcrypt.compare(currentPassword, user.password);
@@ -159,46 +163,86 @@ export const updateUserProfile = async (req, res, next) => {
                 return res.status(400).json({ error: "Current password is incorrect" });
             }
             if (newPassword.length < 6) {
-                return res.status(400).json({ error: "New password must be at least 6 characters long" });
+                return res
+                    .status(400)
+                    .json({ error: "New password must be at least 6 characters long" });
             }
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(newPassword, salt);
         }
 
         if (profileImg && user.profileImg) {
-            await cloudinary.uploader.destroy(user.profileImg.split('/').pop().split('.')[0]);
+            await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
         }
         if (profileImg) {
-            const uploadedResponse = await cloudinary.uploader.upload(profileImg)
+            const uploadedResponse = await cloudinary.uploader.upload(profileImg);
             user.profileImg = uploadedResponse.secure_url;
         }
 
         if (coverImg && user.coverImg) {
-            await cloudinary.uploader.destroy(user.coverImg.split('/').pop().split('.')[0]);
+            await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
         }
         if (coverImg) {
-            const uploadedResponse = await cloudinary.uploader.upload(coverImg)
+            const uploadedResponse = await cloudinary.uploader.upload(coverImg);
             user.coverImg = uploadedResponse.secure_url;
         }
 
         user.fullName = fullName || user.fullName;
         user.username = username || user.username;
-        user.email = email || user.email;  
+        user.email = email || user.email;
         user.bio = bio || user.bio;
         user.link = link || user.link;
         user.profileImg = profileImg || user.profileImg;
-        user.coverImg = coverImg || user.coverImg;  
-        
+        user.coverImg = coverImg || user.coverImg;
+
         const updatedUser = await user.save();
         updatedUser.password = undefined; // Exclude password from response
         updatedUser.__v = undefined; // Exclude version key from response
-        
-        res.status(200).json(updatedUser);
 
+        res.status(200).json(updatedUser);
     } catch (error) {
         console.log("Error in updateUserProfile", error.message);
         next(error);
     }
+};
 
+// Get list of users who follow the given username
+export const getFollowers = async (req, res, next) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username })
+            .populate(
+                "followers",
+                "-password -email -__v" // exclude sensitive fields
+            )
+            .lean();
 
-}
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json(user.followers);
+    } catch (error) {
+        console.log("Error in getFollowers", error.message);
+        next(error);
+    }
+};
+
+// Get list of users whom the given username is following
+export const getFollowing = async (req, res, next) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username })
+            .populate("following", "-password -email -__v")
+            .lean();
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json(user.following);
+    } catch (error) {
+        console.log("Error in getFollowing", error.message);
+        next(error);
+    }
+};
