@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
-import { formatDistanceToNowStrict } from "date-fns";
+import { formatPostDate } from "../../utils/date/function";
 
 const Post = ({ post }) => {
     const queryClient = useQueryClient();
@@ -18,21 +18,7 @@ const Post = ({ post }) => {
     const postOwner = post.user;
     const isLiked = post.likes.includes(authUser._id);
     const isMyPost = authUser._id === post.user._id;
-    const formattedDate = formatDistanceToNowStrict(new Date(post.createdAt))
-        .replace(" seconds", "s")
-        .replace(" second", "s")
-        .replace(" minutes", "m")
-        .replace(" minute", "m")
-        .replace(" hours", "h")
-        .replace(" hour", "h")
-        .replace(" days", "d")
-        .replace(" day", "d")
-        .replace(" weeks", "w")
-        .replace(" week", "w")
-        .replace(" months", "mo")
-        .replace(" month", "mo")
-        .replace(" years", "y")
-        .replace(" year", "y");
+    const formattedDate = formatPostDate(post.createdAt);
 
     const { mutate: deletePost, isPending: deletePending } = useMutation({
         mutationFn: async () => {
@@ -144,6 +130,7 @@ const Post = ({ post }) => {
 
     const handlePostComment = (e) => {
         e.preventDefault();
+        if (commentPending) return;
         if (!comment.trim()) return;
         commentPost(comment);
         setComment(""); // optionally clear after posting
