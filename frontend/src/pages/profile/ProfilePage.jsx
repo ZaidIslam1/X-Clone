@@ -11,11 +11,13 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { formatMemberSinceDate } from "../../utils/date/function";
 
 const ProfilePage = () => {
+    const queryClient = useQueryClient();
     const [coverImg, setCoverImg] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [feedType, setFeedType] = useState("posts");
@@ -48,10 +50,26 @@ const ProfilePage = () => {
         },
     });
 
-    const { mutate: updateProfilePic, isPending: profilePicPending } = useMutation({
+    const { mutate: updateProfilePic, isPending: uploadPicPending } = useMutation({
         mutationFn: async () => {
             try {
-            } catch (error) {}
+                const res = await fetch(`/api/users/update`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ coverImg, profileImg }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Failed to follow/unfollow");
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        onSuccess: async () => {
+            Promise.all(
+                queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+                queryClient.invalidateQueries({ queryKey: ["authUser"] })
+            );
         },
     });
 
@@ -168,9 +186,9 @@ const ProfilePage = () => {
                                 {(coverImg || profileImg) && (
                                     <button
                                         className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                                        onClick={() => alert("Profile updated successfully")}
+                                        onClick={() => updateProfilePic()}
                                     >
-                                        Update
+                                        {uploadPicPending ? "Updating..." : "Update"}
                                     </button>
                                 )}
                             </div>
@@ -190,12 +208,12 @@ const ProfilePage = () => {
                                             <>
                                                 <FaLink className="w-3 h-3 text-slate-500" />
                                                 <a
-                                                    href="https://youtube.com/@asaprogrammer_"
+                                                    href={user?.link}
                                                     target="_blank"
                                                     rel="noreferrer"
                                                     className="text-sm text-blue-500 hover:underline"
                                                 >
-                                                    youtube.com/@asaprogrammer_
+                                                    {user?.link}
                                                 </a>
                                             </>
                                         </div>
@@ -203,7 +221,7 @@ const ProfilePage = () => {
                                     <div className="flex gap-2 items-center">
                                         <IoCalendarOutline className="w-4 h-4 text-slate-500" />
                                         <span className="text-sm text-slate-500">
-                                            Joined July 2021
+                                            {formatMemberSinceDate(user?.createdAt)}
                                         </span>
                                     </div>
                                 </div>
@@ -229,7 +247,7 @@ const ProfilePage = () => {
                                     </Link>
                                 </div>
                             </div>
-                            <div className="flex w-full border-b border-gray-700 mt-4">
+                            <div className="flex w-full border-b border-gray-700 mt-4 font-semibold">
                                 <div
                                     className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"
                                     onClick={() => setFeedType("posts")}
@@ -240,7 +258,7 @@ const ProfilePage = () => {
                                     )}
                                 </div>
                                 <div
-                                    className="flex justify-center flex-1 p-3 text-slate-500 hover:bg-secondary transition duration-300 relative cursor-pointer"
+                                    className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"
                                     onClick={() => setFeedType("likes")}
                                 >
                                     Likes

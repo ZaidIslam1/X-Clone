@@ -1,20 +1,21 @@
 import { useState } from "react";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const EditProfileModal = () => {
+    const queryClient = useQueryClient();
+    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+
     const [formData, setFormData] = useState({
-        fullName: "",
-        username: "",
-        email: "",
-        bio: "",
-        link: "",
+        fullName: authUser?.fullName,
+        username: authUser?.username,
+        email: authUser?.email,
+        bio: authUser?.bio,
+        link: authUser?.link,
         newPassword: "",
         currentPassword: "",
     });
-
-    const queryClient = useQueryClient();
 
     const { mutate: updateProfile, isPending } = useMutation({
         mutationFn: async () => {
@@ -32,18 +33,21 @@ const EditProfileModal = () => {
                 throw new Error(error);
             }
         },
-        onSuccess: () => {
+        onSuccess: async (updatedUser) => {
             setFormData({
-                fullName: "",
-                username: "",
-                email: "",
-                bio: "",
-                link: "",
+                fullName: updatedUser.fullName,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                bio: updatedUser.bio,
+                link: updatedUser.link,
                 newPassword: "",
                 currentPassword: "",
             });
             toast.success("Profile updated successfully");
-            queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            Promise.all(
+                queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+                queryClient.invalidateQueries({ queryKey: ["authUser"] })
+            );
         },
 
         onError: () => {
@@ -143,7 +147,7 @@ const EditProfileModal = () => {
                             className="btn btn-primary rounded-full btn-sm text-white"
                             onClick={handleSubmit}
                         >
-                            {isPending ? <LoadingSpinner size="sm" /> : "Update"}
+                            {isPending ? "Updating..." : "Update"}
                         </button>
                     </form>
                 </div>

@@ -161,18 +161,17 @@ export const deleteComment = async (req, res, next) => {
 
 export const getLikedPosts = async (req, res, next) => {
     try {
-        const { id: userId } = req.params;
-        const user = await User.findById(userId);
+        const { username } = req.params;
+        const user = await User.findOne({ username }); // ✅ Use username, not userId
         if (!user) {
-            return res.status(401).json({ error: "User not found" });
+            return res.status(404).json({ error: "User not found" }); // 404 is better here
         }
+
         const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
             .sort({ createdAt: -1 })
             .populate("user", "-password")
             .populate("comments.user", "-password");
-        if (!likedPosts || likedPosts.length === 0) {
-            return res.status(404).json({ error: "No liked posts found" });
-        }
+
         res.status(200).json(likedPosts);
     } catch (error) {
         console.log("Error in getLikedPosts", error.message);
@@ -218,37 +217,3 @@ export const getUserPosts = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

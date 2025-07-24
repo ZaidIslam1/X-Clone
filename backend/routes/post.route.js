@@ -20,7 +20,7 @@ router.post("/like/:id", likeUnlikePost);
 router.post("/comment/:id", commentPost);
 router.delete("/comment/:postId/:commentId", deleteComment);
 router.delete("/:id", deletePost);
-router.get("/likes/:id", getLikedPosts);
+router.get("/likes/:username", getLikedPosts);
 router.get("/following", getFollowingPosts);
 router.get("/user/:username", getUserPosts);
 router.get("/all", async (req, res, next) => {

@@ -6,13 +6,17 @@ const useFollow = () => {
 
     const mutation = useMutation({
         mutationFn: async (userId) => {
-            const res = await fetch(`/api/users/follow/${userId}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Failed to follow/unfollow");
-            return data;
+            try {
+                const res = await fetch(`/api/users/follow/${userId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Failed to follow/unfollow");
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
         },
         onSuccess: async (data) => {
             const targetUsername = data.user.username;
