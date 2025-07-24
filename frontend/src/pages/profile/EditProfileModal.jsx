@@ -1,18 +1,21 @@
-import { useState } from "react";
-import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const EditProfileModal = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const [formData, setFormData] = useState({
-        fullName: authUser?.fullName,
-        username: authUser?.username,
-        email: authUser?.email,
-        bio: authUser?.bio,
-        link: authUser?.link,
+        fullName: "",
+        username: "",
+        email: "",
+        bio: "",
+        link: "",
         newPassword: "",
         currentPassword: "",
     });
@@ -34,26 +37,34 @@ const EditProfileModal = () => {
             }
         },
         onSuccess: async (updatedUser) => {
-            setFormData({
-                fullName: updatedUser.fullName,
-                username: updatedUser.username,
-                email: updatedUser.email,
-                bio: updatedUser.bio,
-                link: updatedUser.link,
-                newPassword: "",
-                currentPassword: "",
-            });
+            if (updatedUser.username && updatedUser.username !== authUser.username) {
+                navigate(`/profile/${updatedUser.username}`);
+            }
             toast.success("Profile updated successfully");
-            Promise.all(
+            await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
-                queryClient.invalidateQueries({ queryKey: ["authUser"] })
-            );
+                queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+            ]);
         },
 
         onError: () => {
             toast.success("Unable to update profile");
         },
     });
+
+    useEffect(() => {
+        if (authUser) {
+            setFormData({
+                fullName: authUser.fullName,
+                username: authUser.username,
+                email: authUser.email,
+                bio: authUser.bio,
+                link: authUser.link,
+                newPassword: "",
+                currentPassword: "",
+            });
+        }
+    }, [authUser]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -79,7 +90,7 @@ const EditProfileModal = () => {
                         className="flex flex-col gap-4"
                         onSubmit={(e) => {
                             e.preventDefault();
-                            alert("Profile updated successfully");
+                            handleSubmit(e);
                         }}
                     >
                         <div className="flex flex-wrap gap-2">

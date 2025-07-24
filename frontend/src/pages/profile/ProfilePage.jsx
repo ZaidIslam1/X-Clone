@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
@@ -18,6 +18,7 @@ import { formatMemberSinceDate } from "../../utils/date/function";
 
 const ProfilePage = () => {
     const queryClient = useQueryClient();
+
     const [coverImg, setCoverImg] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [feedType, setFeedType] = useState("posts");
@@ -66,10 +67,10 @@ const ProfilePage = () => {
             }
         },
         onSuccess: async () => {
-            Promise.all(
+            await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
-                queryClient.invalidateQueries({ queryKey: ["authUser"] })
-            );
+                queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+            ]);
         },
     });
 
