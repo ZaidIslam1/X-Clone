@@ -120,7 +120,6 @@ const Post = ({ post }) => {
                     return p;
                 });
             });
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
             toast.success("Post liked successfully");
         },
     });
