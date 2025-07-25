@@ -148,15 +148,18 @@ export const updateUserProfile = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        if (
-            (currentPassword && !newPassword) ||
-            (!currentPassword && newPassword) ||
-            (newPassword && newPassword.trim() === "")
-        ) {
-            return res
-                .status(400)
-                .json({ error: "New password is required when current password is provided" });
+        if (currentPassword && !newPassword) {
+            return res.status(400).json({ error: "New password is required" });
         }
+
+        if (!currentPassword && newPassword) {
+            return res.status(400).json({ error: "Current password is required" });
+        }
+
+        if (newPassword && newPassword.trim() === "") {
+            return res.status(400).json({ error: "New password cannot be empty" });
+        }
+
         if (currentPassword && newPassword) {
             const isMatch = await bcrypt.compare(currentPassword, user.password);
             if (!isMatch) {

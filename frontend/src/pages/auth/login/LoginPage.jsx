@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 
 import XSvg from "../../../components/svgs/X";
 
-import { MdOutlineMail } from "react-icons/md";
-import { MdPassword } from "react-icons/md";
+import { MdOutlineMail, MdPassword } from "react-icons/md";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const LoginPage = () => {
+    const [showPassword, setShowPassword] = useState(false);
+
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -76,16 +78,25 @@ const LoginPage = () => {
                         />
                     </label>
 
-                    <label className="input input-bordered rounded flex items-center gap-2">
+                    <label className="input input-bordered rounded flex items-center gap-2 relative">
                         <MdPassword />
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             className="grow"
                             placeholder="Password"
                             name="password"
                             onChange={handleInputChange}
                             value={formData.password}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1} // prevent focus
+                            onMouseDown={(e) => e.preventDefault()} // prevent input losing focus
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
                     </label>
                     <button className="btn rounded-full btn-primary text-white">
                         {isPending ? "Loading.." : "Login"}

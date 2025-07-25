@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,6 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 const EditProfileModal = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
@@ -33,7 +36,7 @@ const EditProfileModal = () => {
                 if (!res.ok) throw new Error(data.error);
                 return data;
             } catch (error) {
-                throw new Error(error);
+                throw new Error(error.message);
             }
         },
         onSuccess: async (updatedUser) => {
@@ -47,8 +50,8 @@ const EditProfileModal = () => {
             ]);
         },
 
-        onError: () => {
-            toast.success("Unable to update profile");
+        onError: (error) => {
+            toast.error(error.message);
         },
     });
 
@@ -129,22 +132,45 @@ const EditProfileModal = () => {
                             />
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            <input
-                                type="password"
-                                placeholder="Current Password"
-                                className="flex-1 input border border-gray-700 rounded p-2 input-md"
-                                value={formData.currentPassword}
-                                name="currentPassword"
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="password"
-                                placeholder="New Password"
-                                className="flex-1 input border border-gray-700 rounded p-2 input-md"
-                                value={formData.newPassword}
-                                name="newPassword"
-                                onChange={handleInputChange}
-                            />
+                            <div className="relative flex-1">
+                                <input
+                                    type={showCurrentPassword ? "text" : "password"}
+                                    placeholder="Current Password"
+                                    className="w-full input border border-gray-700 rounded p-2 input-md pr-10"
+                                    value={formData.currentPassword}
+                                    name="currentPassword"
+                                    onChange={handleInputChange}
+                                />
+                                {/* Always show the button */}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+                                    style={{ zIndex: 10 }}
+                                >
+                                    {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            </div>
+
+                            <div className="relative flex-1">
+                                <input
+                                    type={showNewPassword ? "text" : "password"}
+                                    placeholder="New Password"
+                                    className="w-full input border border-gray-700 rounded p-2 input-md pr-10"
+                                    value={formData.newPassword}
+                                    name="newPassword"
+                                    onChange={handleInputChange}
+                                />
+                                {/* Always show the button */}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewPassword(!showNewPassword)}
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+                                    style={{ zIndex: 10 }}
+                                >
+                                    {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            </div>
                         </div>
                         <input
                             type="text"

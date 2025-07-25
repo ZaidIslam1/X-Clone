@@ -71,6 +71,8 @@ const ProfilePage = () => {
                 queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
                 queryClient.invalidateQueries({ queryKey: ["authUser"] }),
             ]);
+            setCoverImg(null);
+            setProfileImg(null);
         },
     });
 

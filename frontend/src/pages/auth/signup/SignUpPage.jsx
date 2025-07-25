@@ -2,15 +2,15 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 import XSvg from "../../../components/svgs/X";
+import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 
-import { MdOutlineMail } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
-import { MdPassword } from "react-icons/md";
-import { MdDriveFileRenameOutline } from "react-icons/md";
+import { MdOutlineMail, MdPassword, MdDriveFileRenameOutline } from "react-icons/md";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
+    const [showPassword, setShowPassword] = useState(false);
+
     const [formData, setFormData] = useState({
         email: "",
         username: "",
@@ -101,13 +101,23 @@ const SignUpPage = () => {
                     <label className="input input-bordered rounded flex items-center gap-2 w-full">
                         <MdPassword />
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             className="grow"
                             placeholder="Password"
                             name="password"
                             onChange={handleInputChange}
                             value={formData.password}
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1} // prevent focus
+                            onMouseDown={(e) => e.preventDefault()} // prevent input losing focus
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 
+text-gray-600"
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
                     </label>
                     <button className="btn rounded-full btn-primary text-white">
                         {isPending ? "Loading..." : "Sign up"}
