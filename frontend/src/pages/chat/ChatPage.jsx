@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { FaUserCircle } from "react-icons/fa";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import UserListSidebar from "../../components/common/UserListSidebar";
 
@@ -121,10 +122,6 @@ const ChatPage = ({ authUser }) => {
         setInput("");
     };
 
-    const handleRefresh = () => {
-        fetchMessages();
-    };
-
     return (
         <>
             <style>
@@ -158,9 +155,14 @@ const ChatPage = ({ authUser }) => {
                 <div className="flex-1 flex flex-col h-screen">
                     {/* Header */}
                     <div className="px-4 py-2 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
-                        <h2 className="text-lg font-bold text-white">
-                            {authUser.username === username ? "Select a user" : username}
-                        </h2>
+                        {authUser.username === username ? (
+                            <div className="flex items-center gap-2">
+                                <FaUserCircle className="text-white h-6 w-6" />
+                                <h2 className="text-lg font-bold text-white">No User Selected</h2>
+                            </div>
+                        ) : (
+                            <h2 className="text-lg font-bold text-white">{username}</h2>
+                        )}
                     </div>
 
                     {/* Messages scroll area */}
@@ -170,10 +172,13 @@ const ChatPage = ({ authUser }) => {
                             <div className="flex justify-center mt-8">
                                 <LoadingSpinner size="lg" />
                             </div>
-                        ) : !username || !receiverId ? (
-                            <p className="text-center text-gray-400 mt-8">
-                                Select a user to start chatting
-                            </p>
+                        ) : !username || !receiverId || authUser.username === username ? (
+                            <div className="flex flex-col items-center justify-center mt-16">
+                                <FaUserCircle className="text-white h-10 w-10 mb-4" />
+                                <p className="text-center text-gray-400">
+                                    Select a user to start chatting
+                                </p>
+                            </div>
                         ) : messages.length === 0 ? (
                             <p className="text-center text-gray-400 mt-8">Send the first message</p>
                         ) : (
@@ -200,7 +205,7 @@ const ChatPage = ({ authUser }) => {
                     </div>
 
                     {/* Input fixed at bottom */}
-                    {username && receiverId && (
+                    {username && receiverId && authUser.username !== username && (
                         <form
                             onSubmit={handleSend}
                             className="px-3 py-2 border-t border-gray-700 flex gap-2 bg-black flex-shrink-0"
