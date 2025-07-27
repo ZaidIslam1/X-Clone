@@ -8,6 +8,7 @@ import {
     getFollowing,
     getAllUsers,
     getMessages,
+    getMutual,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../lib/middleware/protectRoute.js";
 
@@ -21,6 +22,8 @@ router.get("/suggested", getSuggestedUsers);
 router.post("/follow/:id", followUnfollowUser);
 router.post("/update", updateUserProfile);
 router.get("/all", getAllUsers);
+router.get("/mutual", getMutual);
+
 router.get("/messages/:userId", getMessages);
 
 export default router;

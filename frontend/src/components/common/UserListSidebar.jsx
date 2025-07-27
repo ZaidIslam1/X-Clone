@@ -11,18 +11,18 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect }) => {
         async function fetchUsers() {
             try {
                 setIsLoading(true);
-                const res = await fetch("/api/users/all");
+                const res = await fetch("/api/users/mutual");
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
+                if (!res.ok) throw new Error(data.error || "Failed to fetch mutual users");
                 setUsers(data.filter((user) => user._id !== authUser._id));
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching mutual users:", err);
             } finally {
                 setIsLoading(false);
             }
         }
         fetchUsers();
-    }, [authUser._id]);
+    }, [authUser._id, authUser.followers, authUser.following]);
 
     const handleUserSelect = (username, userId) => {
         navigate(`/chat/messages/${username}`);
@@ -62,7 +62,7 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect }) => {
                     </div>
                 ) : users.length === 0 ? (
                     <p className="text-gray-500 dark:text-gray-400 text-center flex-shrink-0">
-                        No users found
+                        No mutual users found
                     </p>
                 ) : (
                     <ul className="flex-1 overflow-y-auto users-scroll space-y-2">

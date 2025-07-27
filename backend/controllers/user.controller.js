@@ -259,7 +259,6 @@ export const getMessages = async (req, res, next) => {
         const currentUserId = req.user._id;
         const { userId } = req.params;
 
-        console.log("Fetching messages for userId:", userId);
         const otherUser = await User.findById(userId);
         if (!otherUser) {
             return res.status(404).json({ error: "User not found" });
@@ -276,6 +275,27 @@ export const getMessages = async (req, res, next) => {
     } catch (error) {
         console.log("Error in getMessages", error.message);
         res.status(500).json({ error: "Internal server error" });
+        next(error);
+    }
+};
+export const getMutual = async (req, res, next) => {
+    try {
+        const currentUserId = req.user._id;
+        const currentUser = await User.findById(currentUserId).select("following followers").lean();
+
+        const mutualUsers = await User.find({
+            _id: { $in: currentUser.following }, // Users I follow
+            followers: currentUserId, // Who follow me back
+            following: currentUserId, // And I am in their following
+            _id: { $in: currentUser.followers }, // And they are in my followers
+        })
+            .select("-password -__v")
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.status(200).json(mutualUsers);
+    } catch (error) {
+        console.log("Error in getMutual", error.message);
         next(error);
     }
 };
