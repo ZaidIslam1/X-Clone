@@ -9,6 +9,7 @@ import ProfilePage from "./pages/profile/ProfilePage.jsx";
 import FollowersFollowingPage from "./pages/profile/FollowersFollowingPage.jsx";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
+import ChatPage from "./pages/chat/ChatPage.jsx";
 
 function App() {
     const { data: authUser, isLoading } = useQuery({
@@ -51,6 +52,10 @@ function App() {
                 <Route
                     path="/profile/:username"
                     element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+                />
+                <Route
+                    path="/chat/messages/:username"
+                    element={authUser ? <ChatPage authUser={authUser} /> : <Navigate to="/login" />}
                 />
                 <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
                 <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />

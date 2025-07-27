@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
+import { Message } from "../models/message.model.js";
 
 export const getProfile = async (req, res, next) => {
     try {
@@ -60,8 +61,8 @@ export const getSuggestedUsers = async (req, res, next) => {
 
 export const followUnfollowUser = async (req, res, next) => {
     try {
-        const { id } = req.params; // User ID to follow/unfollow
-        const currentUserId = req.user._id; // ID of the authenticated user
+        const { id } = req.params;
+        const currentUserId = req.user._id;
 
         if (id === currentUserId.toString()) {
             return res.status(400).json({ error: "You cannot follow/unfollow yourself" });
@@ -79,7 +80,6 @@ export const followUnfollowUser = async (req, res, next) => {
 
         const isFollowing = currentUser.following.includes(id);
         if (!isFollowing) {
-            // Follow user
             await User.findByIdAndUpdate(id, { $push: { followers: currentUserId } });
             await User.findByIdAndUpdate(currentUserId, { $push: { following: id } });
 
@@ -110,7 +110,6 @@ export const followUnfollowUser = async (req, res, next) => {
                 isFollowing,
             });
         } else {
-            // Unfollow user
             await User.findByIdAndUpdate(id, { $pull: { followers: currentUserId } });
             await User.findByIdAndUpdate(currentUserId, { $pull: { following: id } });
             res.status(200).json({
@@ -199,8 +198,8 @@ export const updateUserProfile = async (req, res, next) => {
         user.coverImg = coverImg || user.coverImg;
 
         const updatedUser = await user.save();
-        updatedUser.password = undefined; // Exclude password from response
-        updatedUser.__v = undefined; // Exclude version key from response
+        updatedUser.password = undefined;
+        updatedUser.__v = undefined;
 
         res.status(200).json(updatedUser);
     } catch (error) {
@@ -209,15 +208,11 @@ export const updateUserProfile = async (req, res, next) => {
     }
 };
 
-// Get list of users who follow the given username
 export const getFollowers = async (req, res, next) => {
     try {
         const { username } = req.params;
         const user = await User.findOne({ username })
-            .populate(
-                "followers",
-                "-password -email -__v" // exclude sensitive fields
-            )
+            .populate("followers", "-password -email -__v")
             .lean();
 
         if (!user) {
@@ -231,7 +226,6 @@ export const getFollowers = async (req, res, next) => {
     }
 };
 
-// Get list of users whom the given username is following
 export const getFollowing = async (req, res, next) => {
     try {
         const { username } = req.params;
@@ -246,6 +240,42 @@ export const getFollowing = async (req, res, next) => {
         res.status(200).json(user.following);
     } catch (error) {
         console.log("Error in getFollowing", error.message);
+        next(error);
+    }
+};
+
+export const getAllUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({}, "-password").sort({ createdAt: -1 });
+        res.status(200).json(users);
+    } catch (error) {
+        console.log("Error in getAllUsers", error.message);
+        next(error);
+    }
+};
+
+export const getMessages = async (req, res, next) => {
+    try {
+        const currentUserId = req.user._id;
+        const { userId } = req.params;
+
+        console.log("Fetching messages for userId:", userId);
+        const otherUser = await User.findById(userId);
+        if (!otherUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const messages = await Message.find({
+            $or: [
+                { senderId: currentUserId, receiverId: otherUser._id },
+                { senderId: otherUser._id, receiverId: currentUserId },
+            ],
+        }).sort({ createdAt: 1 });
+
+        res.status(200).json(messages || []); // Always return array, even if empty
+    } catch (error) {
+        console.log("Error in getMessages", error.message);
+        res.status(500).json({ error: "Internal server error" });
         next(error);
     }
 };
