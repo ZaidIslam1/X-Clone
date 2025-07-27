@@ -99,7 +99,7 @@ const LoginPage = () => {
                         </button>
                     </label>
                     <button className="btn rounded-full btn-primary text-white">
-                        {isPending ? "Loading.." : "Login"}
+                        {isPending ? "Logging in.." : "Login"}
                     </button>
                     {isError && <p className="text-red-500">{error.message}</p>}
                 </form>
