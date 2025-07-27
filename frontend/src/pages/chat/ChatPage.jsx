@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { FaUserCircle } from "react-icons/fa";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import UserListSidebar from "../../components/common/UserListSidebar";
+import XSvg from "../../components/svgs/X";
 
 const ChatPage = ({ authUser }) => {
     const { username } = useParams();
@@ -156,9 +157,8 @@ const ChatPage = ({ authUser }) => {
                     {/* Header */}
                     <div className="px-4 py-2 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
                         {authUser.username === username ? (
-                            <div className="flex items-center gap-2">
-                                <FaUserCircle className="text-white h-6 w-6" />
-                                <h2 className="text-lg font-bold text-white">No User Selected</h2>
+                            <div className="flex items-center justify-center gap-2">
+                                <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
                             </div>
                         ) : (
                             <h2 className="text-lg font-bold text-white">{username}</h2>
