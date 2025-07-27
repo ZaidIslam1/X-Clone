@@ -72,7 +72,9 @@ const ChatPage = ({ authUser }) => {
     useEffect(() => {
         socketRef.current = io(
             `${import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002"}`,
-            { withCredentials: true }
+            {
+                withCredentials: true,
+            }
         );
         socketRef.current.emit("user_connected", authUser._id);
         const handleReceive = (message) => {
