@@ -5,10 +5,12 @@ import XSvg from "../../../components/svgs/X";
 import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 
 import { MdOutlineMail, MdPassword, MdDriveFileRenameOutline } from "react-icons/md";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
+    const queryClient = useQueryClient
+
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -38,6 +40,8 @@ const SignUpPage = () => {
         },
         onSuccess: () => {
             toast.success("Account created successfully");
+            queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+            
         },
     });
     useQuery;
