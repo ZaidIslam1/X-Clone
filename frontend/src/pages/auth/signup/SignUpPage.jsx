@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
-    const queryClient = useQueryClient
+    const queryClient = useQueryClient;
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -40,8 +40,7 @@ const SignUpPage = () => {
         },
         onSuccess: () => {
             toast.success("Account created successfully");
-            queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-            
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
         },
     });
     useQuery;
