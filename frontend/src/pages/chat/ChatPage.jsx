@@ -108,7 +108,9 @@ const ChatPage = ({ authUser }) => {
     }, [authUser._id, receiverId]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+        }, 50);
     }, [messages]);
 
     const handleSend = (e) => {
@@ -122,114 +124,96 @@ const ChatPage = ({ authUser }) => {
         socketRef.current.emit("send_message", messageData);
         setInput("");
     };
-
     return (
         <>
-            <style>
-                {`
-                    .messages-scroll {
-                        scrollbar-width: thin;
-                        scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
-                    }
-                    .messages-scroll::-webkit-scrollbar {
-                        width: 4px;
-                    }
-                    .messages-scroll::-webkit-scrollbar-thumb {
-                        background-color: rgba(75, 85, 99, 0.5);
-                        border-radius: 3px;
-                    }
-                    .messages-scroll::-webkit-scrollbar-track {
-                        background: transparent;
-                    }
-                    .messages-scroll:not(:hover)::-webkit-scrollbar {
-                        width: 0;
-                    }
-                `}
-            </style>
-            <div className="flex h-screen bg-black">
-                <UserListSidebar
-                    authUser={authUser}
-                    selectedUsername={username}
-                    onUserSelect={setReceiverId}
-                    className="w-32 sm:w-48 flex-shrink-0"
-                />
-                <div className="flex-1 flex flex-col h-screen">
-                    {/* Header */}
-                    <div className="px-4 py-2 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
-                        {authUser.username === username ? (
-                            <div className="flex items-center justify-center gap-2">
-                                <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
-                            </div>
-                        ) : (
-                            <h2 className="text-lg font-bold text-white">{username}</h2>
-                        )}
-                    </div>
+            {/* Full width flex */}
+            <div className="flex-1 h-screen bg-black flex flex-col">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
+                    {authUser.username === username ? (
+                        <div className="flex items-center justify-center gap-2">
+                            <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
+                            <h2 className="text-lg font-semibold text-white">No User Selected</h2>
+                        </div>
+                    ) : (
+                        <h2 className="text-lg font-semibold text-white">@{username}</h2>
+                    )}
+                </div>
 
-                    {/* Messages scroll area */}
-                    <div className="flex-1 overflow-y-auto p-3 space-y-3 messages-scroll">
-                        {error && <p className="text-center text-red-500 mt-8">{error}</p>}
-                        {isLoading ? (
-                            <div className="flex justify-center mt-8">
-                                <LoadingSpinner size="lg" />
-                            </div>
-                        ) : !username || !receiverId || authUser.username === username ? (
-                            <div className="flex flex-col items-center justify-center mt-16">
-                                <FaUserCircle className="text-white h-10 w-10 mb-4" />
-                                <p className="text-center text-gray-400">
-                                    Select a user to start chatting
-                                </p>
-                            </div>
-                        ) : messages.length === 0 ? (
-                            <p className="text-center text-gray-400 mt-8">Send the first message</p>
-                        ) : (
-                            messages.map((msg) => (
+                {/* Messages scroll area - more padding for bigger feel */}
+                <div
+                    className="flex-1 overflow-y-auto px-6 py-4 space-y-4 messages-scroll"
+                    style={{ paddingBottom: 32 }}
+                >
+                    {error && <p className="text-center text-red-500 mt-8">{error}</p>}
+                    {isLoading ? (
+                        <div className="flex justify-center mt-8">
+                            <LoadingSpinner size="lg" />
+                        </div>
+                    ) : !username || !receiverId || authUser.username === username ? (
+                        <div className="flex flex-col items-center justify-center mt-32">
+                            <FaUserCircle className="text-white h-12 w-12 mb-4" />
+                            <p className="text-center text-gray-400">
+                                Select a user to start chatting
+                            </p>
+                        </div>
+                    ) : messages.length === 0 ? (
+                        <p className="text-center text-gray-400 mt-12">Send the first message</p>
+                    ) : (
+                        messages.map((msg) => (
+                            <div
+                                key={msg._id}
+                                className={`flex ${msg.isOwn ? "justify-end" : "justify-start"}`}
+                            >
                                 <div
-                                    key={msg._id}
-                                    className={`max-w-[70%] p-2 rounded-lg break-words ${
+                                    className={`max-w-[75%] px-5 py-3 rounded-2xl break-words ${
                                         msg.isOwn
-                                            ? "bg-primary text-white self-end"
-                                            : "bg-gray-800 text-gray-300 self-start"
+                                            ? "bg-primary text-white mr-2 md:mr-6"
+                                            : "bg-gray-800 text-gray-300 ml-0"
                                     }`}
                                 >
-                                    <p className="text-sm">{msg.content}</p>
-                                    <span className="text-xs text-gray-400 mt-1 block text-right">
+                                    <p className="text-base">{msg.content}</p>
+                                    <span
+                                        className={`text-xs mt-1 block text-right ${
+                                            msg.isOwn ? "text-gray-200" : "text-gray-400"
+                                        }`}
+                                    >
                                         {new Date(msg.createdAt).toLocaleTimeString([], {
                                             hour: "2-digit",
                                             minute: "2-digit",
                                         })}
                                     </span>
                                 </div>
-                            ))
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    {/* Input fixed at bottom */}
-                    {username && receiverId && authUser.username !== username && (
-                        <form
-                            onSubmit={handleSend}
-                            className="px-3 py-2 border-t border-gray-700 flex gap-2 bg-black flex-shrink-0"
-                        >
-                            <input
-                                type="text"
-                                placeholder="Type your message..."
-                                className="flex-1 rounded-full bg-gray-900 text-white px-3 py-1 text-sm focus:outline-none"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                            />
-                            <button
-                                type="submit"
-                                className="btn btn-primary rounded-full px-4 py-1 text-sm text-white"
-                                disabled={!input.trim()}
-                            >
-                                Send
-                            </button>
-                        </form>
+                            </div>
+                        ))
                     )}
+                    <div ref={messagesEndRef} style={{ height: 1 }} />
                 </div>
+
+                {/* Input fixed at bottom */}
+                {username && receiverId && authUser.username !== username && (
+                    <form
+                        onSubmit={handleSend}
+                        className="px-6 py-3 border-t border-gray-700 flex gap-3 bg-black flex-shrink-0"
+                    >
+                        <input
+                            type="text"
+                            placeholder="Type your message..."
+                            className="flex-1 rounded-full bg-gray-900 text-white px-4 py-2 text-base focus:outline-none"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                        />
+                        <button
+                            type="submit"
+                            className="btn btn-primary rounded-full px-6 py-2 text-base text-white"
+                            disabled={!input.trim()}
+                        >
+                            Send
+                        </button>
+                    </form>
+                )}
             </div>
         </>
     );
 };
-
 export default ChatPage;

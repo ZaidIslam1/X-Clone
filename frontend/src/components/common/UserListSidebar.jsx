@@ -31,28 +31,7 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect }) => {
 
     return (
         <>
-            <style>
-                {`
-                    .users-scroll {
-                        scrollbar-width: thin;
-                        scrollbar-color: rgba(107, 114, 128, 0.5) transparent;
-                    }
-                    .users-scroll::-webkit-scrollbar {
-                        width: 8px;
-                    }
-                    .users-scroll::-webkit-scrollbar-thumb {
-                        background-color: rgba(107, 114, 128, 0.5);
-                        border-radius: 4px;
-                    }
-                    .users-scroll::-webkit-scrollbar-track {
-                        background: transparent;
-                    }
-                    .users-scroll:not(:hover)::-webkit-scrollbar {
-                        width: 0;
-                    }
-                `}
-            </style>
-            <div className="w-48 sm:w-64 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-black h-screen p-4 flex flex-col">
+            <div className="flex-1 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-black h-screen p-4 flex flex-col">
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex-shrink-0">
                     Messages
                 </h2>
