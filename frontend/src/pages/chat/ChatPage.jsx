@@ -92,6 +92,8 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                         },
                     ];
                 });
+                // Remove from unread if this chat is open
+                setUnreadUsers((prev) => prev.filter((id) => id !== receiverId));
             }
         };
         socketRef.current.on("receive_message", handleReceive);
