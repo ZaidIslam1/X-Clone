@@ -30,6 +30,15 @@ export const createPost = async (req, res, next) => {
         });
 
         await newPost.save();
+        // Emit real-time event for new post
+        try {
+            const io = getSocketIO();
+            if (io) {
+                io.emit("new_post", { post: newPost });
+            }
+        } catch (e) {
+            console.log("Socket emit error (new_post):", e.message);
+        }
         res.status(201).json(newPost);
     } catch (error) {
         console.log("Error in createPost", error.message);
