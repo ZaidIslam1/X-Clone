@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { v2 as cloudinary } from "cloudinary";
+import { getSocketIO } from "../config/globalSocket.js";
 
 export const createPost = async (req, res, next) => {
     try {
@@ -87,6 +88,30 @@ export const likeUnlikePost = async (req, res, next) => {
                     type: "like",
                 });
                 await newNotification.save();
+                // Emit socket event for new like notification only to recipient
+                const io = getSocketIO();
+                if (io && io.userSockets) {
+                    const recipientSocketId = io.userSockets.get(post.user.toString());
+                    if (recipientSocketId) {
+                        io.to(recipientSocketId).emit("new_like", {
+                            to: post.user.toString(),
+                            from: userId.toString(),
+                            postId: post._id.toString(),
+                        });
+                    }
+                }
+            }
+            // Emit socket event for new comment notification only to recipient
+            const io = getSocketIO();
+            if (io && io.userSockets) {
+                const recipientSocketId = io.userSockets.get(post.user.toString());
+                if (recipientSocketId) {
+                    io.to(recipientSocketId).emit("new_comment", {
+                        to: post.user.toString(),
+                        from: userId.toString(),
+                        postId: post._id.toString(),
+                    });
+                }
             }
         }
         // Fetch the updated post to get fresh likes

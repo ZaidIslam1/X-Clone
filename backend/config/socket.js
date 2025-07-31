@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { setSocketIO } from "./globalSocket.js";
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import { Message } from "../models/message.model.js";
@@ -10,7 +11,9 @@ export const initializeSocket = (server, originUrl) => {
             credentials: true,
         },
     });
+    setSocketIO(io);
     const userSockets = new Map(); // {userId: socketId}
+    io.userSockets = userSockets; // Expose for controllers
 
     io.on("connection", (socket) => {
         socket.on("user_connected", (userId) => {

@@ -6,15 +6,12 @@ import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { BiSolidCommentDots } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { formatPostDate } from "../../utils/date/function";
 import toast from "react-hot-toast";
 
-const NotificationPage = ({ setHasNewNotification }) => {
-    useEffect(() => {
-        setHasNewNotification && setHasNewNotification(false);
-    }, [setHasNewNotification]);
+const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
     const queryClient = useQueryClient();
-
     const { data: notifications, isLoading } = useQuery({
         queryKey: ["notifications"],
         queryFn: async () => {
@@ -29,6 +26,23 @@ const NotificationPage = ({ setHasNewNotification }) => {
             }
         },
     });
+    const hasMarkedRead = useRef(false);
+    useEffect(() => {
+        setHasNewNotification && setHasNewNotification(false);
+        if (setBlinkNotification) {
+            setBlinkNotification(true);
+            const timeout = setTimeout(() => setBlinkNotification(false), 4000);
+            return () => clearTimeout(timeout);
+        }
+    }, [setHasNewNotification, setBlinkNotification]);
+
+    // Mark notifications as read after they are displayed
+    useEffect(() => {
+        if (!hasMarkedRead.current && notifications && notifications.length > 0) {
+            fetch("/api/notifications/mark-read", { method: "POST" });
+            hasMarkedRead.current = true;
+        }
+    }, [notifications]);
 
     const { mutate: deleteNotifications } = useMutation({
         mutationFn: async () => {
@@ -76,7 +90,7 @@ const NotificationPage = ({ setHasNewNotification }) => {
                 )}
                 {notifications?.map((notification) => (
                     <div className="border-b border-gray-700" key={notification._id}>
-                        <div className="flex gap-2 p-4">
+                        <div className="flex gap-2 p-4 items-center">
                             {notification.type === "follow" && (
                                 <FaUser className="w-7 h-7 text-primary" />
                             )}
@@ -86,7 +100,10 @@ const NotificationPage = ({ setHasNewNotification }) => {
                             {notification.type === "comment" && (
                                 <BiSolidCommentDots className="w-7 h-7 text-green-500" />
                             )}
-                            <Link to={`/profile/${notification.from.username}`}>
+                            <Link
+                                to={`/profile/${notification.from.username}`}
+                                className="flex-1 flex items-center"
+                            >
                                 <div className="avatar">
                                     <div className="w-8 rounded-full">
                                         <img
@@ -97,15 +114,21 @@ const NotificationPage = ({ setHasNewNotification }) => {
                                         />
                                     </div>
                                 </div>
-                                <div className="flex gap-1">
+                                <div className="flex gap-1 items-center">
                                     <span className="font-bold">@{notification.from.username}</span>{" "}
                                     {notification.type === "follow"
                                         ? "followed you"
                                         : notification.type === "comment"
                                         ? "commented on your post"
                                         : "liked your post"}
+                                    <span className="ml-2 text-xs text-gray-400">
+                                        {formatPostDate(notification.createdAt)}
+                                    </span>
                                 </div>
                             </Link>
+                            {!notification.read && (
+                                <span className="ml-2 w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
+                            )}
                         </div>
                     </div>
                 ))}

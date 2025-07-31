@@ -34,6 +34,7 @@ function App() {
 
     const [unreadUsers, setUnreadUsers] = useState([]); // userIds with unread messages
     const [hasNewNotification, setHasNewNotification] = useState(false); // for notification bubble
+    const [blinkNotification, setBlinkNotification] = useState(false); // for blinking effect
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -61,15 +62,15 @@ function App() {
         // Real-time comments, likes, follows: show notification bubble and refetch
         const handleNewComment = () => {
             setHasNewNotification(true);
-            queryClient.invalidateQueries({ queryKey: ["comments"] });
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
         };
         const handleNewLike = () => {
             setHasNewNotification(true);
-            queryClient.invalidateQueries({ queryKey: ["likes"] });
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
         };
         const handleNewFollow = () => {
             setHasNewNotification(true);
-            queryClient.invalidateQueries({ queryKey: ["followers"] });
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
         };
         socketRef.current.on("new_comment", handleNewComment);
         socketRef.current.on("new_like", handleNewLike);
@@ -97,6 +98,7 @@ function App() {
                     unreadUsers={unreadUsers}
                     hasNewNotification={hasNewNotification}
                     setHasNewNotification={setHasNewNotification}
+                    blinkNotification={blinkNotification}
                 />
             )}
             <Routes>
@@ -105,7 +107,10 @@ function App() {
                     path="/notifications"
                     element={
                         authUser ? (
-                            <NotificationPage setHasNewNotification={setHasNewNotification} />
+                            <NotificationPage
+                                setHasNewNotification={setHasNewNotification}
+                                setBlinkNotification={setBlinkNotification}
+                            />
                         ) : (
                             <Navigate to="/login" />
                         )

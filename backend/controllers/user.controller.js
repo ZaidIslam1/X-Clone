@@ -3,6 +3,7 @@ import Notification from "../models/notification.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
 import { Message } from "../models/message.model.js";
+import { getSocketIO } from "../config/globalSocket.js";
 
 export const getProfile = async (req, res, next) => {
     try {
@@ -90,6 +91,17 @@ export const followUnfollowUser = async (req, res, next) => {
             });
 
             await newNotification.save();
+            // Emit socket event for new follow notification only to recipient
+            const io = getSocketIO();
+            if (io && io.userSockets) {
+                const recipientSocketId = io.userSockets.get(otherUser._id.toString());
+                if (recipientSocketId) {
+                    io.to(recipientSocketId).emit("new_follow", {
+                        to: otherUser._id.toString(),
+                        from: currentUserId.toString(),
+                    });
+                }
+            }
 
             res.status(200).json({
                 message: "User followed successfully",

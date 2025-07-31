@@ -6,10 +6,21 @@ export const getNotifications = async (req, res, next) => {
         const notifications = await Notification.find({ to: userId })
             .sort({ createdAt: -1 })
             .populate("from", "username profileImg");
-        await Notification.updateMany({ to: userId }, { read: true });
+        // Do not mark as read here; let frontend do it after display
         res.status(200).json(notifications);
     } catch (error) {
         console.log("Error in getNotifications", error.message);
+        next(error);
+    }
+};
+
+export const markNotificationsRead = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        await Notification.updateMany({ to: userId, read: false }, { read: true });
+        res.status(200).json({ message: "Notifications marked as read" });
+    } catch (error) {
+        console.log("Error in markNotificationsRead", error.message);
         next(error);
     }
 };

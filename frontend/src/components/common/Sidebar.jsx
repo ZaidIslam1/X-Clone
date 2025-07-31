@@ -14,6 +14,7 @@ const Sidebar = ({
     unreadUsers = [],
     hasNewNotification = false,
     setHasNewNotification,
+    blinkNotification = false,
 }) => {
     const queryClient = useQueryClient();
 
@@ -65,7 +66,11 @@ const Sidebar = ({
                             <span className="text-lg hidden md:block">Notifications</span>
                             {hasNewNotification && (
                                 <span className="absolute -top-1 right-0 md:right-2 flex items-center">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
+                                    <span
+                                        className={`w-2.5 h-2.5 rounded-full bg-primary border-2 border-white ${
+                                            blinkNotification ? "animate-ping" : "animate-pulse"
+                                        }`}
+                                    ></span>
                                 </span>
                             )}
                         </Link>
