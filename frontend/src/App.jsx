@@ -103,7 +103,13 @@ function App() {
                 <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
                 <Route
                     path="/notifications"
-                    element={authUser ? <NotificationPage /> : <Navigate to="/login" />}
+                    element={
+                        authUser ? (
+                            <NotificationPage setHasNewNotification={setHasNewNotification} />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
                 <Route
                     path="/profile/:username/:tab"

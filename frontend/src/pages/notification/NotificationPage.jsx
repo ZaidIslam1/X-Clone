@@ -6,9 +6,13 @@ import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { BiSolidCommentDots } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-const NotificationPage = () => {
+const NotificationPage = ({ setHasNewNotification }) => {
+    useEffect(() => {
+        setHasNewNotification && setHasNewNotification(false);
+    }, [setHasNewNotification]);
     const queryClient = useQueryClient();
 
     const { data: notifications, isLoading } = useQuery({
