@@ -123,11 +123,19 @@ const ProfilePage = () => {
                             </div>
                             {/* COVER IMG */}
                             <div className="relative group/cover">
-                                <img
-                                    src={coverImg || user?.coverImg || "/cover.png"}
-                                    className="h-52 w-full object-cover"
-                                    alt="cover image"
-                                />
+                                {coverImg || user?.coverImg ? (
+                                    <img
+                                        src={coverImg || user?.coverImg}
+                                        className="h-52 w-full object-cover"
+                                        alt="cover image"
+                                    />
+                                ) : (
+                                    <div className="h-52 w-full flex items-center justify-center bg-gray-800 text-white text-7xl font-bold select-none">
+                                        {user?.fullName
+                                            ? user.fullName[0].toUpperCase()
+                                            : user?.username?.[0]?.toUpperCase()}
+                                    </div>
+                                )}
                                 {isMyProfile && (
                                     <div
                                         className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
@@ -158,6 +166,7 @@ const ProfilePage = () => {
                                                 user?.profileImg ||
                                                 "/avatar-placeholder.png"
                                             }
+                                            alt={user?.fullName}
                                         />
                                         <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
                                             {isMyProfile && (
