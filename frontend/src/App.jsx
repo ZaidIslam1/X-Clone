@@ -2,14 +2,16 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Homepage from "./pages/home/Homepage.jsx";
 import LoginPage from "./pages/auth/login/LoginPage.jsx";
 import SignUpPage from "./pages/auth/signup/SignUpPage.jsx";
+import ProfilePage from "./pages/profile/ProfilePage.jsx";
 import Sidebar from "./components/common/Sidebar.jsx";
 import RightPanel from "./components/common/RightPanel.jsx";
 import NotificationPage from "./pages/notification/NotificationPage.jsx";
-import ProfilePage from "./pages/profile/ProfilePage.jsx";
+import { useState, useEffect, useRef } from "react";
 import FollowersFollowingPage from "./pages/profile/FollowersFollowingPage.jsx";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
 import ChatPage from "./pages/chat/ChatPage.jsx";
+import { io } from "socket.io-client";
 
 function App() {
     const { data: authUser, isLoading } = useQuery({
@@ -28,6 +30,30 @@ function App() {
         retry: false,
     });
 
+    const [unreadUsers, setUnreadUsers] = useState([]); // userIds with unread messages
+    const socketRef = useRef(null);
+
+    useEffect(() => {
+        if (!authUser) return;
+        if (socketRef.current) return; // Prevent multiple connections
+        const baseUrl = import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002";
+        socketRef.current = io(baseUrl, { withCredentials: true });
+        socketRef.current.emit("user_connected", authUser._id);
+        const handleReceive = (message) => {
+            if (message.receiverId === authUser._id && message.senderId !== authUser._id) {
+                setUnreadUsers((prev) =>
+                    prev.includes(message.senderId) ? prev : [...prev, message.senderId]
+                );
+            }
+        };
+        socketRef.current.on("receive_message", handleReceive);
+        socketRef.current.on("sent_message", handleReceive);
+        return () => {
+            socketRef.current && socketRef.current.disconnect();
+            socketRef.current = null;
+        };
+    }, [authUser]);
+
     if (isLoading) {
         return (
             <div className="h-screen flex justify-center items-center">
@@ -38,7 +64,7 @@ function App() {
 
     return (
         <div className="flex max-w-6xl mx-auto">
-            {authUser && <Sidebar authUser={authUser} />}
+            {authUser && <Sidebar authUser={authUser} unreadUsers={unreadUsers} />}
             <Routes>
                 <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
                 <Route
@@ -54,13 +80,39 @@ function App() {
                     element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
                 />
                 <Route
+                    path="/chat/messages"
+                    element={
+                        authUser ? (
+                            <ChatPage
+                                authUser={authUser}
+                                unreadUsers={unreadUsers}
+                                setUnreadUsers={setUnreadUsers}
+                                socketRef={socketRef}
+                            />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
+                />
+                <Route
                     path="/chat/messages/:username"
-                    element={authUser ? <ChatPage authUser={authUser} /> : <Navigate to="/login" />}
+                    element={
+                        authUser ? (
+                            <ChatPage
+                                authUser={authUser}
+                                unreadUsers={unreadUsers}
+                                setUnreadUsers={setUnreadUsers}
+                                socketRef={socketRef}
+                            />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
                 <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
                 <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
             </Routes>
-            {authUser && <RightPanel authUser={authUser} />}
+            {authUser && <RightPanel authUser={authUser} unreadUsers={unreadUsers} />}
         </div>
     );
 }

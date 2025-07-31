@@ -1,19 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client"; // Not needed, socketRef is passed from App
 import { FaUserCircle } from "react-icons/fa";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import UserListSidebar from "../../components/common/UserListSidebar";
 import XSvg from "../../components/svgs/X";
 
-const ChatPage = ({ authUser }) => {
+const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
     const { username } = useParams();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [receiverId, setReceiverId] = useState(null);
     const [error, setError] = useState(null);
-    const socketRef = useRef(null);
+    // socketRef is now passed as a prop from App.jsx
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -32,6 +32,8 @@ const ChatPage = ({ authUser }) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "User not found");
             setReceiverId(data._id);
+            // Remove from unread when opening chat
+            setUnreadUsers((prev) => prev.filter((id) => id !== data._id));
         } catch (err) {
             console.error("Fetch receiverId error:", err);
             setError("Failed to load user");
@@ -71,15 +73,11 @@ const ChatPage = ({ authUser }) => {
         }
     };
 
+    // Listen for real-time messages for this chat only
     useEffect(() => {
-        socketRef.current = io(
-            `${import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002"}`,
-            {
-                withCredentials: true,
-            }
-        );
-        socketRef.current.emit("user_connected", authUser._id);
+        if (!socketRef || !socketRef.current || !receiverId) return;
         const handleReceive = (message) => {
+            // Only add to messages if for this chat
             if (
                 (message.senderId === receiverId && message.receiverId === authUser._id) ||
                 (message.senderId === authUser._id && message.receiverId === receiverId)
@@ -98,14 +96,11 @@ const ChatPage = ({ authUser }) => {
         };
         socketRef.current.on("receive_message", handleReceive);
         socketRef.current.on("sent_message", handleReceive);
-        socketRef.current.on("message_error", (err) => {
-            console.error("Message error:", err);
-            setError(err?.error || "Failed to send message");
-        });
         return () => {
-            socketRef.current.disconnect();
+            socketRef.current.off("receive_message", handleReceive);
+            socketRef.current.off("sent_message", handleReceive);
         };
-    }, [authUser._id, receiverId]);
+    }, [socketRef, receiverId, authUser._id]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -121,16 +116,18 @@ const ChatPage = ({ authUser }) => {
             receiverId,
             content: input,
         };
-        socketRef.current.emit("send_message", messageData);
+        if (socketRef && socketRef.current) {
+            socketRef.current.emit("send_message", messageData);
+        }
         setInput("");
     };
     return (
-        <>
-            {/* Full width flex */}
-            <div className="flex-1 h-screen bg-black flex flex-col">
+        <div className="flex h-screen overflow-hidden flex-1">
+            {/* Chat area (center) */}
+            <div className="flex-1 flex flex-col h-full">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
-                    {authUser.username === username ? (
+                    {!username ? (
                         <div className="flex items-center justify-center gap-2">
                             <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
                             <h2 className="text-lg font-semibold text-white">No User Selected</h2>
@@ -213,7 +210,7 @@ const ChatPage = ({ authUser }) => {
                     </form>
                 )}
             </div>
-        </>
+        </div>
     );
 };
 export default ChatPage;

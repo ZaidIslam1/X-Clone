@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { RiMessageFill, RiUserFollowFill } from "react-icons/ri";
 
-const Sidebar = ({ authUser }) => {
+const Sidebar = ({ authUser, unreadUsers = [] }) => {
     const queryClient = useQueryClient();
 
     const { mutate: logoutMutation } = useMutation({
@@ -59,7 +59,6 @@ const Sidebar = ({ authUser }) => {
                             <span className="text-lg hidden md:block">Notifications</span>
                         </Link>
                     </li>
-
                     <li className="flex justify-center md:justify-start">
                         <Link
                             to={`/profile/${authUser?.username}`}
@@ -72,21 +71,27 @@ const Sidebar = ({ authUser }) => {
                     <li className="flex justify-center md:justify-start">
                         <Link
                             to={`/profile/${authUser?.username}/following`}
-                            className="flex gap-3 items-center hover:bg-stone-900 transition-all 
-rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+                            className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                         >
                             <RiUserFollowFill className="w-6 h-6" />
                             <span className="text-lg hidden md:block">Following</span>
                         </Link>
                     </li>
-                    <li className="flex justify-center md:justify-start">
+                    <li className="flex justify-center md:justify-start relative">
                         <Link
-                            to={`/chat/messages/${authUser?.username}`}
-                            className="flex gap-3 items-center hover:bg-stone-900 transition-all 
-rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+                            to="/chat/messages"
+                            className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                         >
                             <RiMessageFill className="w-6 h-6" />
                             <span className="text-lg hidden md:block">Messages</span>
+                            {unreadUsers && unreadUsers.length > 0 && (
+                                <span className="absolute -top-1 right-0 md:right-2 flex items-center">
+                                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
+                                    <span className="ml-1 text-primary text-xs font-bold">
+                                        {unreadUsers.length}
+                                    </span>
+                                </span>
+                            )}
                         </Link>
                     </li>
                 </ul>

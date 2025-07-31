@@ -5,7 +5,7 @@ import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "./LoadingSpinner";
 import UserListSidebar from "./UserListSidebar";
 
-const RightPanel = ({ authUser }) => {
+const RightPanel = ({ authUser, unreadUsers = [] }) => {
     const location = useLocation();
     const isMessagesPage = location.pathname.startsWith("/chat/messages");
 
@@ -29,7 +29,7 @@ const RightPanel = ({ authUser }) => {
             {isMessagesPage ? (
                 // Show UserListSidebar on messages page
                 <div className="bg-[#16181C] rounded-md flex-1">
-                    <UserListSidebar authUser={authUser} />
+                    <UserListSidebar authUser={authUser} unreadUsers={unreadUsers} />
                 </div>
             ) : (
                 // Default Suggested Users Panel

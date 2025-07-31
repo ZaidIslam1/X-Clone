@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-const UserListSidebar = ({ authUser, selectedUsername, onUserSelect }) => {
+const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers = [] }) => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -67,9 +67,15 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect }) => {
                                             {user.fullName ? user.fullName[0].toUpperCase() : "?"}
                                         </div>
                                     )}
-                                    <div>
-                                        <p className="text-gray-800 dark:text-white font-medium">
+                                    <div className="relative">
+                                        <p className="text-gray-800 dark:text-white font-medium flex items-center">
                                             {user.fullName}
+                                            {unreadUsers.includes(user._id) && (
+                                                <span
+                                                    className="ml-2 inline-block w-2.5 h-2.5 rounded-full bg-primary animate-pulse"
+                                                    title="New message"
+                                                ></span>
+                                            )}
                                         </p>
                                         <p className="text-gray-500 dark:text-gray-400 text-sm">
                                             @{user.username}
