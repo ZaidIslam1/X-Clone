@@ -33,6 +33,7 @@ function App() {
     });
 
     const [unreadUsers, setUnreadUsers] = useState([]); // userIds with unread messages
+    const [hasNewNotification, setHasNewNotification] = useState(false); // for notification bubble
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -57,6 +58,23 @@ function App() {
         };
         socketRef.current.on("new_post", handleNewPost);
 
+        // Real-time comments, likes, follows: show notification bubble and refetch
+        const handleNewComment = () => {
+            setHasNewNotification(true);
+            queryClient.invalidateQueries({ queryKey: ["comments"] });
+        };
+        const handleNewLike = () => {
+            setHasNewNotification(true);
+            queryClient.invalidateQueries({ queryKey: ["likes"] });
+        };
+        const handleNewFollow = () => {
+            setHasNewNotification(true);
+            queryClient.invalidateQueries({ queryKey: ["followers"] });
+        };
+        socketRef.current.on("new_comment", handleNewComment);
+        socketRef.current.on("new_like", handleNewLike);
+        socketRef.current.on("new_follow", handleNewFollow);
+
         return () => {
             socketRef.current && socketRef.current.disconnect();
             socketRef.current = null;
@@ -73,7 +91,14 @@ function App() {
 
     return (
         <div className="flex max-w-6xl mx-auto">
-            {authUser && <Sidebar authUser={authUser} unreadUsers={unreadUsers} />}
+            {authUser && (
+                <Sidebar
+                    authUser={authUser}
+                    unreadUsers={unreadUsers}
+                    hasNewNotification={hasNewNotification}
+                    setHasNewNotification={setHasNewNotification}
+                />
+            )}
             <Routes>
                 <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
                 <Route
