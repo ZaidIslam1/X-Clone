@@ -136,6 +136,14 @@ const Post = ({ post }) => {
         setComment(""); // optionally clear after posting
     };
 
+    // Handle Enter key for comment textarea
+    const handleCommentKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handlePostComment(e);
+        }
+    };
+
     const handleDeleteComment = (commentId) => {
         deleteComment(commentId);
     };
@@ -273,6 +281,7 @@ const Post = ({ post }) => {
                                             );
                                         })}
                                     </div>
+
                                     <form
                                         className="flex gap-2 items-center mt-4 border-t border-gray-600 pt-2"
                                         onSubmit={handlePostComment}
@@ -283,45 +292,34 @@ const Post = ({ post }) => {
                                             placeholder="Add a comment..."
                                             value={comment}
                                             onChange={(e) => setComment(e.target.value)}
+                                            onKeyDown={handleCommentKeyDown}
                                         />
                                         <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                                            {commentPending ? <LoadingSpinner size="sm" /> : "Post"}
+                                            {commentPending ? (
+                                                <LoadingSpinner size="sm" />
+                                            ) : (
+                                                "Comment"
+                                            )}
                                         </button>
                                     </form>
                                 </div>
-                                <form method="dialog" className="modal-backdrop">
-                                    <button className="outline-none">close</button>
-                                </form>
                             </dialog>
-                            <div className="flex gap-1 items-center group cursor-pointer">
-                                <BiRepost className="w-6 h-6  text-slate-500 group-hover:text-green-500" />
-                                <span className="text-sm text-slate-500 group-hover:text-green-500">
-                                    0
-                                </span>
-                            </div>
                             <div
-                                className="flex gap-1 items-center group cursor-pointer"
+                                className="flex gap-1 items-center cursor-pointer group"
                                 onClick={handleLikePost}
                             >
-                                {likePending && <LoadingSpinner size="sm" />}
-                                {!isLiked && !likePending && (
-                                    <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
+                                {isLiked ? (
+                                    <FaHeart className="w-4 h-4 text-red-500" />
+                                ) : (
+                                    <FaRegHeart className="w-4 h-4 text-slate-500 group-hover:text-pink-400" />
                                 )}
-                                {isLiked && !likePending && (
-                                    <FaHeart className="w-4 h-4 cursor-pointer text-pink-500 " />
-                                )}
-
-                                <span
-                                    className={`text-sm group-hover:text-pink-500 ${
-                                        isLiked ? "text-pink-500" : "text-slate-500"
-                                    }`}
-                                >
+                                <span className="text-sm text-slate-500 group-hover:text-pink-400">
                                     {post.likes.length}
                                 </span>
                             </div>
-                        </div>
-                        <div className="flex w-1/3 justify-end gap-2 items-center">
-                            <FaRegBookmark className="w-4 h-4 text-slate-500 cursor-pointer" />
+                            <div className="flex w-1/3 justify-end gap-2 items-center">
+                                <FaRegBookmark className="w-4 h-4 text-slate-500 cursor-pointer" />
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -151,6 +151,18 @@ export const commentPost = async (req, res, next) => {
                 type: "comment",
             });
             await newNotification.save();
+            // Emit socket event for new comment notification only to recipient
+            const io = getSocketIO();
+            if (io && io.userSockets) {
+                const recipientSocketId = io.userSockets.get(post.user.toString());
+                if (recipientSocketId) {
+                    io.to(recipientSocketId).emit("new_comment", {
+                        to: post.user.toString(),
+                        from: userId.toString(),
+                        postId: post._id.toString(),
+                    });
+                }
+            }
         }
 
         const updatedPost = await Post.findById(id).populate("comments.user", "-password");
