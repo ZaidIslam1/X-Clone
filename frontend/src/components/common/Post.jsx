@@ -161,7 +161,15 @@ const Post = ({ post }) => {
                         to={`/profile/${postOwner.username}`}
                         className="w-8 rounded-full overflow-hidden"
                     >
-                        <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+                        {postOwner.profileImg ? (
+                            <img src={postOwner.profileImg} alt={postOwner.fullName} />
+                        ) : (
+                            <div className="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-full text-lg font-bold">
+                                {postOwner.fullName
+                                    ? postOwner.fullName[0].toUpperCase()
+                                    : postOwner.username[0].toUpperCase()}
+                            </div>
+                        )}
                     </Link>
                 </div>
                 <div className="flex flex-col flex-1">
@@ -188,12 +196,18 @@ const Post = ({ post }) => {
                     </div>
                     <div className="flex flex-col gap-3 overflow-hidden">
                         <span>{post.text}</span>
-                        {post.img && (
+                        {post.img ? (
                             <img
                                 src={post.img}
                                 className="h-80 object-contain rounded-lg border border-gray-700"
-                                alt=""
+                                alt="cover"
                             />
+                        ) : (
+                            <div className="h-80 flex items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-white text-5xl font-bold">
+                                {postOwner.fullName
+                                    ? postOwner.fullName[0].toUpperCase()
+                                    : postOwner.username[0].toUpperCase()}
+                            </div>
                         )}
                     </div>
                     <div className="flex justify-between mt-3">
@@ -234,13 +248,20 @@ const Post = ({ post }) => {
                                                     <div className="flex gap-2 items-start">
                                                         <div className="avatar">
                                                             <div className="w-8 rounded-full">
-                                                                <img
-                                                                    src={
-                                                                        comment.user.profileImg ||
-                                                                        "/avatar-placeholder.png"
-                                                                    }
-                                                                    alt={`${comment.user.fullName}'s avatar`}
-                                                                />
+                                                                {comment.user.profileImg ? (
+                                                                    <img
+                                                                        src={
+                                                                            comment.user.profileImg
+                                                                        }
+                                                                        alt={comment.user.fullName}
+                                                                    />
+                                                                ) : (
+                                                                    <div className="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-full text-lg font-bold">
+                                                                        {comment.user.fullName
+                                                                            ? comment.user.fullName[0].toUpperCase()
+                                                                            : comment.user.username[0].toUpperCase()}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                         <div className="flex flex-col">
