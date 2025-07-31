@@ -7,6 +7,7 @@ import Sidebar from "./components/common/Sidebar.jsx";
 import RightPanel from "./components/common/RightPanel.jsx";
 import NotificationPage from "./pages/notification/NotificationPage.jsx";
 import { useState, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import FollowersFollowingPage from "./pages/profile/FollowersFollowingPage.jsx";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
@@ -14,6 +15,7 @@ import ChatPage from "./pages/chat/ChatPage.jsx";
 import { io } from "socket.io-client";
 
 function App() {
+    const queryClient = useQueryClient();
     const { data: authUser, isLoading } = useQuery({
         queryKey: ["authUser"],
         queryFn: async () => {
@@ -48,11 +50,18 @@ function App() {
         };
         socketRef.current.on("receive_message", handleReceive);
         socketRef.current.on("sent_message", handleReceive);
+
+        // Real-time posts: refetch posts on 'new_post' event
+        const handleNewPost = () => {
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+        };
+        socketRef.current.on("new_post", handleNewPost);
+
         return () => {
             socketRef.current && socketRef.current.disconnect();
             socketRef.current = null;
         };
-    }, [authUser]);
+    }, [authUser, queryClient]);
 
     if (isLoading) {
         return (
