@@ -22,331 +22,180 @@ const Post = ({ post }) => {
 
     const { mutate: deletePost, isPending: deletePending } = useMutation({
         mutationFn: async () => {
-            try {
-                const res = await fetch(`/api/posts/${post._id}`, {
-                    method: "DELETE",
-                });
-                const data = await res.json();
-
-                if (!res.ok) throw new Error(data.error);
-                return data;
-            } catch (error) {
-                throw new Error(error);
-            }
+            const res = await fetch(`/api/posts/${post._id}`, { method: "DELETE" });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data;
         },
         onSuccess: () => {
-            queryClient.setQueryData(["posts"], (oldData) => {
-                return oldData.filter((p) => p._id !== post._id);
-            });
+            queryClient.setQueryData(["posts"], (oldData) =>
+                oldData.filter((p) => p._id !== post._id)
+            );
             toast.success("Post deleted successfully");
         },
     });
 
     const { mutate: commentPost, isPending: commentPending } = useMutation({
         mutationFn: async (text) => {
-            try {
-                const res = await fetch(`/api/posts/comment/${post._id}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        text,
-                    }),
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
-                return data;
-            } catch (error) {
-                throw new Error(error);
-            }
+            const res = await fetch(`/api/posts/comment/${post._id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data;
         },
         onSuccess: (updatedPost) => {
-            queryClient.setQueryData(["posts"], (oldData) => {
-                return oldData.map((p) => {
-                    if (p._id === post._id) {
-                        return { ...p, comments: updatedPost.comments };
-                    }
-                    return p;
-                });
-            });
+            queryClient.setQueryData(["posts"], (oldData) =>
+                oldData.map((p) =>
+                    p._id === post._id ? { ...p, comments: updatedPost.comments } : p
+                )
+            );
         },
     });
 
     const { mutate: deleteComment, isPending: deleteCommentPending } = useMutation({
         mutationFn: async (commentId) => {
-            try {
-                const res = await fetch(`/api/posts/comment/${post._id}/${commentId}`, {
-                    method: "DELETE",
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
-                return data;
-            } catch (error) {
-                throw new Error(error);
-            }
-        },
-
-        onSuccess: (updatedPost) => {
-            queryClient.setQueryData(["posts"], (oldData) => {
-                return oldData.map((p) => {
-                    if (p._id === post._id) {
-                        return { ...p, comments: updatedPost.comments };
-                    }
-                    return p;
-                });
+            const res = await fetch(`/api/posts/comment/${post._id}/${commentId}`, {
+                method: "DELETE",
             });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data;
+        },
+        onSuccess: (updatedPost) => {
+            queryClient.setQueryData(["posts"], (oldData) =>
+                oldData.map((p) =>
+                    p._id === post._id ? { ...p, comments: updatedPost.comments } : p
+                )
+            );
         },
     });
 
     const { mutate: likePost, isPending: likePending } = useMutation({
         mutationFn: async () => {
-            try {
-                const res = await fetch(`/api/posts/like/${post._id}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
-                return data;
-            } catch (error) {
-                throw new Error(error);
-            }
+            const res = await fetch(`/api/posts/like/${post._id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data;
         },
         onSuccess: (updatedLikes) => {
-            queryClient.setQueryData(["posts"], (oldData) => {
-                return oldData.map((p) => {
-                    if (p._id === post._id) {
-                        return { ...p, likes: updatedLikes };
-                    }
-                    return p;
-                });
-            });
-            toast.success("Post liked successfully");
+            queryClient.setQueryData(["posts"], (oldData) =>
+                oldData.map((p) => (p._id === post._id ? { ...p, likes: updatedLikes } : p))
+            );
         },
     });
 
-    const handleDeletePost = () => {
-        deletePost();
-    };
-
+    const handleDeletePost = () => deletePost();
     const handlePostComment = (e) => {
         e.preventDefault();
-        if (commentPending) return;
-        if (!comment.trim()) return;
+        if (!comment.trim() || commentPending) return;
         commentPost(comment);
-        setComment(""); // optionally clear after posting
+        setComment("");
     };
-
-    // Handle Enter key for comment textarea
     const handleCommentKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handlePostComment(e);
         }
     };
-
-    const handleDeleteComment = (commentId) => {
-        deleteComment(commentId);
-    };
-
-    const handleLikePost = () => {
-        if (likePending) return;
-        likePost();
-    };
-
-    // Placeholder repost handler
-    const handleRepost = () => {
-        toast("Repost feature coming soon!");
-    };
+    const handleDeleteComment = (commentId) => deleteComment(commentId);
+    const handleLikePost = () => !likePending && likePost();
+    const handleRepost = () => toast("Repost feature coming soon!");
 
     return (
-        <>
-            <div className="flex gap-2 items-start p-4 border-b border-gray-700">
-                <div className="avatar">
-                    <Link
-                        to={`/profile/${postOwner.username}`}
-                        className="w-8 rounded-full overflow-hidden"
-                    >
-                        <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+        <div className="flex gap-2 items-start p-4 border-b border-gray-700">
+            <div className="avatar">
+                <Link
+                    to={`/profile/${postOwner.username}`}
+                    className="w-8 rounded-full overflow-hidden"
+                >
+                    <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+                </Link>
+            </div>
+
+            <div className="flex flex-col flex-1">
+                <div className="flex gap-2 items-center">
+                    <Link to={`/profile/${postOwner.username}`} className="font-bold">
+                        {postOwner.fullName}
                     </Link>
-                </div>
-                <div className="flex flex-col flex-1">
-                    <div className="flex gap-2 items-center">
-                        <Link to={`/profile/${postOwner.username}`} className="font-bold">
-                            {postOwner.fullName}
-                        </Link>
-                        <span className="text-gray-700 flex gap-1 text-sm">
-                            <Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
-                            <span>·</span>
-                            <span>{formattedDate}</span>
+                    <span className="text-gray-700 flex gap-1 text-sm">
+                        <Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
+                        <span>·</span>
+                        <span>{formattedDate}</span>
+                    </span>
+
+                    {isMyPost && (
+                        <span className="flex justify-end flex-1">
+                            {!deletePending ? (
+                                <FaTrash
+                                    className="cursor-pointer hover:text-red-500"
+                                    onClick={handleDeletePost}
+                                />
+                            ) : (
+                                <LoadingSpinner size="sm" />
+                            )}
                         </span>
-                        {isMyPost && (
-                            <span className="flex justify-end flex-1">
-                                {!deletePending && (
-                                    <FaTrash
-                                        className="cursor-pointer hover:text-red-500"
-                                        onClick={handleDeletePost}
-                                    />
-                                )}
-                                {deletePending && <LoadingSpinner size="sm" />}
-                            </span>
-                        )}
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-3 overflow-hidden">
+                    <span>{post.text}</span>
+                    {post.img && (
+                        <img
+                            src={post.img}
+                            className="h-80 object-contain rounded-lg border border-gray-700"
+                            alt=""
+                        />
+                    )}
+                </div>
+
+                {/* --- NEW CLEAN ICON ROW --- */}
+                <div className="flex justify-around items-center mt-3 text-slate-500 text-sm">
+                    {/* Comment */}
+                    <div
+                        className="flex items-center gap-2 cursor-pointer hover:text-sky-400"
+                        onClick={() =>
+                            document.getElementById("comments_modal" + post._id).showModal()
+                        }
+                    >
+                        <FaRegComment className="w-5 h-5" />
+                        <span>{post.comments.length}</span>
                     </div>
-                    <div className="flex flex-col gap-3 overflow-hidden">
-                        <span>{post.text}</span>
-                        {post.img && (
-                            <img
-                                src={post.img}
-                                className="h-80 object-contain rounded-lg border border-gray-700"
-                                alt=""
-                            />
-                        )}
+
+                    {/* Repost */}
+                    <div
+                        className="flex items-center gap-2 cursor-pointer hover:text-green-500"
+                        onClick={handleRepost}
+                    >
+                        <BiRepost className="w-5 h-5" />
+                        <span></span>
                     </div>
-                    <div className="flex justify-between mt-3">
-                        <div className="flex gap-4 items-center w-2/3 justify-between">
-                            <div
-                                className="flex gap-1 items-center cursor-pointer group"
-                                onClick={() =>
-                                    document.getElementById("comments_modal" + post._id).showModal()
-                                }
-                            >
-                                <FaRegComment className="w-4 h-4  text-slate-500 group-hover:text-sky-400" />
-                                <span className="text-sm text-slate-500 group-hover:text-sky-400">
-                                    {post.comments.length}
-                                </span>
-                            </div>
-                            {/* Repost button restored */}
-                            <div
-                                className="flex gap-1 items-center cursor-pointer group"
-                                onClick={handleRepost}
-                            >
-                                <BiRepost className="w-4 h-4 text-slate-500 group-hover:text-green-500" />
-                                <span className="text-sm text-slate-500 group-hover:text-green-500">
-                                    {/* Placeholder for repost count, if available */}
-                                </span>
-                            </div>
-                            <dialog
-                                id={`comments_modal${post._id}`}
-                                className="modal border-none outline-none"
-                                onClick={(e) => {
-                                    if (e.target === e.currentTarget) {
-                                        e.currentTarget.close();
-                                    }
-                                }}
-                            >
-                                <div
-                                    className="modal-box rounded border border-gray-600"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
-                                    <div className="flex flex-col gap-3 max-h-60 overflow-auto">
-                                        {post.comments.length === 0 && (
-                                            <p className="text-sm text-slate-500">
-                                                No comments yet 🤔 Be the first one 😉
-                                            </p>
-                                        )}
-                                        {post.comments.map((comment) => {
-                                            const isMyComment = comment.user._id === authUser._id;
 
-                                            return (
-                                                <div
-                                                    key={comment._id}
-                                                    className="flex justify-between items-center gap-2"
-                                                    style={{ minHeight: "2.5rem" }} // ensures enough height for vertical alignment
-                                                >
-                                                    <div className="flex gap-2 items-start">
-                                                        <div className="avatar">
-                                                            <div className="w-8 rounded-full">
-                                                                <img
-                                                                    src={
-                                                                        comment.user.profileImg ||
-                                                                        "/avatar-placeholder.png"
-                                                                    }
-                                                                    alt={`${comment.user.fullName}'s avatar`}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <div className="flex items-center gap-1">
-                                                                <span className="font-bold">
-                                                                    {comment.user.fullName}
-                                                                </span>
-                                                                <span className="text-gray-700 text-sm">
-                                                                    @{comment.user.username}
-                                                                </span>
-                                                            </div>
-                                                            <div className="text-sm">
-                                                                {comment.text}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                    {/* Like */}
+                    <div
+                        className="flex items-center gap-2 cursor-pointer group"
+                        onClick={handleLikePost}
+                    >
+                        {isLiked ? (
+                            <FaHeart className="w-5 h-5 text-red-500" />
+                        ) : (
+                            <FaRegHeart className="w-5 h-5 group-hover:text-pink-400" />
+                        )}
+                        <span className="group-hover:text-pink-400">{post.likes.length}</span>
+                    </div>
 
-                                                    {isMyComment && (
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDeleteComment(comment._id)
-                                                            }
-                                                            className="text-gray-400 hover:text-red-500 ml-4 p-0"
-                                                            aria-label="Delete comment"
-                                                            style={{
-                                                                border: "none",
-                                                                background: "transparent",
-                                                            }}
-                                                        >
-                                                            {deleteCommentPending ? (
-                                                                <LoadingSpinner size="sm" />
-                                                            ) : (
-                                                                <FaTrash className="w-3 h-3" />
-                                                            )}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    <form
-                                        className="flex gap-2 items-center mt-4 border-t border-gray-600 pt-2"
-                                        onSubmit={handlePostComment}
-                                    >
-                                        <textarea
-                                            data-gramm="false"
-                                            className="textarea w-full p-1 rounded text-md resize-none border focus:outline-none  border-gray-800"
-                                            placeholder="Add a comment..."
-                                            value={comment}
-                                            onChange={(e) => setComment(e.target.value)}
-                                            onKeyDown={handleCommentKeyDown}
-                                        />
-                                        <button className="btn btn-primary rounded-full btn-sm text-white px-4">
-                                            {commentPending ? (
-                                                <LoadingSpinner size="sm" />
-                                            ) : (
-                                                "Comment"
-                                            )}
-                                        </button>
-                                    </form>
-                                </div>
-                            </dialog>
-                            <div
-                                className="flex gap-1 items-center cursor-pointer group"
-                                onClick={handleLikePost}
-                            >
-                                {isLiked ? (
-                                    <FaHeart className="w-4 h-4 text-red-500" />
-                                ) : (
-                                    <FaRegHeart className="w-4 h-4 text-slate-500 group-hover:text-pink-400" />
-                                )}
-                                <span className="text-sm text-slate-500 group-hover:text-pink-400">
-                                    {post.likes.length}
-                                </span>
-                            </div>
-                            <div className="flex w-1/3 justify-end gap-2 items-center">
-                                <FaRegBookmark className="w-4 h-4 text-slate-500 cursor-pointer" />
-                            </div>
-                        </div>
+                    {/* Bookmark */}
+                    <div className="flex items-center gap-2 cursor-pointer hover:text-yellow-400">
+                        <FaRegBookmark className="w-5 h-5" />
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 export default Post;
