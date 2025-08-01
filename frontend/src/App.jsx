@@ -41,14 +41,22 @@ function App() {
         // Real-time comment deletion: update posts cache
         const handleDeleteComment = (data) => {
             if (data && data.postId && data.post) {
-                // Only update if all comments have populated user objects
-                const allPopulated = Array.isArray(data.post.comments)
+                // Check post.user is populated and all comments' user are populated
+                const postUserPopulated =
+                    data.post.user &&
+                    typeof data.post.user === "object" &&
+                    data.post.user._id &&
+                    (data.post.user.username || data.post.user.fullName);
+                const allCommentsPopulated = Array.isArray(data.post.comments)
                     ? data.post.comments.every(
                           (c) =>
-                              c.user && typeof c.user === "object" && c.user._id && c.user.username
+                              c.user &&
+                              typeof c.user === "object" &&
+                              c.user._id &&
+                              (c.user.username || c.user.fullName)
                       )
                     : true;
-                if (allPopulated) {
+                if (postUserPopulated && allCommentsPopulated) {
                     queryClient.setQueryData(["posts"], (old) => {
                         if (!old) return old;
                         return old.map((p) => (p._id === data.postId ? data.post : p));
