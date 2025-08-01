@@ -12,14 +12,15 @@ import { formatPostDate } from "../../utils/date/function";
 
 const Post = ({ post }) => {
     const queryClient = useQueryClient();
-
     const [comment, setComment] = useState("");
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+
     const postOwner = post.user;
     const isLiked = post.likes.includes(authUser._id);
     const isMyPost = authUser._id === post.user._id;
     const formattedDate = formatPostDate(post.createdAt);
 
+    // --- Mutations ---
     const { mutate: deletePost, isPending: deletePending } = useMutation({
         mutationFn: async () => {
             const res = await fetch(`/api/posts/${post._id}`, { method: "DELETE" });
@@ -90,6 +91,7 @@ const Post = ({ post }) => {
         },
     });
 
+    // --- Handlers ---
     const handleDeletePost = () => deletePost();
     const handlePostComment = (e) => {
         e.preventDefault();
@@ -109,6 +111,7 @@ const Post = ({ post }) => {
 
     return (
         <div className="flex gap-2 items-start p-4 border-b border-gray-700">
+            {/* Avatar */}
             <div className="avatar">
                 <Link
                     to={`/profile/${postOwner.username}`}
@@ -118,7 +121,9 @@ const Post = ({ post }) => {
                 </Link>
             </div>
 
+            {/* Post Content */}
             <div className="flex flex-col flex-1">
+                {/* Header */}
                 <div className="flex gap-2 items-center">
                     <Link to={`/profile/${postOwner.username}`} className="font-bold">
                         {postOwner.fullName}
@@ -128,7 +133,6 @@ const Post = ({ post }) => {
                         <span>·</span>
                         <span>{formattedDate}</span>
                     </span>
-
                     {isMyPost && (
                         <span className="flex justify-end flex-1">
                             {!deletePending ? (
@@ -143,6 +147,7 @@ const Post = ({ post }) => {
                     )}
                 </div>
 
+                {/* Text & Image */}
                 <div className="flex flex-col gap-3 overflow-hidden">
                     <span>{post.text}</span>
                     {post.img && (
@@ -154,13 +159,13 @@ const Post = ({ post }) => {
                     )}
                 </div>
 
-                {/* --- NEW CLEAN ICON ROW --- */}
+                {/* --- ACTION ICON ROW --- */}
                 <div className="flex justify-around items-center mt-3 text-slate-500 text-sm">
                     {/* Comment */}
                     <div
                         className="flex items-center gap-2 cursor-pointer hover:text-sky-400"
                         onClick={() =>
-                            document.getElementById("comments_modal" + post._id).showModal()
+                            document.getElementById(`comments_modal${post._id}`).showModal()
                         }
                     >
                         <FaRegComment className="w-5 h-5" />
@@ -173,7 +178,6 @@ const Post = ({ post }) => {
                         onClick={handleRepost}
                     >
                         <BiRepost className="w-5 h-5" />
-                        <span></span>
                     </div>
 
                     {/* Like */}
@@ -194,6 +198,99 @@ const Post = ({ post }) => {
                         <FaRegBookmark className="w-5 h-5" />
                     </div>
                 </div>
+
+                {/* --- COMMENT MODAL --- */}
+                <dialog
+                    id={`comments_modal${post._id}`}
+                    className="modal border-none outline-none"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) e.currentTarget.close();
+                    }}
+                >
+                    <div
+                        className="modal-box rounded border border-gray-600"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
+
+                        <div className="flex flex-col gap-3 max-h-60 overflow-auto">
+                            {post.comments.length === 0 && (
+                                <p className="text-sm text-slate-500">
+                                    No comments yet 🤔 Be the first one 😉
+                                </p>
+                            )}
+                            {post.comments.map((c) => {
+                                const isMyComment = c.user._id === authUser._id;
+                                return (
+                                    <div
+                                        key={c._id}
+                                        className="flex justify-between items-center gap-2"
+                                        style={{ minHeight: "2.5rem" }}
+                                    >
+                                        <div className="flex gap-2 items-start">
+                                            <div className="avatar">
+                                                <div className="w-8 rounded-full">
+                                                    <img
+                                                        src={
+                                                            c.user.profileImg ||
+                                                            "/avatar-placeholder.png"
+                                                        }
+                                                        alt={`${c.user.fullName}'s avatar`}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="font-bold">
+                                                        {c.user.fullName}
+                                                    </span>
+                                                    <span className="text-gray-700 text-sm">
+                                                        @{c.user.username}
+                                                    </span>
+                                                </div>
+                                                <div className="text-sm">{c.text}</div>
+                                            </div>
+                                        </div>
+
+                                        {isMyComment && (
+                                            <button
+                                                onClick={() => handleDeleteComment(c._id)}
+                                                className="text-gray-400 hover:text-red-500 ml-4 p-0"
+                                                aria-label="Delete comment"
+                                                style={{
+                                                    border: "none",
+                                                    background: "transparent",
+                                                }}
+                                            >
+                                                {deleteCommentPending ? (
+                                                    <LoadingSpinner size="sm" />
+                                                ) : (
+                                                    <FaTrash className="w-3 h-3" />
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <form
+                            className="flex gap-2 items-center mt-4 border-t border-gray-600 pt-2"
+                            onSubmit={handlePostComment}
+                        >
+                            <textarea
+                                className="textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-gray-800"
+                                placeholder="Add a comment..."
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                onKeyDown={handleCommentKeyDown}
+                            />
+                            <button className="btn btn-primary rounded-full btn-sm text-white px-4">
+                                {commentPending ? <LoadingSpinner size="sm" /> : "Comment"}
+                            </button>
+                        </form>
+                    </div>
+                </dialog>
             </div>
         </div>
     );
