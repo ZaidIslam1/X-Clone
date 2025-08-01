@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers = [] }) => {
+const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUsers = [] }) => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();

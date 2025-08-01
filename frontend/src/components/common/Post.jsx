@@ -104,6 +104,7 @@ const Post = ({ post }) => {
     const handleDeleteComment = (commentId) => deleteComment(commentId);
     const handleLikePost = () => !likePending && likePost();
     const handleRepost = () => toast("Repost feature coming soon!");
+    const handleBookmark = () => toast("Bookmark feature coming soon!");
     // Modal open/close helpers
     const openCommentsModal = () => setIsCommentsModalOpen(true);
     const closeCommentsModal = () => setIsCommentsModalOpen(false);
@@ -192,7 +193,7 @@ const Post = ({ post }) => {
 
                     {/* Bookmark */}
                     <div className="flex items-center gap-2 cursor-pointer hover:text-yellow-400">
-                        <FaRegBookmark className="w-5 h-5" />
+                        <FaRegBookmark className="w-5 h-5" onClick={handleBookmark} />
                     </div>
                 </div>
 

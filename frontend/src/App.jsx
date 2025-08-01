@@ -73,6 +73,7 @@ function App() {
                 queryClient.invalidateQueries({ queryKey: ["posts"] });
             }
         };
+        
         if (!authUser) return;
         if (socketRef.current) return; // Prevent multiple connections
         const baseUrl = import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002";
