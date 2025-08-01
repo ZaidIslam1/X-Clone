@@ -62,6 +62,15 @@ export const deletePost = async (req, res, next) => {
         }
 
         await Post.findByIdAndDelete(id);
+        // Emit real-time event for post deletion
+        try {
+            const io = getSocketIO();
+            if (io) {
+                io.emit("delete_post", { postId: id });
+            }
+        } catch (e) {
+            console.log("Socket emit error (delete_post):", e.message);
+        }
         res.status(200).json({ message: "Post deleted successfully" });
     } catch (error) {
         console.log("Error in deletePost", error.message);

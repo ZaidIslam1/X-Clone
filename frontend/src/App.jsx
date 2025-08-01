@@ -57,7 +57,14 @@ function App() {
         const handleNewPost = () => {
             queryClient.invalidateQueries({ queryKey: ["posts"] });
         };
+
         socketRef.current.on("new_post", handleNewPost);
+
+        // Real-time post deletion
+        const handleDeletePost = () => {
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+        };
+        socketRef.current.on("delete_post", handleDeletePost);
 
         // Real-time comments, likes, follows: show notification bubble and refetch
         const handleNewComment = () => {
