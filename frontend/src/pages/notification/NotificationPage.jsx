@@ -142,7 +142,8 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                         notification.post && (
                                             <Link
                                                 to={`/post/${notification.post}`}
-                                                className="mt-1 text-blue-500 underline text-xs px-2 py-1 rounded hover:bg-blue-100/10 w-fit"
+                                                className="mt-2 btn btn-xs btn-primary text-white px-3 py-1 rounded shadow hover:bg-blue-600 w-fit"
+                                                style={{ maxWidth: 120 }}
                                             >
                                                 View post
                                             </Link>
