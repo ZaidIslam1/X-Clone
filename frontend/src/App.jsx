@@ -38,6 +38,29 @@ function App() {
     const socketRef = useRef(null);
 
     useEffect(() => {
+        // Real-time comment deletion: update posts cache
+        const handleDeleteComment = (data) => {
+            if (data && data.postId && data.post) {
+                // Only update if all comments have populated user objects
+                const allPopulated = Array.isArray(data.post.comments)
+                    ? data.post.comments.every(
+                          (c) =>
+                              c.user && typeof c.user === "object" && c.user._id && c.user.username
+                      )
+                    : true;
+                if (allPopulated) {
+                    queryClient.setQueryData(["posts"], (old) => {
+                        if (!old) return old;
+                        return old.map((p) => (p._id === data.postId ? data.post : p));
+                    });
+                } else {
+                    // If not populated, refetch that post
+                    queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+                }
+            } else if (data && data.postId) {
+                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+            }
+        };
         if (!authUser) return;
         if (socketRef.current) return; // Prevent multiple connections
         const baseUrl = import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002";
@@ -121,6 +144,7 @@ function App() {
         socketRef.current.on("new_comment", handleNewComment);
         socketRef.current.on("new_like", handleNewLike);
         socketRef.current.on("new_follow", handleNewFollow);
+        socketRef.current.on("delete_comment", handleDeleteComment);
 
         return () => {
             socketRef.current && socketRef.current.disconnect();

@@ -65,13 +65,7 @@ const Post = ({ post }) => {
             if (!res.ok) throw new Error(data.error);
             return data;
         },
-        onSuccess: (updatedPost) => {
-            queryClient.setQueryData(["posts"], (oldData) =>
-                oldData.map((p) =>
-                    p._id === post._id ? { ...p, comments: updatedPost.comments } : p
-                )
-            );
-        },
+        // No onSuccess needed: real-time socket event will update the cache
     });
 
     const { mutate: likePost, isPending: likePending } = useMutation({
@@ -177,7 +171,7 @@ const Post = ({ post }) => {
                         className="flex items-center gap-2 cursor-pointer hover:text-green-500"
                         onClick={handleRepost}
                     >
-                        <BiRepost className="w-5 h-5" />
+                        <BiRepost className="w-6 h-6" />
                     </div>
 
                     {/* Like */}

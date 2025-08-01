@@ -236,6 +236,17 @@ export const deleteComment = async (req, res, next) => {
         }
 
         const updatedPost = await Post.findById(postId).populate("comments.user", "-password");
+
+        // Emit real-time event for comment deletion (update all feeds) with full post
+        try {
+            const io = getSocketIO();
+            if (io) {
+                io.emit("delete_comment", { postId: postId.toString(), post: updatedPost });
+            }
+        } catch (e) {
+            console.log("Socket emit error (delete_comment):", e.message);
+        }
+
         res.status(200).json(updatedPost);
     } catch (error) {
         console.log("Error in deleteComment", error.message);
