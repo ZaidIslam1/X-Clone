@@ -176,6 +176,15 @@ export const commentPost = async (req, res, next) => {
 
         const updatedPost = await Post.findById(id).populate("comments.user", "-password");
 
+        // Emit real-time event for new comment (update all feeds)
+        try {
+            const io = getSocketIO();
+            if (io) {
+                io.emit("new_comment", { postId: id, comment: comment });
+            }
+        } catch (e) {
+            console.log("Socket emit error (new_comment):", e.message);
+        }
         res.status(200).json(updatedPost);
     } catch (error) {
         console.log("Error in commentPost", error.message);

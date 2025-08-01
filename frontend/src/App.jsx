@@ -63,6 +63,7 @@ function App() {
         const handleNewComment = () => {
             setHasNewNotification(true);
             queryClient.invalidateQueries({ queryKey: ["notifications"] });
+            queryClient.invalidateQueries({ queryKey: ["posts"] }); // real-time comments
         };
         const handleNewLike = () => {
             setHasNewNotification(true);

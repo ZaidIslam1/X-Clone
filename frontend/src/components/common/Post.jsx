@@ -213,8 +213,16 @@ const Post = ({ post }) => {
                             <dialog
                                 id={`comments_modal${post._id}`}
                                 className="modal border-none outline-none"
+                                onClick={(e) => {
+                                    if (e.target === e.currentTarget) {
+                                        e.currentTarget.close();
+                                    }
+                                }}
                             >
-                                <div className="modal-box rounded border border-gray-600">
+                                <div
+                                    className="modal-box rounded border border-gray-600"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
                                     <div className="flex flex-col gap-3 max-h-60 overflow-auto">
                                         {post.comments.length === 0 && (
