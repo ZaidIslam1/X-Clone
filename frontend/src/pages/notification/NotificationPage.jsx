@@ -88,50 +88,59 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                 {notifications?.length === 0 && (
                     <div className="text-center p-4 font-bold">No notifications 🤔</div>
                 )}
-                {notifications?.map((notification) => (
-                    <div className="border-b border-gray-700" key={notification._id}>
-                        <div className="flex gap-2 p-4 items-center">
-                            {notification.type === "follow" && (
-                                <FaUser className="w-7 h-7 text-primary" />
-                            )}
-                            {notification.type === "like" && (
-                                <FaHeart className="w-7 h-7 text-red-500" />
-                            )}
-                            {notification.type === "comment" && (
-                                <BiSolidCommentDots className="w-7 h-7 text-green-500" />
-                            )}
-                            <Link
-                                to={`/profile/${notification.from.username}`}
-                                className="flex-1 flex items-center"
-                            >
-                                <div className="avatar">
-                                    <div className="w-8 rounded-full">
-                                        <img
-                                            src={
-                                                notification.from.profileImg ||
-                                                "/avatar-placeholder.png"
-                                            }
-                                        />
+                {notifications?.map((notification) => {
+                    // For comment/like, link to the post; for follow, link to profile
+                    let linkTo = `/profile/${notification.from.username}`;
+                    if (
+                        (notification.type === "comment" || notification.type === "like") &&
+                        notification.post
+                    ) {
+                        linkTo = `/post/${notification.post}`;
+                    }
+                    return (
+                        <div className="border-b border-gray-700" key={notification._id}>
+                            <div className="flex gap-2 p-4 items-center">
+                                {notification.type === "follow" && (
+                                    <FaUser className="w-7 h-7 text-primary" />
+                                )}
+                                {notification.type === "like" && (
+                                    <FaHeart className="w-7 h-7 text-red-500" />
+                                )}
+                                {notification.type === "comment" && (
+                                    <BiSolidCommentDots className="w-7 h-7 text-green-500" />
+                                )}
+                                <Link to={linkTo} className="flex-1 flex items-center">
+                                    <div className="avatar">
+                                        <div className="w-8 rounded-full">
+                                            <img
+                                                src={
+                                                    notification.from.profileImg ||
+                                                    "/avatar-placeholder.png"
+                                                }
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex gap-1 items-center">
-                                    <span className="font-bold">@{notification.from.username}</span>{" "}
-                                    {notification.type === "follow"
-                                        ? "followed you"
-                                        : notification.type === "comment"
-                                        ? "commented on your post"
-                                        : "liked your post"}
-                                    <span className="ml-2 text-xs text-gray-400">
-                                        {formatPostDate(notification.createdAt)}
-                                    </span>
-                                </div>
-                            </Link>
-                            {!notification.read && (
-                                <span className="ml-2 w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
-                            )}
+                                    <div className="flex gap-1 items-center">
+                                        <span className="font-bold">
+                                            @{notification.from.username}
+                                        </span>{" "}
+                                        {notification.type === "follow"
+                                            ? "followed you"
+                                            : notification.type === "comment"
+                                            ? "commented on your post"
+                                            : "liked your post"}
+                                        <span className="ml-2 text-xs text-gray-400">
+                                            {formatPostDate(notification.createdAt)}
+                                        </span>
+                                    </div>
+                                </Link>
+                                {!notification.read && (
+                                    <span className="ml-2 w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </>
     );

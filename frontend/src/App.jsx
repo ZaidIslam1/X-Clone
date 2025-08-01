@@ -88,9 +88,13 @@ function App() {
                 setHasNewNotification(true);
                 queryClient.invalidateQueries({ queryKey: ["notifications"] });
             }
-            // Only refetch the post that got commented on
-            if (data && data.postId) {
-                queryClient.invalidateQueries({ queryKey: ["posts"] }); // fallback for list
+            // Update only the commented post in cache if full post is provided
+            if (data && data.postId && data.post) {
+                queryClient.setQueryData(["posts"], (old) => {
+                    if (!old) return old;
+                    return old.map((p) => (p._id === data.postId ? data.post : p));
+                });
+            } else if (data && data.postId) {
                 queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
             }
         };

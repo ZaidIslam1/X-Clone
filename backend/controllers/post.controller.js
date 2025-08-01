@@ -167,9 +167,10 @@ export const commentPost = async (req, res, next) => {
                 from: userId,
                 to: post.user,
                 type: "comment",
+                post: post._id,
             });
             await newNotification.save();
-            // Emit socket event for new comment notification only to recipient
+            // Emit socket event for new comment notification only to recipient, include postId for navigation
             const io = getSocketIO();
             if (io && io.userSockets) {
                 const recipientSocketId = io.userSockets.get(post.user.toString());
@@ -183,13 +184,16 @@ export const commentPost = async (req, res, next) => {
             }
         }
 
-        const updatedPost = await Post.findById(id).populate("comments.user", "-password");
+        // Always populate user and comments for real-time update
+        const updatedPost = await Post.findById(id)
+            .populate("user", "-password")
+            .populate("comments.user", "-password");
 
-        // Emit real-time event for new comment (update all feeds)
+        // Emit real-time event for new comment (update all feeds) with full post
         try {
             const io = getSocketIO();
             if (io) {
-                io.emit("new_comment", { postId: id, comment: comment });
+                io.emit("new_comment", { postId: id, post: updatedPost });
             }
         } catch (e) {
             console.log("Socket emit error (new_comment):", e.message);
