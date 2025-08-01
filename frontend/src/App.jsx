@@ -53,24 +53,46 @@ function App() {
         socketRef.current.on("receive_message", handleReceive);
         socketRef.current.on("sent_message", handleReceive);
 
-        // Real-time posts: refetch posts on 'new_post' event
-        const handleNewPost = () => {
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
+        // Real-time posts: update posts cache on 'new_post' event
+        const handleNewPost = (data) => {
+            if (data && data.post) {
+                queryClient.setQueryData(["posts"], (old) => {
+                    if (!old) return [data.post];
+                    // Avoid duplicate if already present
+                    if (old.some((p) => p._id === data.post._id)) return old;
+                    return [data.post, ...old];
+                });
+            } else {
+                queryClient.invalidateQueries({ queryKey: ["posts"] });
+            }
         };
-
         socketRef.current.on("new_post", handleNewPost);
 
-        // Real-time post deletion
-        const handleDeletePost = () => {
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
+        // Real-time post deletion: update posts cache
+        const handleDeletePost = (data) => {
+            if (data && data.postId) {
+                queryClient.setQueryData(["posts"], (old) => {
+                    if (!old) return old;
+                    return old.filter((p) => p._id !== data.postId);
+                });
+            } else {
+                queryClient.invalidateQueries({ queryKey: ["posts"] });
+            }
         };
         socketRef.current.on("delete_post", handleDeletePost);
 
         // Real-time comments, likes, follows: show notification bubble and refetch
-        const handleNewComment = () => {
-            setHasNewNotification(true);
-            queryClient.invalidateQueries({ queryKey: ["notifications"] });
-            queryClient.invalidateQueries({ queryKey: ["posts"] }); // real-time comments
+        const handleNewComment = (data) => {
+            // Only show notification bubble if the comment is for the logged-in user
+            if (data && data.to === authUser._id) {
+                setHasNewNotification(true);
+                queryClient.invalidateQueries({ queryKey: ["notifications"] });
+            }
+            // Only refetch the post that got commented on
+            if (data && data.postId) {
+                queryClient.invalidateQueries({ queryKey: ["posts"] }); // fallback for list
+                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+            }
         };
         const handleNewLike = () => {
             setHasNewNotification(true);
