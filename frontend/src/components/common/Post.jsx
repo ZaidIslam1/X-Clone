@@ -195,6 +195,7 @@ const Post = ({ post }) => {
 
                 {/* --- COMMENT MODAL --- */}
                 <dialog
+                    key={post._id + "-" + post.comments.length}
                     id={`comments_modal${post._id}`}
                     className="modal border-none outline-none"
                     onClick={(e) => {
