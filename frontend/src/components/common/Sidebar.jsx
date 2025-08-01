@@ -67,7 +67,7 @@ const Sidebar = ({
                             {hasNewNotification && (
                                 <span className="absolute -top-1 right-0 md:right-2 flex items-center">
                                     <span
-                                        className={`w-2.5 h-2.5 rounded-full bg-primary border-2 border-white ${
+                                        className={`w-1.5 h-1.5 rounded-full bg-primary border border-white ${
                                             blinkNotification ? "animate-ping" : "animate-pulse"
                                         }`}
                                     ></span>
