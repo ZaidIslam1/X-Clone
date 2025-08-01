@@ -153,6 +153,11 @@ const Post = ({ post }) => {
         likePost();
     };
 
+    // Placeholder repost handler
+    const handleRepost = () => {
+        toast("Repost feature coming soon!");
+    };
+
     return (
         <>
             <div className="flex gap-2 items-start p-4 border-b border-gray-700">
@@ -209,7 +214,16 @@ const Post = ({ post }) => {
                                     {post.comments.length}
                                 </span>
                             </div>
-                            {/* We're using Modal Component from DaisyUI */}
+                            {/* Repost button restored */}
+                            <div
+                                className="flex gap-1 items-center cursor-pointer group"
+                                onClick={handleRepost}
+                            >
+                                <BiRepost className="w-4 h-4 text-slate-500 group-hover:text-green-500" />
+                                <span className="text-sm text-slate-500 group-hover:text-green-500">
+                                    {/* Placeholder for repost count, if available */}
+                                </span>
+                            </div>
                             <dialog
                                 id={`comments_modal${post._id}`}
                                 className="modal border-none outline-none"

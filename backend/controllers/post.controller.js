@@ -136,8 +136,19 @@ export const likeUnlikePost = async (req, res, next) => {
                 }
             }
         }
-        // Fetch the updated post to get fresh likes
-        const updatedPost = await Post.findById(postId);
+        // Fetch the updated post to get fresh likes and populate user/comments
+        const updatedPost = await Post.findById(postId)
+            .populate("user", "-password")
+            .populate("comments.user", "-password");
+        // Emit real-time event for new like (update all feeds) with full post
+        try {
+            const io = getSocketIO();
+            if (io) {
+                io.emit("new_like", { postId: postId.toString(), post: updatedPost });
+            }
+        } catch (e) {
+            console.log("Socket emit error (new_like):", e.message);
+        }
         res.status(200).json(updatedPost.likes);
     } catch (error) {
         console.log("Error in likeUnlikePost", error.message);

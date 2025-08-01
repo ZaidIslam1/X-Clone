@@ -98,9 +98,21 @@ function App() {
                 queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
             }
         };
-        const handleNewLike = () => {
-            setHasNewNotification(true);
-            queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        const handleNewLike = (data) => {
+            // Only show notification bubble if the like is for the logged-in user
+            if (data && data.to === authUser._id) {
+                setHasNewNotification(true);
+                queryClient.invalidateQueries({ queryKey: ["notifications"] });
+            }
+            // Update only the liked post in cache if full post is provided
+            if (data && data.postId && data.post) {
+                queryClient.setQueryData(["posts"], (old) => {
+                    if (!old) return old;
+                    return old.map((p) => (p._id === data.postId ? data.post : p));
+                });
+            } else if (data && data.postId) {
+                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+            }
         };
         const handleNewFollow = () => {
             setHasNewNotification(true);
