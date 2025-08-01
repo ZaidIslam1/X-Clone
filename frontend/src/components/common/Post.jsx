@@ -3,7 +3,7 @@ import { BiRepost } from "react-icons/bi";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -13,6 +13,8 @@ import { formatPostDate } from "../../utils/date/function";
 const Post = ({ post }) => {
     const queryClient = useQueryClient();
     const [comment, setComment] = useState("");
+    const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+    const dialogRef = useRef(null);
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const postOwner = post.user;
@@ -102,6 +104,9 @@ const Post = ({ post }) => {
     const handleDeleteComment = (commentId) => deleteComment(commentId);
     const handleLikePost = () => !likePending && likePost();
     const handleRepost = () => toast("Repost feature coming soon!");
+    // Modal open/close helpers
+    const openCommentsModal = () => setIsCommentsModalOpen(true);
+    const closeCommentsModal = () => setIsCommentsModalOpen(false);
 
     return (
         <div className="flex gap-2 items-start p-4 border-b border-gray-700">
@@ -158,9 +163,7 @@ const Post = ({ post }) => {
                     {/* Comment */}
                     <div
                         className="flex items-center gap-2 cursor-pointer hover:text-sky-400"
-                        onClick={() =>
-                            document.getElementById(`comments_modal${post._id}`).showModal()
-                        }
+                        onClick={openCommentsModal}
                     >
                         <FaRegComment className="w-5 h-5" />
                         <span>{post.comments.length}</span>
@@ -195,17 +198,25 @@ const Post = ({ post }) => {
 
                 {/* --- COMMENT MODAL --- */}
                 <dialog
-                    key={post._id + "-" + post.comments.length}
-                    id={`comments_modal${post._id}`}
+                    ref={dialogRef}
+                    open={isCommentsModalOpen}
                     className="modal border-none outline-none"
+                    onClose={closeCommentsModal}
                     onClick={(e) => {
-                        if (e.target === e.currentTarget) e.currentTarget.close();
+                        if (e.target === e.currentTarget) closeCommentsModal();
                     }}
                 >
                     <div
                         className="modal-box rounded border border-gray-600"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        <button
+                            className="btn btn-xs btn-circle absolute right-2 top-2"
+                            onClick={closeCommentsModal}
+                            aria-label="Close"
+                        >
+                            ✕
+                        </button>
                         <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
 
                         <div className="flex flex-col gap-3 max-h-60 overflow-auto">
