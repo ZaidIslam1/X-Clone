@@ -30,16 +30,20 @@ export const createPost = async (req, res, next) => {
         });
 
         await newPost.save();
+        // Always populate user and comments for real-time update
+        const populatedPost = await Post.findById(newPost._id)
+            .populate("user", "-password")
+            .populate("comments.user", "-password");
         // Emit real-time event for new post
         try {
             const io = getSocketIO();
             if (io) {
-                io.emit("new_post", { post: newPost });
+                io.emit("new_post", { post: populatedPost });
             }
         } catch (e) {
             console.log("Socket emit error (new_post):", e.message);
         }
-        res.status(201).json(newPost);
+        res.status(201).json(populatedPost);
     } catch (error) {
         console.log("Error in createPost", error.message);
         next(error);
