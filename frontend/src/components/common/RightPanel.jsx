@@ -115,7 +115,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
 
                 {isMessagesPage ? (
                     // Show UserListSidebar on messages page
-                    <div className="bg-[#16181C] rounded-md flex-1 mt-2">
+                    <div className="bg-[#16181C] rounded-md flex-1 ">
                         <UserListSidebar
                             authUser={authUser}
                             unreadUsers={unreadUsers}
@@ -125,7 +125,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                 ) : (
                     // Default Suggested Users Panel
                     <div
-                        className={`bg-[#16181C] p-4 rounded-md flex flex-col mt-2 ${
+                        className={`bg-[#16181C] p-4 rounded-md flex flex-col ${
                             noSuggestions ? "min-h-[150px]" : ""
                         }`}
                     >
