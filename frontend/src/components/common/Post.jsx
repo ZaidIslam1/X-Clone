@@ -15,6 +15,7 @@ const Post = ({ post }) => {
     const [comment, setComment] = useState("");
     const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
     const dialogRef = useRef(null);
+    const commentsContainerRef = useRef(null);
     const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
     const postOwner = post.user;
@@ -55,6 +56,13 @@ const Post = ({ post }) => {
                     p._id === post._id ? { ...p, comments: updatedPost.comments } : p
                 )
             );
+            // Scroll to bottom of comments after successful comment submission
+            setTimeout(() => {
+                if (commentsContainerRef.current) {
+                    commentsContainerRef.current.scrollTop =
+                        commentsContainerRef.current.scrollHeight;
+                }
+            }, 100);
         },
     });
 
@@ -220,7 +228,10 @@ const Post = ({ post }) => {
                         </button>
                         <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
 
-                        <div className="flex flex-col gap-3 max-h-60 overflow-auto">
+                        <div
+                            ref={commentsContainerRef}
+                            className="flex flex-col gap-3 max-h-60 overflow-auto"
+                        >
                             {post.comments.length === 0 && (
                                 <p className="text-sm text-slate-500">
                                     No comments yet 🤔 Be the first one 😉

@@ -86,7 +86,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                 ${isMobileCollapsed ? "translate-x-full lg:translate-x-0" : "translate-x-0"} 
                 fixed lg:relative top-0 lg:top-0 right-0 z-50 lg:z-auto
                 ${
-                    isMessagesPage ? "lg:flex-[0_0_280px] lg:w-70" : "flex-[3_3_0] lg:flex-[2_2_0]"
+                    isMessagesPage ? "lg:flex-[0_0_280px] lg:w-70" : "lg:flex-[0_0_300px] lg:w-75"
                 } flex flex-col 
                 my-0 lg:my-2 mx-0 lg:mx-2 
                 w-80 lg:w-auto h-screen gap-4 

@@ -66,11 +66,7 @@ const Sidebar = ({
                             <span className="text-lg hidden md:block">Notifications</span>
                             {hasNewNotification && (
                                 <span className="absolute -top-1 right-0 md:right-2 flex items-center">
-                                    <span
-                                        className={`w-1.5 h-1.5 rounded-full bg-primary border border-white ${
-                                            blinkNotification ? "animate-ping" : "animate-pulse"
-                                        }`}
-                                    ></span>
+                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
                                 </span>
                             )}
                         </Link>
@@ -102,7 +98,7 @@ const Sidebar = ({
                             <span className="text-lg hidden md:block">Messages</span>
                             {unreadUsers && unreadUsers.length > 0 && (
                                 <span className="absolute -top-1 right-0 md:right-2 flex items-center">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse border-2 border-white"></span>
+                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
                                     <span className="ml-1 text-primary text-xs font-bold">
                                         {unreadUsers.length}
                                     </span>
