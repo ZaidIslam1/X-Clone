@@ -53,15 +53,35 @@ body {
     }
 
     .border-gray-700 {
-        border-color: rgb(75, 85, 99) !important; /* Lighter border gray */
+        border-color: rgb(107, 114, 128) !important; /* Lighter border gray */
     }
 
     .border-gray-600 {
-        border-color: rgb(107, 114, 128) !important; /* Even lighter for better contrast */
+        border-color: rgb(156, 163, 175) !important; /* Even lighter for better contrast */
     }
 
     .text-gray-400 {
         color: rgb(156, 163, 175) !important; /* Lighter gray for better readability */
+    }
+
+    .text-gray-500 {
+        color: rgb(156, 163, 175) !important; /* Lighter gray for mobile */
+    }
+
+    .bg-gray-800 {
+        background-color: rgb(55, 65, 81) !important; /* Lighter background gray */
+    }
+
+    .bg-gray-900 {
+        background-color: rgb(75, 85, 99) !important; /* Lighter dark gray */
+    }
+
+    .text-slate-500 {
+        color: rgb(148, 163, 184) !important; /* Lighter slate for mobile */
+    }
+
+    .hover\:bg-gray-800:hover {
+        background-color: rgb(55, 65, 81) !important; /* Lighter hover gray */
     }
 }
 
@@ -221,6 +241,24 @@ body {
 
     .pt-safe {
         padding-top: env(safe-area-inset-top);
+    }
+
+    /* Better mobile height handling */
+    .mobile-screen-height {
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+    }
+
+    /* Ensure pages can scroll on mobile */
+    .mobile-page-container {
+        height: 100dvh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Sidebar specific mobile handling */
+    .sidebar-mobile {
+        height: 100dvh !important;
     }
 }
 

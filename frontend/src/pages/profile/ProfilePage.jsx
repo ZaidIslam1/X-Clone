@@ -101,7 +101,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="flex-[4_4_0] border-r border-gray-700 h-screen overflow-y-auto w-full">
+            <div className="flex-[4_4_0] border-r border-gray-700 h-screen mobile-page-container w-full">
                 {/* HEADER */}
                 {isLoading && isRefetching && <ProfileHeaderSkeleton />}
                 {!isLoading && !isRefetching && !user && (

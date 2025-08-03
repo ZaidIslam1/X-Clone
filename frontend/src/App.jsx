@@ -180,6 +180,7 @@ function App() {
             className={`flex max-w-6xl mx-auto h-screen relative bg-black mobile-safe-top mobile-safe-bottom overflow-hidden ${
                 isMessagesPage ? "chat-no-scroll" : ""
             }`}
+            style={{ height: "100dvh" }}
         >
             {authUser && (
                 <Sidebar
