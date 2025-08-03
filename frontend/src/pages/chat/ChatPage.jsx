@@ -124,24 +124,28 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         setInput("");
     };
     return (
-        <div className="flex h-screen overflow-hidden flex-1">
+        <div className="flex h-screen overflow-hidden flex-1 w-full">
             {/* Chat area (center) */}
-            <div className="flex-1 flex flex-col h-full">
+            <div className="flex-1 flex flex-col h-full w-full">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
+                <div className="px-3 sm:px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
                     {!username ? (
                         <div className="flex items-center justify-center gap-2">
-                            <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
-                            <h2 className="text-lg font-semibold text-white">No User Selected</h2>
+                            <XSvg className="px-2 w-8 sm:w-12 h-8 sm:h-12 rounded-full fill-white hover:bg-stone-900" />
+                            <h2 className="text-base sm:text-lg font-semibold text-white">
+                                No User Selected
+                            </h2>
                         </div>
                     ) : (
-                        <h2 className="text-lg font-semibold text-white">@{username}</h2>
+                        <h2 className="text-base sm:text-lg font-semibold text-white">
+                            @{username}
+                        </h2>
                     )}
                 </div>
 
                 {/* Messages scroll area - more padding for bigger feel */}
                 <div
-                    className="flex-1 overflow-y-auto px-6 py-4 space-y-4 messages-scroll"
+                    className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4 messages-scroll"
                     style={{ paddingBottom: 32 }}
                 >
                     {error && <p className="text-center text-red-500 mt-8">{error}</p>}
@@ -193,7 +197,7 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                 {username && receiverId && authUser.username !== username && (
                     <form
                         onSubmit={handleSend}
-                        className="px-6 py-3 border-t border-gray-700 flex gap-3 bg-black flex-shrink-0"
+                        className="px-3 sm:px-6 py-3 border-t border-gray-700 flex gap-2 sm:gap-3 bg-black flex-shrink-0"
                     >
                         <input
                             type="text"

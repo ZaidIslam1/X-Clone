@@ -110,12 +110,12 @@ const Post = ({ post }) => {
     const closeCommentsModal = () => setIsCommentsModalOpen(false);
 
     return (
-        <div className="flex gap-2 items-start p-4 border-b border-gray-700">
+        <div className="flex gap-2 items-start p-3 sm:p-4 border-b border-gray-700">
             {/* Avatar */}
-            <div className="avatar">
+            <div className="avatar flex-shrink-0">
                 <Link
                     to={`/profile/${postOwner.username}`}
-                    className="w-8 rounded-full overflow-hidden"
+                    className="w-8 h-8 rounded-full overflow-hidden"
                 >
                     <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
                 </Link>
@@ -153,7 +153,7 @@ const Post = ({ post }) => {
                     {post.img && (
                         <img
                             src={post.img}
-                            className="h-80 object-contain rounded-lg border border-gray-700"
+                            className="h-60 sm:h-80 object-contain rounded-lg border border-gray-700 w-full max-w-full"
                             alt=""
                         />
                     )}

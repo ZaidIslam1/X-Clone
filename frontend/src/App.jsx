@@ -73,7 +73,7 @@ function App() {
                 queryClient.invalidateQueries({ queryKey: ["posts"] });
             }
         };
-        
+
         if (!authUser) return;
         if (socketRef.current) return; // Prevent multiple connections
         const baseUrl = import.meta.env.VITE_SERVER_BASE_URL || "http://localhost:5002";
@@ -174,7 +174,7 @@ function App() {
     }
 
     return (
-        <div className="flex max-w-6xl mx-auto">
+        <div className="flex max-w-6xl mx-auto min-h-screen relative bg-black">
             {authUser && (
                 <Sidebar
                     authUser={authUser}
@@ -184,63 +184,71 @@ function App() {
                     blinkNotification={blinkNotification}
                 />
             )}
-            <Routes>
-                <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
-                <Route
-                    path="/notifications"
-                    element={
-                        authUser ? (
-                            <NotificationPage
-                                setHasNewNotification={setHasNewNotification}
-                                setBlinkNotification={setBlinkNotification}
-                            />
-                        ) : (
-                            <Navigate to="/login" />
-                        )
-                    }
-                />
-                <Route
-                    path="/profile/:username/:tab"
-                    element={authUser ? <FollowersFollowingPage /> : <Navigate to="/login" />}
-                />
-                <Route
-                    path="/profile/:username"
-                    element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
-                />
-                <Route
-                    path="/chat/messages"
-                    element={
-                        authUser ? (
-                            <ChatPage
-                                authUser={authUser}
-                                unreadUsers={unreadUsers}
-                                setUnreadUsers={setUnreadUsers}
-                                socketRef={socketRef}
-                            />
-                        ) : (
-                            <Navigate to="/login" />
-                        )
-                    }
-                />
-                <Route
-                    path="/chat/messages/:username"
-                    element={
-                        authUser ? (
-                            <ChatPage
-                                authUser={authUser}
-                                unreadUsers={unreadUsers}
-                                setUnreadUsers={setUnreadUsers}
-                                socketRef={socketRef}
-                            />
-                        ) : (
-                            <Navigate to="/login" />
-                        )
-                    }
-                />
-                <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-                <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
-            </Routes>
-            {authUser && <RightPanel authUser={authUser} unreadUsers={unreadUsers} />}
+            <div className="flex-1 flex min-w-0">
+                <Routes>
+                    <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
+                    <Route
+                        path="/notifications"
+                        element={
+                            authUser ? (
+                                <NotificationPage
+                                    setHasNewNotification={setHasNewNotification}
+                                    setBlinkNotification={setBlinkNotification}
+                                />
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                    <Route
+                        path="/profile/:username/:tab"
+                        element={authUser ? <FollowersFollowingPage /> : <Navigate to="/login" />}
+                    />
+                    <Route
+                        path="/profile/:username"
+                        element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+                    />
+                    <Route
+                        path="/chat/messages"
+                        element={
+                            authUser ? (
+                                <ChatPage
+                                    authUser={authUser}
+                                    unreadUsers={unreadUsers}
+                                    setUnreadUsers={setUnreadUsers}
+                                    socketRef={socketRef}
+                                />
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                    <Route
+                        path="/chat/messages/:username"
+                        element={
+                            authUser ? (
+                                <ChatPage
+                                    authUser={authUser}
+                                    unreadUsers={unreadUsers}
+                                    setUnreadUsers={setUnreadUsers}
+                                    socketRef={socketRef}
+                                />
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
+                    <Route
+                        path="/login"
+                        element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+                    />
+                    <Route
+                        path="/signup"
+                        element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+                    />
+                </Routes>
+                {authUser && <RightPanel authUser={authUser} unreadUsers={unreadUsers} />}
+            </div>
         </div>
     );
 }

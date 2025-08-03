@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUsers = [] }) => {
+const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers = [] }) => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -26,13 +26,16 @@ const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUser
 
     const handleUserSelect = (username, userId) => {
         navigate(`/chat/messages/${username}`);
-        onUserSelect(userId);
+        // Call the callback to collapse the panel on mobile
+        if (onUserSelect) {
+            onUserSelect(userId);
+        }
     };
 
     return (
         <>
-            <div className="flex-1 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-black h-screen p-4 flex flex-col">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex-shrink-0">
+            <div className="flex-1 border-gray-700 bg-black h-screen p-3 sm:p-4 flex flex-col">
+                <h2 className="text-base sm:text-lg font-semibold text-white mb-4 flex-shrink-0">
                     Messages
                 </h2>
                 {isLoading ? (
@@ -40,18 +43,14 @@ const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUser
                         <LoadingSpinner size="sm" />
                     </div>
                 ) : users.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 text-center flex-shrink-0">
-                        No mutual users found
-                    </p>
+                    <p className="text-gray-400 text-center flex-shrink-0">No mutual users found</p>
                 ) : (
                     <ul className="flex-1 overflow-y-auto users-scroll space-y-2">
                         {users.map((user) => (
                             <li
                                 key={user._id}
-                                className={`p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
-                                    selectedUsername === user.username
-                                        ? "bg-gray-200 dark:bg-gray-900"
-                                        : ""
+                                className={`p-3 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors ${
+                                    selectedUsername === user.username ? "bg-gray-900" : ""
                                 }`}
                                 onClick={() => handleUserSelect(user.username, user._id)}
                             >
@@ -63,12 +62,12 @@ const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUser
                                             className="w-10 h-10 rounded-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-800 dark:text-white text-lg font-bold">
+                                        <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white text-lg font-bold">
                                             {user.fullName ? user.fullName[0].toUpperCase() : "?"}
                                         </div>
                                     )}
                                     <div className="relative">
-                                        <p className="text-gray-800 dark:text-white font-medium flex items-center">
+                                        <p className="text-white font-medium flex items-center">
                                             {user.fullName}
                                             {unreadUsers.includes(user._id) && (
                                                 <span
@@ -77,9 +76,7 @@ const UserListSidebar = ({ authUser, selectedUsername, onUPserSelect, unreadUser
                                                 ></span>
                                             )}
                                         </p>
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                                            @{user.username}
-                                        </p>
+                                        <p className="text-gray-400 text-sm">@{user.username}</p>
                                     </div>
                                 </div>
                             </li>

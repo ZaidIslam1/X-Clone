@@ -41,9 +41,9 @@ const Sidebar = ({
     });
 
     return (
-        <div className="md:flex-[2_2_0] w-18 max-w-52 font-semibold">
-            <div className="sticky top-1 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full">
-                <Link to="/" className="flex justify-center md:justify-start">
+        <div className="flex-shrink-0 w-16 md:w-20 lg:w-52 lg:max-w-52 font-semibold">
+            <div className="fixed lg:sticky top-0 lg:top-1 left-0 h-screen flex flex-col border-r border-gray-700 w-16 md:w-20 lg:w-full bg-black z-40 sidebar-mobile">
+                <Link to="/" className="flex justify-center lg:justify-start mt-2">
                     <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
                 </Link>
                 <ul className="flex flex-col gap-3 mt-4 ">

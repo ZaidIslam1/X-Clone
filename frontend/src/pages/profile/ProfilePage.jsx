@@ -101,7 +101,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="flex-[4_4_0]  border-r border-gray-700 min-h-screen ">
+            <div className="flex-[4_4_0] border-r border-gray-700 min-h-screen w-full">
                 {/* HEADER */}
                 {isLoading && isRefetching && <ProfileHeaderSkeleton />}
                 {!isLoading && !isRefetching && !user && (
@@ -110,7 +110,7 @@ const ProfilePage = () => {
                 <div className="flex flex-col">
                     {!isLoading && user && (
                         <>
-                            <div className="flex gap-10 px-4 py-2 items-center">
+                            <div className="flex gap-10 px-4 py-2 items-center sticky top-0 bg-black/80 backdrop-blur-md z-10 border-b border-gray-700">
                                 <Link to="/">
                                     <FaArrowLeft className="w-4 h-4" />
                                 </Link>
@@ -126,11 +126,11 @@ const ProfilePage = () => {
                                 {coverImg || user?.coverImg ? (
                                     <img
                                         src={coverImg || user?.coverImg}
-                                        className="h-52 w-full object-cover"
+                                        className="h-40 sm:h-52 w-full object-cover"
                                         alt="cover image"
                                     />
                                 ) : (
-                                    <div className="h-52 w-full flex items-center justify-center bg-gray-800 text-white text-7xl font-bold select-none">
+                                    <div className="h-40 sm:h-52 w-full flex items-center justify-center bg-gray-800 text-white text-5xl sm:text-7xl font-bold select-none">
                                         {user?.fullName
                                             ? user.fullName[0].toUpperCase()
                                             : user?.username?.[0]?.toUpperCase()}

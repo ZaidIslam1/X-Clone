@@ -42,25 +42,43 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
     return (
         <>
             {/* Mobile toggle button with tooltip */}
-            <div
-                className={`lg:hidden fixed ${
-                    isMessagesPage ? "bottom-20" : "bottom-6"
-                } right-6 z-50 group`}
-            >
+            <div className="lg:hidden fixed bottom-6 right-6 z-50 group">
                 <button
                     className="bg-primary text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
                     onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
                     aria-label={getTooltipText()}
                 >
-                    {/* Always show left arrow - points to what will be shown */}
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 19l-7-7 7-7"
-                        />
-                    </svg>
+                    {isMobileCollapsed ? (
+                        // Plus icon when collapsed
+                        <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            />
+                        </svg>
+                    ) : (
+                        // Left arrow when expanded
+                        <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                    )}
                 </button>
 
                 {/* Tooltip */}
@@ -84,17 +102,15 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
             <div
                 className={`
                 ${isMobileCollapsed ? "translate-x-full lg:translate-x-0" : "translate-x-0"} 
-                fixed lg:relative top-0 lg:top-0 right-0 z-50 lg:z-auto
-                ${
-                    isMessagesPage ? "lg:flex-[0_0_280px] lg:w-70" : "flex-[3_3_0] lg:flex-[2_2_0]"
-                } flex flex-col 
-                my-0 lg:my-2 mx-0 lg:mx-2 
-                w-80 lg:w-auto h-screen gap-4 
+                fixed lg:relative top-0 lg:top-2 right-0 z-50 lg:z-auto
+                flex-[3_3_0] lg:flex-[2_2_0] flex flex-col 
+                my-0 lg:my-4 mx-0 lg:mx-2 
+                w-80 lg:w-72 h-screen gap-4 
                 bg-black lg:bg-transparent
                 border-l border-gray-700 lg:border-none
                 overflow-y-auto
                 transform transition-transform duration-300 ease-in-out
-                px-4 lg:px-0 py-4 lg:py-2
+                px-4 lg:px-0 py-4 lg:py-0
             `}
             >
                 {/* Close button for mobile */}
@@ -115,7 +131,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
 
                 {isMessagesPage ? (
                     // Show UserListSidebar on messages page
-                    <div className="bg-[#16181C] rounded-md flex-1 mt-2">
+                    <div className="bg-[#16181C] rounded-md flex-1">
                         <UserListSidebar
                             authUser={authUser}
                             unreadUsers={unreadUsers}
@@ -125,7 +141,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                 ) : (
                     // Default Suggested Users Panel
                     <div
-                        className={`bg-[#16181C] p-4 rounded-md flex flex-col mt-2 ${
+                        className={`bg-[#16181C] p-4 rounded-md flex flex-col ${
                             noSuggestions ? "min-h-[150px]" : ""
                         }`}
                     >
