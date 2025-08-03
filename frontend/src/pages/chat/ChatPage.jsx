@@ -49,53 +49,58 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
     const fetchMessages = async () => {
         try {
             setIsLoading(true);
+            setError(null); // Clear any previous errors
             const res = await fetch(`/api/users/messages/${receiverId}`);
-            const text = await res.text();
-            let data;
-            if (!text.trim()) {
-                data = [];
-            } else if (!text.trim().startsWith("[")) {
-                throw new Error("Invalid response");
-            } else {
-                data = JSON.parse(text);
+            const data = await res.json();
+
+            // Check if the response is ok and handle empty messages array
+            if (!res.ok) {
+                if (res.status === 404) {
+                    // No messages found - this is okay, just set empty array
+                    setMessages([]);
+                    return;
+                }
+                throw new Error(data.error || "Failed to load messages");
             }
-            setMessages(
-                data.map((msg) => ({
-                    ...msg,
-                    isOwn: msg.senderId.toString() === authUser._id.toString(),
-                }))
-            );
+
+            // Handle case where data might be null or undefined
+            const messagesArray = Array.isArray(data) ? data : [];
+            const processedMessages = messagesArray.map((msg) => ({
+                ...msg,
+                isOwn: msg.senderId === authUser._id,
+            }));
+            setMessages(processedMessages);
         } catch (err) {
             console.error("Fetch messages error:", err);
-            setError("Failed to load messages");
+            // Only set error for actual failures, not for empty message lists
+            if (err.message !== "Failed to fetch") {
+                setError("Failed to load messages");
+            } else {
+                // Network error - show a more helpful message
+                setError("Unable to connect to server");
+            }
         } finally {
             setIsLoading(false);
         }
     };
-
-    // Listen for real-time messages for this chat only
     useEffect(() => {
         if (!socketRef || !socketRef.current || !receiverId) return;
-        const handleReceive = (message) => {
-            // Only add to messages if for this chat
+
+        const handleReceive = (data) => {
             if (
-                (message.senderId === receiverId && message.receiverId === authUser._id) ||
-                (message.senderId === authUser._id && message.receiverId === receiverId)
+                (data.senderId === authUser._id && data.receiverId === receiverId) ||
+                (data.senderId === receiverId && data.receiverId === authUser._id)
             ) {
-                setMessages((prev) => {
-                    if (prev.some((msg) => msg._id === message._id)) return prev;
-                    return [
-                        ...prev,
-                        {
-                            ...message,
-                            isOwn: message.senderId === authUser._id,
-                        },
-                    ];
-                });
-                // Remove from unread if this chat is open
-                setUnreadUsers((prev) => prev.filter((id) => id !== receiverId));
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        ...data,
+                        isOwn: data.senderId === authUser._id,
+                    },
+                ]);
             }
         };
+
         socketRef.current.on("receive_message", handleReceive);
         socketRef.current.on("sent_message", handleReceive);
         return () => {
@@ -124,9 +129,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         setInput("");
     };
     return (
-        <div className="flex h-screen overflow-hidden flex-1 w-full">
+        <div className="flex h-screen overflow-hidden flex-1 w-full chat-no-scroll">
             {/* Chat area (center) */}
-            <div className="flex-1 flex flex-col h-full w-full">
+            <div className="flex-1 flex flex-col h-full w-full chat-no-scroll">
                 {/* Header */}
                 <div className="px-3 sm:px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
                     {!username ? (
@@ -145,7 +150,7 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
 
                 {/* Messages scroll area - more padding for bigger feel */}
                 <div
-                    className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-4 messages-scroll"
+                    className="flex-1 px-3 sm:px-6 py-4 space-y-4 messages-only-scroll"
                     style={{ paddingBottom: 32 }}
                 >
                     {error && <p className="text-center text-red-500 mt-8">{error}</p>}
@@ -219,4 +224,5 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         </div>
     );
 };
+
 export default ChatPage;

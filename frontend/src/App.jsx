@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Homepage from "./pages/home/Homepage.jsx";
 import LoginPage from "./pages/auth/login/LoginPage.jsx";
 import SignUpPage from "./pages/auth/signup/SignUpPage.jsx";
@@ -15,6 +15,8 @@ import ChatPage from "./pages/chat/ChatPage.jsx";
 import { io } from "socket.io-client";
 
 function App() {
+    const location = useLocation();
+    const isMessagesPage = location.pathname.startsWith("/chat/messages");
     const queryClient = useQueryClient();
     const { data: authUser, isLoading } = useQuery({
         queryKey: ["authUser"],
@@ -174,7 +176,11 @@ function App() {
     }
 
     return (
-        <div className="flex max-w-6xl mx-auto min-h-screen relative bg-black">
+        <div
+            className={`flex max-w-6xl mx-auto h-screen relative bg-black mobile-safe-top mobile-safe-bottom overflow-hidden ${
+                isMessagesPage ? "chat-no-scroll" : ""
+            }`}
+        >
             {authUser && (
                 <Sidebar
                     authUser={authUser}
@@ -184,7 +190,7 @@ function App() {
                     blinkNotification={blinkNotification}
                 />
             )}
-            <div className="flex-1 flex min-w-0">
+            <div className={`flex-1 flex min-w-0 ${isMessagesPage ? "chat-no-scroll" : ""}`}>
                 <Routes>
                     <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
                     <Route

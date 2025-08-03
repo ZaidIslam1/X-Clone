@@ -51,18 +51,27 @@ const Post = ({ post }) => {
             return data;
         },
         onSuccess: (updatedPost) => {
-            queryClient.setQueryData(["posts"], (oldData) =>
-                oldData.map((p) =>
-                    p._id === post._id ? { ...p, comments: updatedPost.comments } : p
-                )
-            );
-            // Scroll to bottom of comments after successful comment submission
-            setTimeout(() => {
-                if (commentsContainerRef.current) {
-                    commentsContainerRef.current.scrollTop =
-                        commentsContainerRef.current.scrollHeight;
-                }
-            }, 100);
+            onSuccess: (updatedPost) => {
+                queryClient.setQueryData(["posts"], (oldData) =>
+                    oldData.map((p) =>
+                        p._id === post._id ? { ...p, comments: updatedPost.comments } : p
+                    )
+                );
+                // Scroll to bottom of comments after successful comment submission
+                setTimeout(() => {
+                    if (commentsContainerRef.current) {
+                        commentsContainerRef.current.scrollTop =
+                            commentsContainerRef.current.scrollHeight;
+                    }
+                }, 100);
+            },
+                // Scroll to bottom of comments after successful comment submission
+                setTimeout(() => {
+                    if (commentsContainerRef.current) {
+                        commentsContainerRef.current.scrollTop =
+                            commentsContainerRef.current.scrollHeight;
+                    }
+                }, 100);
         },
     });
 

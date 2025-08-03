@@ -1,6 +1,30 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Mobile-first responsive design and safe areas */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden; /* Prevent page-level vertical scrolling */
+    scroll-behavior: auto; /* Prevent smooth scrolling that can cause jumps */
+    /* Safe area handling for iOS devices */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    overscroll-behavior: none; /* Prevent elastic scrolling */
+}
+
+#root {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+    position: relative;
+    overflow: hidden; /* Prevent any root-level scrolling */
+}
+
 /* Custom X Clone Theme */
 @plugin "daisyui/theme" {
     name: "xclone";
@@ -20,6 +44,25 @@
     --color-secondary: rgb(245, 245, 245);
     --color-base-100: white;
     --color-neutral-content: black;
+}
+
+/* Mobile-optimized grays - lighter on mobile for better visibility */
+@media (max-width: 768px) {
+    .text-gray-700 {
+        color: rgb(156, 163, 175) !important; /* Much lighter gray for mobile */
+    }
+
+    .border-gray-700 {
+        border-color: rgb(75, 85, 99) !important; /* Lighter border gray */
+    }
+
+    .border-gray-600 {
+        border-color: rgb(107, 114, 128) !important; /* Even lighter for better contrast */
+    }
+
+    .text-gray-400 {
+        color: rgb(156, 163, 175) !important; /* Lighter gray for better readability */
+    }
 }
 
 /* Custom Scrollbar Styles */
@@ -49,7 +92,7 @@
     background: transparent;
 }
 
-/* Show scrollbars on hover or when actively scrolling */
+/* Show scrollbars on hover or when actively scrolling - lighter on mobile */
 *:hover {
     scrollbar-color: rgba(64, 64, 64, 0.4) transparent;
 }
@@ -60,6 +103,21 @@
 
 *:hover::-webkit-scrollbar-thumb:hover {
     background-color: rgba(96, 96, 96, 0.6);
+}
+
+/* Mobile-specific scrollbar colors */
+@media (max-width: 768px) {
+    *:hover {
+        scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    }
+
+    *:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+    }
+
+    *:hover::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(156, 163, 175, 0.7);
+    }
 }
 
 /* Show scrollbars during active scroll (for containers with scroll events) */
@@ -130,4 +188,126 @@
 
 .conditional-scroll:hover::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+/* Mobile-specific conditional scroll colors */
+@media (max-width: 768px) {
+    .conditional-scroll:hover {
+        scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+    }
+
+    .conditional-scroll:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+    }
+
+    .conditional-scroll:hover::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(156, 163, 175, 0.7);
+    }
+}
+
+/* Safe area handling for mobile browsers */
+@media (max-width: 768px) {
+    .mobile-safe-bottom {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+
+    .mobile-safe-top {
+        padding-top: calc(0.5rem + env(safe-area-inset-top));
+    }
+
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .pt-safe {
+        padding-top: env(safe-area-inset-top);
+    }
+}
+
+/* Prevent zoom on input focus for iOS */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+}
+
+/* Prevent layout shifts and scroll jumps */
+* {
+    box-sizing: border-box;
+}
+
+/* Stabilize layout containers */
+.max-w-6xl {
+    position: relative;
+}
+
+/* Prevent content jumping during navigation */
+.flex-1 {
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Prevent mobile viewport bouncing - only for chat page */
+@media (max-width: 768px) {
+    /* Prevent elastic scrolling on iOS for all containers */
+    * {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: auto;
+    }
+
+    /* Only apply restrictive scrolling to chat page container */
+    .chat-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        touch-action: pan-y;
+    }
+
+    /* Prevent elastic scrolling on iOS for specific elements */
+    .messages-scroll {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Lock ChatPage to prevent any page-level scrolling */
+.chat-page-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* Prevent scrolling on chat and right panel areas */
+.chat-no-scroll {
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: none;
+}
+
+/* Only allow scrolling within the messages container */
+.messages-only-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+/* Allow scrolling within page content areas */
+.page-content-scroll {
+    overflow-y: auto;
+    height: 100%;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }

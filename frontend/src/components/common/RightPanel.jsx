@@ -92,7 +92,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                 w-80 lg:w-auto h-screen gap-4 
                 bg-black lg:bg-transparent
                 border-l border-gray-700 lg:border-none
-                overflow-y-auto
+                ${isMessagesPage ? "chat-no-scroll" : "overflow-y-auto"}
                 transform transition-transform duration-300 ease-in-out
                 px-4 lg:px-0 py-4 lg:py-2
             `}

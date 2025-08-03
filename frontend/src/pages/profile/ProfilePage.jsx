@@ -101,7 +101,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="flex-[4_4_0] border-r border-gray-700 min-h-screen w-full">
+            <div className="flex-[4_4_0] border-r border-gray-700 h-screen overflow-y-auto w-full">
                 {/* HEADER */}
                 {isLoading && isRefetching && <ProfileHeaderSkeleton />}
                 {!isLoading && !isRefetching && !user && (
@@ -138,7 +138,7 @@ const ProfilePage = () => {
                                 )}
                                 {isMyProfile && (
                                     <div
-                                        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200"
+                                        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-75 md:opacity-0 md:group-hover/cover:opacity-100 transition duration-200"
                                         onClick={() => coverImgRef.current.click()}
                                     >
                                         <MdEdit className="w-5 h-5 text-white" />
@@ -168,7 +168,7 @@ const ProfilePage = () => {
                                             }
                                             alt={user?.fullName}
                                         />
-                                        <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                                        <div className="absolute top-5 right-3 p-1 bg-primary rounded-full opacity-75 md:opacity-0 md:group-hover/avatar:opacity-100 cursor-pointer transition duration-200">
                                             {isMyProfile && (
                                                 <MdEdit
                                                     className="w-4 h-4 text-white"

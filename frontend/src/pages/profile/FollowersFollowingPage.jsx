@@ -69,7 +69,7 @@ const FollowersFollowingPage = () => {
     };
 
     return (
-        <div className="flex-[4_4_0] border-l border-r border-gray-700 min-h-screen p-4">
+        <div className="flex-[4_4_0] border-l border-r border-gray-700 h-screen overflow-y-auto p-4">
             {/* NEW: Show profile user name */}
             {isProfileLoading && <p className="text-center text-gray-400 mb-4">Loading user...</p>}
             {isProfileError && (

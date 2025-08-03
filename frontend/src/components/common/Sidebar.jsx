@@ -3,7 +3,7 @@ import XSvg from "../svgs/X";
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -17,6 +17,7 @@ const Sidebar = ({
     blinkNotification = false,
 }) => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const { mutate: logoutMutation } = useMutation({
         mutationFn: async () => {
@@ -41,84 +42,87 @@ const Sidebar = ({
     });
 
     return (
-        <div className="flex-shrink-0 w-16 md:w-20 lg:w-52 lg:max-w-52 font-semibold">
-            <div className="fixed lg:sticky top-0 lg:top-1 left-0 h-screen flex flex-col border-r border-gray-700 w-16 md:w-20 lg:w-full bg-black z-40 sidebar-mobile">
+        <div className="flex-shrink-0 w-16 lg:w-52 lg:max-w-52 font-semibold">
+            <div className="fixed lg:sticky top-0 lg:top-1 left-0 h-screen flex flex-col border-r border-gray-700 w-16 lg:w-full bg-black z-40 sidebar-mobile pb-safe">
                 <Link to="/" className="flex justify-center lg:justify-start mt-2">
                     <XSvg className="px-2 w-12 h-12 rounded-full fill-white hover:bg-stone-900" />
                 </Link>
                 <ul className="flex flex-col gap-3 mt-4 ">
-                    <li className="flex justify-center md:justify-start">
+                    <li className="flex justify-center lg:justify-start">
                         <Link
                             to="/"
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                         >
                             <MdHomeFilled className="w-6 h-6" />
-                            <span className="text-lg hidden md:block">Home</span>
+                            <span className="text-lg hidden lg:block">Home</span>
                         </Link>
                     </li>
-                    <li className="flex justify-center md:justify-start relative">
+                    <li className="flex justify-center lg:justify-start relative">
                         <Link
                             to="/notifications"
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                             onClick={() => setHasNewNotification && setHasNewNotification(false)}
                         >
                             <IoNotifications className="w-6 h-6" />
-                            <span className="text-lg hidden md:block">Notifications</span>
+                            <span className="text-lg hidden lg:block">Notifications</span>
                             {hasNewNotification && (
-                                <span className="absolute -top-1 right-0 md:right-2 flex items-center">
+                                <span className="absolute -top-1 right-0 lg:right-2 flex items-center">
                                     <span className="w-2 h-2 rounded-full bg-primary"></span>
                                 </span>
                             )}
                         </Link>
                     </li>
-                    <li className="flex justify-center md:justify-start">
+                    <li className="flex justify-center lg:justify-start">
                         <Link
                             to={`/profile/${authUser?.username}`}
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                         >
                             <FaUser className="w-6 h-6" />
-                            <span className="text-lg hidden md:block">Profile</span>
+                            <span className="text-lg hidden lg:block">Profile</span>
                         </Link>
                     </li>
-                    <li className="flex justify-center md:justify-start">
+                    <li className="flex justify-center lg:justify-start">
                         <Link
                             to={`/profile/${authUser?.username}/following`}
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
                         >
                             <RiUserFollowFill className="w-6 h-6" />
-                            <span className="text-lg hidden md:block">Following</span>
+                            <span className="text-lg hidden lg:block">Following</span>
                         </Link>
                     </li>
-                    <li className="flex justify-center md:justify-start relative">
-                        <Link
-                            to="/chat/messages"
+                    <li className="flex justify-center lg:justify-start relative">
+                        <div
                             className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/chat/messages", { replace: true });
+                            }}
                         >
                             <RiMessageFill className="w-6 h-6" />
-                            <span className="text-lg hidden md:block">Messages</span>
+                            <span className="text-lg hidden lg:block">Messages</span>
                             {unreadUsers && unreadUsers.length > 0 && (
-                                <span className="absolute -top-1 right-0 md:right-2 flex items-center">
+                                <span className="absolute -top-1 right-0 lg:right-2 flex items-center">
                                     <span className="w-2 h-2 rounded-full bg-primary"></span>
                                     <span className="ml-1 text-primary text-xs font-bold">
                                         {unreadUsers.length}
                                     </span>
                                 </span>
                             )}
-                        </Link>
+                        </div>
                     </li>
                 </ul>
                 {authUser && (
                     <Link
                         to={`/profile/${authUser.username}`}
-                        className="mt-auto mb-4 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full"
+                        className="mt-auto mb-4 lg:mb-6 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full mobile-safe-bottom"
                     >
-                        <div className="avatar hidden md:inline-flex">
+                        <div className="avatar hidden lg:inline-flex">
                             <div className="w-8 rounded-full">
                                 <img src={authUser?.profileImg || "/avatar-placeholder.png"} />
                             </div>
                         </div>
                         <div className="flex justify-between flex-1">
-                            <div className="hidden md:block">
+                            <div className="hidden lg:block">
                                 <p className="text-white font-bold text-sm w-20 truncate">
                                     {authUser?.fullName}
                                 </p>
