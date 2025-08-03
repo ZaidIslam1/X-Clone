@@ -749,28 +749,21 @@ body {
 
     /* Chat input area mobile handling */
     .chat-input-mobile {
-        padding-bottom: calc(
-            2rem + env(safe-area-inset-bottom)
-        ) !important; /* Increased padding for focus outline */
-        margin-bottom: calc(
-            0.5rem + env(safe-area-inset-bottom)
-        ) !important; /* Slightly higher positioning */
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+        margin-bottom: env(safe-area-inset-bottom) !important;
         position: sticky !important;
-        bottom: calc(
-            0.5rem + env(safe-area-inset-bottom)
-        ) !important; /* Raised higher from bottom */
+        bottom: env(safe-area-inset-bottom) !important;
         background: rgb(0, 0, 0) !important;
         border-top: 1px solid rgb(107, 114, 128) !important;
         z-index: 50 !important;
     }
 
-    /* Fix chat input focus outline */
+    /* Remove chat input focus outline */
     .chat-input-mobile input:focus,
     .chat-input-mobile textarea:focus {
-        border-color: rgb(29, 155, 240) !important;
+        border-color: rgb(107, 114, 128) !important; /* Keep original border color */
         outline: none !important;
-        box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2) !important;
-        margin-bottom: 0.25rem !important; /* Extra space to prevent outline cutoff */
+        box-shadow: none !important; /* Remove blue outline */
     }
 }
 
