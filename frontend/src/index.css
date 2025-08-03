@@ -254,7 +254,27 @@ body {
     .w-4,
     .w-5,
     .w-6 {
-        color: rgb(156, 163, 175) !important;
+        color: rgb(255, 255, 255) !important; /* White for better visibility */
+    }
+
+    /* Fix SVG icons and logos to be white */
+    svg {
+        color: rgb(255, 255, 255) !important;
+        fill: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix specific icon elements */
+    .text-gray-300,
+    .text-gray-400,
+    .text-gray-500,
+    .text-gray-600 {
+        color: rgb(255, 255, 255) !important; /* Make all gray text white for visibility */
+    }
+
+    /* Fix chat message text colors */
+    .text-gray-800,
+    .text-gray-900 {
+        color: rgb(255, 255, 255) !important; /* Chat messages should be white */
     }
 
     /* Fix any remaining dark elements */
@@ -314,6 +334,142 @@ body {
 
     .btn-xs {
         color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix tab navigation and inactive states */
+    .tab,
+    .tab-active,
+    .tab-inactive {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix inactive tab states specifically */
+    .text-slate-500,
+    .opacity-60,
+    .opacity-70 {
+        color: rgb(255, 255, 255) !important;
+        opacity: 1 !important;
+    }
+
+    /* Fix floating action buttons */
+    .btn-circle,
+    .btn-sm,
+    .btn-ghost {
+        background-color: rgb(29, 155, 240) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(29, 155, 240) !important;
+    }
+
+    /* Fix any button with arrow icons */
+    .btn svg {
+        color: rgb(255, 255, 255) !important;
+        fill: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix specific gray shades used in chat */
+    .text-gray-200,
+    .text-gray-300,
+    .text-gray-400,
+    .text-gray-500,
+    .text-gray-600 {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix message text in chat specifically */
+    .message-text,
+    .chat-message {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix any remaining opacity issues */
+    .opacity-50 {
+        opacity: 1 !important;
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Additional fixes for chat and navigation elements */
+    .text-sm,
+    .text-xs {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix navigation tabs and buttons */
+    button {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix any remaining gray backgrounds */
+    .bg-gray-100,
+    .bg-gray-200,
+    .bg-gray-300 {
+        background-color: rgb(55, 65, 81) !important;
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Force all text elements to be visible */
+    span,
+    div:not(.bg-primary):not(.bg-secondary) {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix hover states for buttons and tabs */
+    .hover\:text-gray-300:hover,
+    .hover\:text-gray-400:hover,
+    .hover\:text-gray-500:hover {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix comment box and modal positioning on mobile */
+    .modal-box {
+        max-height: calc(100dvh - 2rem) !important;
+        margin-top: 1rem !important;
+        margin-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+        width: calc(100% - 2rem) !important;
+        max-width: calc(100% - 2rem) !important;
+        position: relative !important;
+    }
+
+    /* Ensure comment textarea is properly sized */
+    .modal-box .textarea {
+        min-height: 80px !important;
+        max-height: 200px !important;
+        resize: none !important;
+    }
+
+    /* Fix modal positioning */
+    .modal {
+        padding: 0 !important;
+        align-items: flex-start !important;
+        padding-top: env(safe-area-inset-top) !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+
+    /* Fix dialog positioning */
+    dialog {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        max-height: 100dvh !important;
+        max-width: 100dvw !important;
+        margin: 0 !important;
+        padding: env(safe-area-inset-top) 1rem calc(1rem + env(safe-area-inset-bottom)) 1rem !important;
+    }
+
+    /* Ensure comment form buttons are visible */
+    .modal-action {
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        margin-top: 1rem !important;
+    }
+
+    /* Fix any fixed positioned elements that might interfere */
+    .fixed {
+        z-index: 40 !important;
+    }
+
+    .modal {
+        z-index: 1000 !important;
     }
 }
 
