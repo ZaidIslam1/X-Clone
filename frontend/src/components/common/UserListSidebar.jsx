@@ -45,7 +45,7 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers
                 ) : users.length === 0 ? (
                     <p className="text-gray-400 text-center flex-shrink-0">No mutual users found</p>
                 ) : (
-                    <ul className="flex-1 overflow-y-auto users-scroll space-y-2">
+                    <ul className="flex-1 conditional-scroll space-y-2">
                         {users.map((user) => (
                             <li
                                 key={user._id}
