@@ -471,6 +471,77 @@ body {
     .modal {
         z-index: 1000 !important;
     }
+
+    /* Fix notification bubbles and badges on mobile */
+    .badge {
+        background-color: rgb(239, 68, 68) !important; /* Red background for notifications */
+        color: rgb(255, 255, 255) !important;
+        border: 2px solid rgb(0, 0, 0) !important; /* Black border for contrast */
+        font-weight: bold !important;
+        min-width: 18px !important;
+        height: 18px !important;
+        font-size: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Fix notification and message count bubbles */
+    .badge-error,
+    .badge-primary,
+    .notification-count,
+    .message-count {
+        background-color: rgb(239, 68, 68) !important; /* Bright red */
+        color: rgb(255, 255, 255) !important;
+        border: 2px solid rgb(0, 0, 0) !important;
+        font-weight: bold !important;
+        z-index: 10 !important;
+        position: relative !important;
+    }
+
+    /* Ensure notification dots are visible */
+    .absolute {
+        z-index: 10 !important;
+    }
+
+    /* Fix notification indicators on icons */
+    .relative .absolute {
+        background-color: rgb(239, 68, 68) !important;
+        color: rgb(255, 255, 255) !important;
+        border: 2px solid rgb(0, 0, 0) !important;
+        border-radius: 50% !important;
+        min-width: 20px !important;
+        height: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        top: -8px !important;
+        right: -8px !important;
+    }
+
+    /* Fix small notification dots */
+    .w-2,
+    .h-2 {
+        background-color: rgb(239, 68, 68) !important;
+        border: 1px solid rgb(0, 0, 0) !important;
+        min-width: 8px !important;
+        min-height: 8px !important;
+    }
+
+    /* Ensure notification text is visible */
+    .text-red-500,
+    .text-red-600 {
+        color: rgb(239, 68, 68) !important;
+    }
+
+    /* Fix any notification containers */
+    .notification {
+        border: 1px solid rgb(156, 163, 175) !important;
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+    }
 }
 
 /* Custom Scrollbar Styles */
