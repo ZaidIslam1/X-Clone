@@ -325,9 +325,9 @@ body {
         border-color: rgb(156, 163, 175) !important;
     }
 
-    /* Fix button circle close buttons */
+    /* Fix button circle close buttons - restore original styling */
     .btn-circle {
-        background-color: rgb(75, 85, 99) !important;
+        background-color: transparent !important; /* Remove forced background */
         color: rgb(255, 255, 255) !important;
         border-color: rgb(156, 163, 175) !important;
     }
@@ -355,6 +355,13 @@ body {
     .btn-circle,
     .btn-sm,
     .btn-ghost {
+        background-color: transparent !important; /* Remove forced blue background */
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Only apply blue to primary buttons */
+    .btn-primary {
         background-color: rgb(29, 155, 240) !important;
         color: rgb(255, 255, 255) !important;
         border-color: rgb(29, 155, 240) !important;
@@ -474,7 +481,7 @@ body {
 
     /* Fix notification bubbles and badges on mobile */
     .badge {
-        background-color: rgb(239, 68, 68) !important; /* Red background for notifications */
+        background-color: rgb(29, 155, 240) !important; /* Twitter blue background */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important; /* Black border for contrast */
         font-weight: bold !important;
@@ -491,7 +498,7 @@ body {
     .badge-primary,
     .notification-count,
     .message-count {
-        background-color: rgb(239, 68, 68) !important; /* Bright red */
+        background-color: rgb(29, 155, 240) !important; /* Twitter blue */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important;
         font-weight: bold !important;
@@ -506,7 +513,7 @@ body {
 
     /* Fix notification indicators on icons */
     .relative .absolute {
-        background-color: rgb(239, 68, 68) !important;
+        background-color: rgb(29, 155, 240) !important; /* Twitter blue */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important;
         border-radius: 50% !important;
@@ -524,13 +531,13 @@ body {
     /* Fix small notification dots */
     .w-2,
     .h-2 {
-        background-color: rgb(239, 68, 68) !important;
+        background-color: rgb(29, 155, 240) !important; /* Twitter blue for small dots */
         border: 1px solid rgb(0, 0, 0) !important;
         min-width: 8px !important;
         min-height: 8px !important;
     }
 
-    /* Ensure notification text is visible */
+    /* Keep red colors only for error states */
     .text-red-500,
     .text-red-600 {
         color: rgb(239, 68, 68) !important;
