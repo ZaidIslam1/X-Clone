@@ -479,8 +479,9 @@ body {
         z-index: 1000 !important;
     }
 
-    /* Fix notification bubbles and badges on mobile */
-    .badge {
+    /* Fix notification bubbles and badges on mobile - only target actual badges */
+    .badge,
+    .notification-badge {
         background-color: rgb(29, 155, 240) !important; /* Twitter blue background */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important; /* Black border for contrast */
@@ -493,11 +494,12 @@ body {
         justify-content: center !important;
     }
 
-    /* Fix notification and message count bubbles */
+    /* Fix notification and message count bubbles - only specific notification elements */
     .badge-error,
     .badge-primary,
     .notification-count,
-    .message-count {
+    .message-count,
+    .notification-indicator {
         background-color: rgb(29, 155, 240) !important; /* Twitter blue */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important;
@@ -506,13 +508,14 @@ body {
         position: relative !important;
     }
 
-    /* Ensure notification dots are visible */
-    .absolute {
+    /* Ensure notification dots are visible - only for actual notifications */
+    .notification-dot {
         z-index: 10 !important;
     }
 
-    /* Fix notification indicators on icons */
-    .relative .absolute {
+    /* Fix notification indicators on icons - only for actual notification badges */
+    .notification-badge.absolute,
+    .notification-indicator {
         background-color: rgb(29, 155, 240) !important; /* Twitter blue */
         color: rgb(255, 255, 255) !important;
         border: 2px solid rgb(0, 0, 0) !important;
@@ -526,11 +529,13 @@ body {
         font-weight: bold !important;
         top: -8px !important;
         right: -8px !important;
+        position: absolute !important;
+        z-index: 10 !important;
     }
 
-    /* Fix small notification dots */
-    .w-2,
-    .h-2 {
+    /* Fix small notification dots - only target actual notification elements */
+    .notification-dot,
+    .badge {
         background-color: rgb(29, 155, 240) !important; /* Twitter blue for small dots */
         border: 1px solid rgb(0, 0, 0) !important;
         min-width: 8px !important;
