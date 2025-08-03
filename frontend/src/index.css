@@ -257,10 +257,72 @@ body {
         color: rgb(255, 255, 255) !important; /* White for better visibility */
     }
 
-    /* Fix SVG icons and logos to be white */
-    svg {
+    /* Fix SVG icons and logos to be white - except notification icons */
+    svg:not(.notification-icon) {
         color: rgb(255, 255, 255) !important;
         fill: rgb(255, 255, 255) !important;
+    }
+
+    /* Allow notification icons to keep their original colors */
+    .notification-icon,
+    .text-green-500,
+    .text-blue-500,
+    .text-red-500,
+    .text-primary {
+        color: inherit !important;
+        fill: inherit !important;
+    }
+
+    /* Restore specific notification icon colors for mobile */
+    .text-green-500 {
+        color: rgb(34, 197, 94) !important; /* Green for comments */
+    }
+
+    .text-red-500 {
+        color: rgb(239, 68, 68) !important; /* Red for likes */
+    }
+
+    .text-primary {
+        color: rgb(29, 155, 240) !important; /* Blue for follows and primary elements */
+    }
+
+    /* Override the general SVG rule for notification icons specifically with higher specificity */
+    svg.text-green-500,
+    .text-green-500 svg,
+    svg.text-red-500,
+    .text-red-500 svg,
+    svg.text-primary,
+    .text-primary svg {
+        color: inherit !important;
+        fill: currentColor !important;
+    }
+
+    /* Force green color for comment notification icons */
+    .w-6.h-6.text-green-500,
+    svg.w-6.h-6.text-green-500 {
+        color: rgb(34, 197, 94) !important;
+        fill: rgb(34, 197, 94) !important;
+    }
+
+    /* Force green comment icons on mobile with higher specificity */
+    @media (max-width: 768px) {
+        .text-green-500,
+        svg.text-green-500 {
+            color: rgb(34, 197, 94) !important;
+            fill: rgb(34, 197, 94) !important;
+        }
+
+        .text-red-500,
+        svg.text-red-500 {
+            color: rgb(239, 68, 68) !important;
+            fill: rgb(239, 68, 68) !important;
+        }
+
+        .text-primary,
+        svg.text-primary {
+            color: rgb(29, 155, 240) !important;
+            fill: rgb(29, 155, 240) !important;
+        }
     }
 
     /* Fix specific icon elements */
