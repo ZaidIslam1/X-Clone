@@ -129,7 +129,7 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         setInput("");
     };
     return (
-        <div className="flex h-screen overflow-hidden flex-1 w-full chat-no-scroll">
+        <div className="flex h-screen mobile-screen-height chat-mobile-container overflow-hidden flex-1 w-full chat-no-scroll">
             {/* Chat area (center) */}
             <div className="flex-1 flex flex-col h-full w-full chat-no-scroll">
                 {/* Header */}
@@ -202,7 +202,7 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                 {username && receiverId && authUser.username !== username && (
                     <form
                         onSubmit={handleSend}
-                        className="px-3 sm:px-6 py-3 border-t border-gray-700 flex gap-2 sm:gap-3 bg-black flex-shrink-0"
+                        className="px-3 sm:px-6 py-3 border-t border-gray-700 flex gap-2 sm:gap-3 bg-black flex-shrink-0 chat-input-mobile"
                     >
                         <input
                             type="text"

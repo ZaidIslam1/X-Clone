@@ -83,6 +83,238 @@ body {
     .hover\:bg-gray-800:hover {
         background-color: rgb(55, 65, 81) !important; /* Lighter hover gray */
     }
+
+    /* Ensure white text stays white on mobile */
+    .text-white {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Ensure white fills stay white (for SVG icons) */
+    .fill-white {
+        fill: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix any dark text that should be white */
+    .text-black {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Ensure primary text is visible */
+    .text-primary {
+        color: rgb(29, 155, 240) !important;
+    }
+
+    /* Make sure backgrounds are properly contrasted */
+    .bg-black {
+        background-color: rgb(0, 0, 0) !important;
+    }
+
+    .bg-stone-900 {
+        background-color: rgb(28, 25, 23) !important;
+    }
+
+    /* Fix any button text that appears dark */
+    .btn-primary {
+        background-color: rgb(29, 155, 240) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(29, 155, 240) !important;
+    }
+
+    .btn-outline {
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix any icon colors that appear dark */
+    svg {
+        color: inherit !important;
+    }
+
+    /* Ensure hover states work properly */
+    .hover\:bg-stone-900:hover {
+        background-color: rgb(41, 37, 36) !important;
+    }
+
+    /* Fix form inputs and placeholders */
+    input {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    input::placeholder {
+        color: rgb(156, 163, 175) !important;
+        opacity: 1 !important;
+    }
+
+    input:focus {
+        border-color: rgb(29, 155, 240) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgb(29, 155, 240) !important;
+    }
+
+    /* Fix textarea elements */
+    textarea {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    textarea::placeholder {
+        color: rgb(156, 163, 175) !important;
+        opacity: 1 !important;
+    }
+
+    textarea:focus {
+        border-color: rgb(29, 155, 240) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 1px rgb(29, 155, 240) !important;
+    }
+
+    /* Fix select elements */
+    select {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix any remaining border issues */
+    .border {
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .border-gray-300 {
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .border-gray-200 {
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix labels and form text */
+    label {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix any dark text in forms */
+    .form-control {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix DaisyUI input components */
+    .input {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .input-bordered {
+        border-color: rgb(156, 163, 175) !important;
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+    }
+
+    .input:focus {
+        border-color: rgb(29, 155, 240) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2) !important;
+    }
+
+    .input-bordered:focus {
+        border-color: rgb(29, 155, 240) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2) !important;
+    }
+
+    /* Fix any remaining text colors in auth pages */
+    .text-lg {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    .font-bold {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Make sure all text is visible on mobile */
+    p,
+    span,
+    div,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: inherit !important;
+    }
+
+    /* Ensure icons are visible */
+    .w-4,
+    .w-5,
+    .w-6 {
+        color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix any remaining dark elements */
+    .text-center {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix link colors */
+    a {
+        color: rgb(29, 155, 240) !important;
+    }
+
+    a:hover {
+        color: rgb(96, 165, 250) !important;
+    }
+
+    /* Fix modal and dialog elements */
+    .modal-box {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .modal {
+        color: rgb(255, 255, 255) !important;
+    }
+
+    dialog {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        color: rgb(255, 255, 255) !important;
+    }
+
+    /* Fix textarea in comments and edit profile */
+    .textarea {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .textarea:focus {
+        border-color: rgb(29, 155, 240) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(29, 155, 240, 0.2) !important;
+    }
+
+    /* Fix additional border classes used in modals */
+    .border-gray-800 {
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    /* Fix button circle close buttons */
+    .btn-circle {
+        background-color: rgb(75, 85, 99) !important;
+        color: rgb(255, 255, 255) !important;
+        border-color: rgb(156, 163, 175) !important;
+    }
+
+    .btn-xs {
+        color: rgb(255, 255, 255) !important;
+    }
 }
 
 /* Custom Scrollbar Styles */
@@ -247,6 +479,7 @@ body {
     .mobile-screen-height {
         height: 100dvh !important;
         min-height: 100dvh !important;
+        max-height: 100dvh !important;
     }
 
     /* Ensure pages can scroll on mobile */
@@ -256,9 +489,27 @@ body {
         -webkit-overflow-scrolling: touch !important;
     }
 
+    /* Chat page specific mobile viewport handling */
+    .chat-mobile-container {
+        height: calc(100dvh - env(safe-area-inset-bottom)) !important;
+        max-height: calc(100dvh - env(safe-area-inset-bottom)) !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+
     /* Sidebar specific mobile handling */
     .sidebar-mobile {
         height: 100dvh !important;
+    }
+
+    /* Chat input area mobile handling */
+    .chat-input-mobile {
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+        margin-bottom: env(safe-area-inset-bottom) !important;
+        position: sticky !important;
+        bottom: env(safe-area-inset-bottom) !important;
+        background: rgb(0, 0, 0) !important;
+        border-top: 1px solid rgb(107, 114, 128) !important;
+        z-index: 50 !important;
     }
 }
 
