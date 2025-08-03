@@ -99,7 +99,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
             >
                 {/* Close button for mobile */}
                 <button
-                    className="lg:hidden self-end mb-4 text-gray-400 hover:text-white"
+                    className="lg:hidden self-end mb-2 text-gray-400 hover:text-white"
                     onClick={() => setIsMobileCollapsed(true)}
                     aria-label="Close"
                 >
