@@ -131,7 +131,10 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
     return (
         <div className="flex h-screen mobile-screen-height chat-mobile-container overflow-hidden flex-1 w-full chat-no-scroll">
             {/* Chat area (center) */}
-            <div className="flex-1 flex flex-col h-full w-full chat-no-scroll">
+            <div
+                className="flex-1 flex flex-col h-full w-full chat-no-scroll"
+                style={{ paddingBottom: "70px" }}
+            >
                 {/* Header */}
                 <div className="px-3 sm:px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
                     {!username ? (
@@ -151,7 +154,7 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                 {/* Messages scroll area - more padding for bigger feel */}
                 <div
                     className="flex-1 px-3 sm:px-6 py-4 space-y-4 messages-only-scroll"
-                    style={{ paddingBottom: 32 }}
+                    style={{ paddingBottom: "90px" }} // Extra space to prevent overlap with input
                 >
                     {error && <p className="text-center text-red-500 mt-8">{error}</p>}
                     {isLoading ? (
@@ -199,15 +202,23 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                 </div>
 
                 {/* Input fixed at bottom */}
-                {username && receiverId && authUser.username !== username && (
+                {username && receiverId && authUser?.username !== username && (
                     <form
                         onSubmit={handleSend}
                         className="px-3 sm:px-6 py-3 border-t border-gray-700 flex gap-2 sm:gap-3 bg-black flex-shrink-0 chat-input-mobile"
+                        style={{
+                            position: "sticky",
+                            bottom: 0,
+                            zIndex: 100,
+                            backgroundColor: "rgb(0, 0, 0)",
+                            borderTop: "1px solid rgb(107, 114, 128)",
+                        }}
                     >
                         <input
                             type="text"
                             placeholder="Type your message..."
                             className="flex-1 rounded-full bg-gray-900 text-white px-4 py-2 text-base focus:outline-none"
+                            style={{ fontSize: "16px" }} // Prevent zoom on iOS
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                         />
@@ -219,6 +230,18 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                             Send
                         </button>
                     </form>
+                )}
+
+                {/* Debug info - remove after testing */}
+                {process.env.NODE_ENV === "development" && (
+                    <div className="text-xs text-gray-500 p-2 bg-gray-800">
+                        Debug: username={username ? "Yes" : "No"}, receiverId=
+                        {receiverId ? "Yes" : "No"}, authUser={authUser?.username || "None"},
+                        condition=
+                        {username && receiverId && authUser?.username !== username
+                            ? "TRUE"
+                            : "FALSE"}
+                    </div>
                 )}
             </div>
         </div>

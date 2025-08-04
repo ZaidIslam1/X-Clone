@@ -815,18 +815,89 @@ body {
         height: 100dvh !important;
     }
 
-    /* Chat input area mobile handling */
+    /* Chat input area mobile handling - Enhanced for iPad */
     .chat-input-mobile {
         padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
         margin-bottom: env(safe-area-inset-bottom) !important;
         position: sticky !important;
-        bottom: env(safe-area-inset-bottom) !important;
+        bottom: 0 !important;
         background: rgb(0, 0, 0) !important;
         border-top: 1px solid rgb(107, 114, 128) !important;
-        z-index: 30 !important; /* Lower than right panel (z-50) */
+        z-index: 100 !important; /* Higher z-index for iPad */
+        min-height: 60px !important;
+        display: flex !important;
+        width: 100% !important;
     }
 
-    /* Remove chat input focus outline */
+    /* iPad specific fixes - Enhanced viewport handling */
+    @media (min-width: 768px) and (max-width: 1024px) {
+        /* Fix main container heights for iPad */
+        html,
+        body,
+        #root {
+            height: 100vh !important;
+            height: 100dvh !important;
+            overflow: hidden !important;
+        }
+
+        /* Chat input fixes for iPad */
+        .chat-input-mobile {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1000 !important;
+            padding: 1rem !important;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5) !important;
+            background: rgb(0, 0, 0) !important;
+            border-top: 1px solid rgb(107, 114, 128) !important;
+        }
+
+        .chat-input-mobile input {
+            font-size: 16px !important; /* Prevent zoom on iPad */
+            min-height: 44px !important; /* Apple's minimum touch target */
+        }
+
+        .chat-input-mobile button {
+            min-height: 44px !important;
+            min-width: 80px !important;
+        }
+
+        /* Sidebar fixes for iPad */
+        .sidebar-mobile {
+            height: 100vh !important;
+            height: 100dvh !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* Ensure logout button is always visible */
+        .sidebar-mobile > div {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* Profile section at bottom with safe spacing */
+        .sidebar-mobile a:last-child {
+            margin-top: auto !important;
+            margin-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: env(safe-area-inset-bottom) !important;
+        }
+
+        /* Chat container adjustments for iPad */
+        .chat-mobile-container {
+            height: 100vh !important;
+            height: calc(100dvh - 70px) !important; /* Account for input bar */
+            padding-bottom: 70px !important; /* Space for input */
+        }
+
+        /* Messages area should not overlap with input */
+        .messages-only-scroll {
+            padding-bottom: 80px !important; /* Extra space for input */
+            margin-bottom: 70px !important;
+        }
+    } /* Remove chat input focus outline */
     .chat-input-mobile input:focus,
     .chat-input-mobile textarea:focus {
         border-color: rgb(107, 114, 128) !important; /* Keep original border color */
