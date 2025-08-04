@@ -858,30 +858,24 @@ body {
             }
         }
 
-        /* Chat input fixes for iPad - enhanced positioning with aggressive spacing like sidebar */
+        /* Chat input fixes for iPad - ultra aggressive spacing to clear home indicator */
         .chat-input-form {
-            position: fixed !important; /* Changed to fixed like sidebar approach */
-            bottom: 0 !important;
+            position: fixed !important;
+            bottom: 50px !important; /* Fixed 50px from bottom instead of 0 */
             left: 0 !important;
             right: 0 !important;
-            padding: 1.5rem !important; /* Increased padding */
-            padding-bottom: calc(
-                3rem + env(safe-area-inset-bottom)
-            ) !important; /* Even more aggressive padding */
-            margin-bottom: calc(
-                3rem + env(safe-area-inset-bottom)
-            ) !important; /* Even more aggressive margin */
+            padding: 2rem !important; /* Even larger padding */
+            padding-bottom: 4rem !important; /* Massive bottom padding */
+            margin-bottom: 2rem !important; /* Additional margin */
             background: rgb(0, 0, 0) !important;
             border-top: 1px solid rgb(107, 114, 128) !important;
-            z-index: 1000 !important; /* Higher z-index like sidebar */
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4) !important; /* Stronger shadow */
-            /* Ensure input stays visible even when keyboard appears */
+            z-index: 1000 !important;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4) !important;
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
-            /* Prevent overlap with home indicator - very aggressive spacing */
-            min-height: calc(
-                120px + env(safe-area-inset-bottom)
-            ) !important; /* Even taller minimum */
+            min-height: 140px !important; /* Very tall minimum height */
+            /* Extra safety with viewport units */
+            bottom: max(50px, 8vh) !important; /* Use larger of 50px or 8% of viewport height */
         }
 
         .chat-input-form input {
@@ -896,23 +890,17 @@ body {
             padding: 12px 24px !important;
         }
 
-        /* Ensure chat container has proper spacing for fixed input and home indicator */
+        /* Ensure chat container has proper spacing for ultra-high fixed input */
         .chat-container {
             height: 100vh !important;
             height: 100dvh !important;
-            padding-bottom: calc(
-                140px + env(safe-area-inset-bottom)
-            ) !important; /* More space for fixed input + aggressive spacing */
+            padding-bottom: 200px !important; /* Massive bottom padding to account for fixed input */
         }
 
-        /* Messages area should not overlap with fixed input or home indicator */
+        /* Messages area should not overlap with ultra-high fixed input */
         .messages-only-scroll {
-            padding-bottom: calc(
-                3rem + env(safe-area-inset-bottom)
-            ) !important; /* Increased padding */
-            margin-bottom: calc(
-                140px + env(safe-area-inset-bottom)
-            ) !important; /* Space for fixed input + aggressive spacing */
+            padding-bottom: 4rem !important; /* Large padding */
+            margin-bottom: 200px !important; /* Massive margin to match container padding */
         }
 
         /* Sidebar fixes for iPad */
