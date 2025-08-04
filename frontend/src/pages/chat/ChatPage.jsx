@@ -80,6 +80,13 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         if (receiverId) fetchMessages();
     }, [receiverId]);
 
+    // Clear unread status when viewing a chat
+    useEffect(() => {
+        if (receiverId) {
+            setUnreadUsers((prev) => prev.filter((id) => id !== receiverId));
+        }
+    }, [receiverId, setUnreadUsers]);
+
     const fetchMessages = async () => {
         try {
             setIsLoading(true);
