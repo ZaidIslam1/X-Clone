@@ -881,8 +881,9 @@ body {
         /* Profile section at bottom with safe spacing */
         .sidebar-mobile a:last-child {
             margin-top: auto !important;
-            margin-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
-            padding-bottom: env(safe-area-inset-bottom) !important;
+            margin-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            min-height: 60px !important; /* Ensure minimum clickable area */
         }
 
         /* Chat container adjustments for iPad */

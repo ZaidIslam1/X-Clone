@@ -122,8 +122,11 @@ const Sidebar = ({
                     {authUser && (
                         <Link
                             to={`/profile/${authUser.username}`}
-                            className="mt-auto mb-2 lg:mb-6 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full pb-safe flex-shrink-0"
-                            style={{ marginBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
+                            className="mt-auto mb-4 lg:mb-8 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-3 px-4 rounded-full pb-safe flex-shrink-0"
+                            style={{
+                                marginBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+                                paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+                            }}
                         >
                             <div className="avatar hidden lg:inline-flex">
                                 <div className="w-8 rounded-full">
