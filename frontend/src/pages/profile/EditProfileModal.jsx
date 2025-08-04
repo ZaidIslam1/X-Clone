@@ -14,13 +14,25 @@ const EditProfileModal = () => {
     const { data: authUser } = useQuery({
         queryKey: ["authUser"],
         queryFn: async () => {
-            const res = await fetch("/api/auth/check-auth", {
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Authentication failed");
-            return data;
+            try {
+                const res = await fetch("/api/auth/check-auth", {
+                    credentials: "include",
+                });
+                const data = await res.json();
+                if (data.error) return null;
+                if (!res.ok) {
+                    if (res.status === 401) return null;
+                    throw new Error(data.error || "Authentication failed");
+                }
+                return data;
+            } catch (error) {
+                if (error.message.includes("401") || error.message.includes("Unauthorized")) {
+                    return null;
+                }
+                return null;
+            }
         },
+        retry: false,
     });
 
     const [formData, setFormData] = useState({

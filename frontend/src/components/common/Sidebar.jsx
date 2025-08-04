@@ -35,7 +35,11 @@ const Sidebar = ({
             }
         },
         onSuccess: () => {
+            // Clear the authUser query and redirect to login
+            queryClient.setQueryData(["authUser"], null);
             queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            navigate("/login", { replace: true });
+            toast.success("Logged out successfully");
         },
         onError: () => {
             toast.error("Logout failed");

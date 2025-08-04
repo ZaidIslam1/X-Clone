@@ -27,10 +27,18 @@ function App() {
                 });
                 const data = await res.json();
                 if (data.error) return null;
-                if (!res.ok) throw new Error(data.error);
+                if (!res.ok) {
+                    // If we get 401 (unauthorized), user is not logged in
+                    if (res.status === 401) return null;
+                    throw new Error(data.error);
+                }
                 return data;
             } catch (error) {
-                throw new Error(error);
+                // If there's a network error or 401, return null (user not authenticated)
+                if (error.message.includes("401") || error.message.includes("Unauthorized")) {
+                    return null;
+                }
+                return null; // For any other errors, assume user is not authenticated
             }
         },
         retry: false,
