@@ -5,8 +5,6 @@ import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
 
-import { POSTS } from "../../utils/db/dummy";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
@@ -39,6 +37,22 @@ const ProfilePage = () => {
     });
 
     const { followUnfollow, isPending } = useFollow();
+
+    // Query to get user's posts count
+    const { data: userPosts } = useQuery({
+        queryKey: ["userPosts", username],
+        queryFn: async () => {
+            try {
+                const res = await fetch(`/api/posts/user/${username}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                return data;
+            } catch (error) {
+                return []; // Return empty array if error
+            }
+        },
+        enabled: !!username, // Only run if username exists
+    });
 
     const {
         data: user,
@@ -126,7 +140,7 @@ const ProfilePage = () => {
                                 <div className="flex flex-col">
                                     <p className="font-bold text-lg">{user?.fullName}</p>
                                     <span className="text-sm text-slate-500">
-                                        {POSTS?.length} posts
+                                        {userPosts?.length || 0} posts
                                     </span>
                                 </div>
                             </div>
@@ -149,7 +163,7 @@ const ProfilePage = () => {
                                 )}
                                 {isMyProfile && (
                                     <div
-                                        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-75 md:opacity-0 md:group-hover/cover:opacity-100 transition duration-200"
+                                        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-100 md:opacity-75 md:group-hover/cover:opacity-100 transition duration-200"
                                         onClick={() => coverImgRef.current.click()}
                                     >
                                         <MdEdit className="w-5 h-5 text-white" />
@@ -179,7 +193,7 @@ const ProfilePage = () => {
                                             }
                                             alt={user?.fullName}
                                         />
-                                        <div className="absolute top-5 right-3 p-1 bg-primary rounded-full opacity-75 md:opacity-0 md:group-hover/avatar:opacity-100 cursor-pointer transition duration-200">
+                                        <div className="absolute top-5 right-3 p-1 bg-primary rounded-full opacity-100 md:opacity-75 md:group-hover/avatar:opacity-100 cursor-pointer transition duration-200">
                                             {isMyProfile && (
                                                 <MdEdit
                                                     className="w-4 h-4 text-white"
