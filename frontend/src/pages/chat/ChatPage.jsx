@@ -76,6 +76,21 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         }
     };
 
+    const markMessagesAsRead = async () => {
+        if (!receiverId) return;
+        try {
+            console.log("Marking messages as read for receiverId:", receiverId);
+            const res = await fetch(`/api/users/messages/${receiverId}/mark-read`, {
+                method: "POST",
+                credentials: "include",
+            });
+            const data = await res.json();
+            console.log("Mark as read response:", data);
+        } catch (err) {
+            console.error("Error marking messages as read:", err);
+        }
+    };
+
     useEffect(() => {
         if (receiverId) fetchMessages();
     }, [receiverId]);
@@ -125,17 +140,6 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
             }
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const markMessagesAsRead = async () => {
-        try {
-            await fetch(`/api/users/messages/${receiverId}/mark-read`, {
-                method: "POST",
-                credentials: "include",
-            });
-        } catch (err) {
-            console.error("Error marking messages as read:", err);
         }
     };
 

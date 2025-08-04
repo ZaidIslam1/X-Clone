@@ -54,10 +54,12 @@ function App() {
         if (authUser) {
             const fetchUnreadUsers = async () => {
                 try {
+                    console.log("Fetching initial unread users...");
                     const res = await fetch("/api/users/unread-users", {
                         credentials: "include",
                     });
                     const data = await res.json();
+                    console.log("Initial unread users:", data);
                     if (res.ok) {
                         setUnreadUsers(data);
                     }
