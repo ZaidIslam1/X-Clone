@@ -931,3 +931,36 @@ body {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 }
+
+/* Crisp image rendering for maximum clarity */
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Specific optimization for post images */
+.post-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    filter: contrast(1.05) saturate(1.1);
+    transition: filter 0.2s ease;
+}
+
+.post-image:hover {
+    filter: contrast(1.1) saturate(1.15);
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}

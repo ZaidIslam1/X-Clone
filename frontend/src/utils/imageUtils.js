@@ -23,13 +23,13 @@ export const optimizeImageUrl = (imageUrl, options = {}) => {
 };
 
 /**
- * High quality image URLs for post images
+ * Ultra high quality image URLs for post images - maximum crispness
  */
 export const createHighQualityPostImage = (imageUrl) => {
     return optimizeImageUrl(imageUrl, {
-        width: 1200,
-        height: 800,
-        quality: 95,
+        width: 1600, // Increased resolution for retina displays
+        height: 1200, // Increased resolution
+        quality: 100, // Maximum quality for crisp images
         format: "webp",
         crop: "limit", // Maintains aspect ratio without cropping
     });

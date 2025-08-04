@@ -184,8 +184,15 @@ const Post = ({ post }) => {
                     {post.img && (
                         <img
                             src={createHighQualityPostImage(post.img)}
-                            className="h-60 sm:h-80 object-contain rounded-lg border border-gray-700 w-full max-w-full"
+                            className="post-image h-60 sm:h-80 object-contain rounded-lg border border-gray-700 w-full max-w-full"
                             alt=""
+                            style={{
+                                imageRendering: "crisp-edges",
+                                imageRendering: "-webkit-optimize-contrast",
+                                backfaceVisibility: "hidden",
+                                transform: "translateZ(0)",
+                            }}
+                            loading="lazy"
                         />
                     )}
                 </div>
