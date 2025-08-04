@@ -14,7 +14,9 @@ const EditProfileModal = () => {
     const { data: authUser } = useQuery({
         queryKey: ["authUser"],
         queryFn: async () => {
-            const res = await fetch("/api/auth/check-auth");
+            const res = await fetch("/api/auth/check-auth", {
+                credentials: "include",
+            });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Authentication failed");
             return data;
