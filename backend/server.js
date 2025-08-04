@@ -23,9 +23,7 @@ cloudinary.config({
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 const originUrl =
-    process.env.NODE_ENV === "production"
-        ? process.env.CLIENT_URL || "https://twitter-clone-dfi2.onrender.com"
-        : "http://localhost:3000";
+    process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "http://localhost:3000";
 
 const app = express();
 app.use(
