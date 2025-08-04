@@ -37,7 +37,10 @@ const Post = ({ post }) => {
     // --- Mutations ---
     const { mutate: deletePost, isPending: deletePending } = useMutation({
         mutationFn: async () => {
-            const res = await fetch(`/api/posts/${post._id}`, { method: "DELETE" });
+            const res = await fetch(`/api/posts/${post._id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
             return data;
@@ -55,6 +58,7 @@ const Post = ({ post }) => {
             const res = await fetch(`/api/posts/comment/${post._id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ text }),
             });
             const data = await res.json();
@@ -90,6 +94,7 @@ const Post = ({ post }) => {
         mutationFn: async (commentId) => {
             const res = await fetch(`/api/posts/comment/${post._id}/${commentId}`, {
                 method: "DELETE",
+                credentials: "include",
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
@@ -103,6 +108,7 @@ const Post = ({ post }) => {
             const res = await fetch(`/api/posts/like/${post._id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);

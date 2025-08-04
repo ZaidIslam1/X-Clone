@@ -12,7 +12,9 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers
         async function fetchUsers() {
             try {
                 setIsLoading(true);
-                const res = await fetch("/api/users/mutual");
+                const res = await fetch("/api/users/mutual", {
+                    credentials: "include",
+                });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || "Failed to fetch mutual users");
                 setUsers(data.filter((user) => user._id !== authUser._id));

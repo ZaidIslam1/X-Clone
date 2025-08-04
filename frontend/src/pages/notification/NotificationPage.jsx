@@ -17,7 +17,10 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
         queryKey: ["notifications"],
         queryFn: async () => {
             try {
-                const res = await fetch("/api/notifications/", { method: "GET" });
+                const res = await fetch("/api/notifications/", {
+                    method: "GET",
+                    credentials: "include",
+                });
                 const data = await res.json();
                 if (data.error) return null;
                 if (!res.ok) throw new Error(data.error);
@@ -40,7 +43,10 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
     // Mark notifications as read after they are displayed
     useEffect(() => {
         if (!hasMarkedRead.current && notifications && notifications.length > 0) {
-            fetch("/api/notifications/mark-read", { method: "POST" });
+            fetch("/api/notifications/mark-read", {
+                method: "POST",
+                credentials: "include",
+            });
             hasMarkedRead.current = true;
         }
     }, [notifications]);
@@ -48,7 +54,10 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
     const { mutate: deleteNotifications } = useMutation({
         mutationFn: async () => {
             try {
-                const res = await fetch("/api/notifications/", { method: "DELETE" });
+                const res = await fetch("/api/notifications/", {
+                    method: "DELETE",
+                    credentials: "include",
+                });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error);
                 return data;

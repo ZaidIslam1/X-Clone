@@ -57,7 +57,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
             setIsLoadingUser(true);
             setError(null);
 
-            const res = await fetch(`/api/users/profile/${username}`);
+            const res = await fetch(`/api/users/profile/${username}`, {
+                credentials: "include",
+            });
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.error || "User not found");
@@ -82,7 +84,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         try {
             setIsLoading(true);
             setError(null); // Clear any previous errors
-            const res = await fetch(`/api/users/messages/${receiverId}`);
+            const res = await fetch(`/api/users/messages/${receiverId}`, {
+                credentials: "include",
+            });
             const data = await res.json();
 
             // Check if the response is ok and handle empty messages array

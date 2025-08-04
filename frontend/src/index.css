@@ -920,6 +920,28 @@ body {
     textarea {
         font-size: 16px !important; /* Prevents zoom on iOS */
     }
+
+    /* Mobile-specific chat layout fixes */
+    .chat-container {
+        margin-left: 64px !important; /* Account for mobile sidebar width (w-16 = 64px) */
+        width: calc(100vw - 64px) !important;
+        height: 100dvh !important;
+    }
+
+    /* Ensure chat takes full mobile width minus sidebar */
+    .chat-container > div {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    /* Mobile sidebar positioning */
+    .sidebar-mobile {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 64px !important; /* w-16 = 64px */
+        z-index: 50 !important;
+    }
 }
 
 /* Prevent layout shifts and scroll jumps */
