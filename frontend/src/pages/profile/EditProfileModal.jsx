@@ -11,7 +11,15 @@ const EditProfileModal = () => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
 
-    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+    const { data: authUser } = useQuery({
+        queryKey: ["authUser"],
+        queryFn: async () => {
+            const res = await fetch("/api/auth/check-auth");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Authentication failed");
+            return data;
+        },
+    });
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -21,6 +29,8 @@ const EditProfileModal = () => {
         link: "",
         newPassword: "",
         currentPassword: "",
+        profileImg: "",
+        coverImg: "",
     });
 
     const { mutate: updateProfile, isPending } = useMutation({
@@ -65,6 +75,8 @@ const EditProfileModal = () => {
                 link: authUser.link,
                 newPassword: "",
                 currentPassword: "",
+                profileImg: "",
+                coverImg: "",
             });
         }
     }, [authUser]);
@@ -72,6 +84,17 @@ const EditProfileModal = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         updateProfile();
+    };
+
+    const handleImageChange = (e, imageType) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setFormData({ ...formData, [imageType]: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleInputChange = (e) => {

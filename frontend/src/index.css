@@ -7,22 +7,21 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden; /* Prevent page-level vertical scrolling */
-    scroll-behavior: auto; /* Prevent smooth scrolling that can cause jumps */
+    overflow: hidden; /* Prevent page-level scrolling */
+    scroll-behavior: smooth;
     /* Safe area handling for iOS devices */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    overscroll-behavior: none; /* Prevent elastic scrolling */
+    overscroll-behavior: none;
 }
 
 #root {
     height: 100vh;
     height: 100dvh; /* Dynamic viewport height for mobile */
     position: relative;
-    overflow: hidden; /* Prevent any root-level scrolling */
+    overflow: hidden; /* Prevent root-level scrolling */
 }
 
 /* Custom X Clone Theme */
@@ -790,8 +789,15 @@ body {
         max-height: 100dvh !important;
     }
 
-    /* Ensure pages can scroll on mobile */
+    /* Ensure pages can scroll on mobile - inherits from page-container */
     .mobile-page-container {
+        height: 100dvh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Make sure all page containers work on mobile */
+    .page-container {
         height: 100dvh !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
@@ -827,6 +833,15 @@ body {
         outline: none !important;
         box-shadow: none !important; /* Remove blue outline */
     }
+}
+
+/* Page content containers that handle their own scrolling */
+.page-container {
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Prevent zoom on input focus for iOS */

@@ -5,7 +5,15 @@ import { useEffect } from "react";
 
 const Posts = ({ feedType, username }) => {
     const queryClient = useQueryClient();
-    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+    const { data: authUser } = useQuery({
+        queryKey: ["authUser"],
+        queryFn: async () => {
+            const res = await fetch("/api/auth/check-auth");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Authentication failed");
+            return data;
+        },
+    });
     const getEndPoint = () => {
         switch (feedType) {
             case "forYou":

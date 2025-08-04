@@ -4,6 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
 import { Message } from "../models/message.model.js";
 import { getSocketIO } from "../config/globalSocket.js";
+import { createTinyImageUrl } from "../lib/utils/imageUtils.js";
 
 export const getProfile = async (req, res, next) => {
     try {
@@ -34,10 +35,13 @@ export const getSuggestedUsers = async (req, res, next) => {
                 $nin: userFollowedByMe.following,
             },
         })
-            .select("-password -__v")
+            .select("username fullName profileImg bio") // Exclude large coverImg and other fields
             .limit(10);
 
-        const suggestedUsers = users.slice(0, 4);
+        const suggestedUsers = users.slice(0, 4).map((user) => ({
+            ...user._doc,
+            profileImg: user.profileImg ? createTinyImageUrl(user.profileImg) : user.profileImg,
+        }));
 
         if (suggestedUsers.length === 0) {
             return res.status(404).json({ error: "No suggested users found" });
@@ -145,6 +149,16 @@ export const updateUserProfile = async (req, res, next) => {
     const currentUserId = req.user._id;
 
     try {
+        // Add size validation for images
+        if (profileImg && profileImg.length > 10 * 1024 * 1024) {
+            // 10MB limit
+            return res.status(400).json({ error: "Profile image too large (max 10MB)" });
+        }
+        if (coverImg && coverImg.length > 15 * 1024 * 1024) {
+            // 15MB limit
+            return res.status(400).json({ error: "Cover image too large (max 15MB)" });
+        }
+
         const user = await User.findById(currentUserId);
         if (!user) {
             return res.status(404).json({ error: "User not found" });
@@ -176,19 +190,35 @@ export const updateUserProfile = async (req, res, next) => {
         }
 
         if (profileImg && user.profileImg) {
-            await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+            // Extract public_id from URL for deletion
+            const publicId = user.profileImg.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(publicId);
         }
         if (profileImg) {
-            const uploadedResponse = await cloudinary.uploader.upload(profileImg);
-            user.profileImg = uploadedResponse.secure_url;
+            const uploadedResponse = await cloudinary.uploader.upload(profileImg, {
+                width: 400,
+                height: 400,
+                crop: "fill",
+                quality: 90, // Better quality
+                format: "webp", // More efficient format
+            });
+            profileImg = uploadedResponse.secure_url;
         }
 
         if (coverImg && user.coverImg) {
-            await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+            // Extract public_id from URL for deletion
+            const publicId = user.coverImg.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(publicId);
         }
         if (coverImg) {
-            const uploadedResponse = await cloudinary.uploader.upload(coverImg);
-            user.coverImg = uploadedResponse.secure_url;
+            const uploadedResponse = await cloudinary.uploader.upload(coverImg, {
+                width: 1200,
+                height: 400,
+                crop: "fill",
+                quality: 95, // High quality for cover images
+                format: "webp", // More efficient format
+            });
+            coverImg = uploadedResponse.secure_url;
         }
 
         user.fullName = fullName || user.fullName;
@@ -196,8 +226,8 @@ export const updateUserProfile = async (req, res, next) => {
         user.email = email || user.email;
         user.bio = bio || user.bio;
         user.link = link || user.link;
-        user.profileImg = profileImg || user.profileImg;
-        user.coverImg = coverImg || user.coverImg;
+        if (profileImg) user.profileImg = profileImg;
+        if (coverImg) user.coverImg = coverImg;
 
         const updatedUser = await user.save();
         updatedUser.password = undefined;

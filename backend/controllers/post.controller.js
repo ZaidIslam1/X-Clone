@@ -3,6 +3,31 @@ import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import { getSocketIO } from "../config/globalSocket.js";
+import { createTinyImageUrl, createSmallImageUrl } from "../lib/utils/imageUtils.js";
+
+// Helper function to optimize post for API response
+const optimizePostForAPI = (post) => {
+    return {
+        ...(post._doc || post),
+        user: {
+            ...(post.user._doc || post.user),
+            profileImg: post.user.profileImg
+                ? createTinyImageUrl(post.user.profileImg)
+                : post.user.profileImg,
+        },
+        img: post.img ? createSmallImageUrl(post.img) : post.img,
+        comments:
+            post.comments?.map((comment) => ({
+                ...(comment._doc || comment),
+                user: {
+                    ...(comment.user._doc || comment.user),
+                    profileImg: comment.user.profileImg
+                        ? createTinyImageUrl(comment.user.profileImg)
+                        : comment.user.profileImg,
+                },
+            })) || [],
+    };
+};
 
 export const createPost = async (req, res, next) => {
     try {
@@ -19,7 +44,13 @@ export const createPost = async (req, res, next) => {
         }
 
         if (img) {
-            const response = await cloudinary.uploader.upload(img);
+            const response = await cloudinary.uploader.upload(img, {
+                width: 1200,
+                height: 800,
+                crop: "limit",
+                quality: 90, // Better quality for posts
+                format: "webp", // More efficient format
+            });
             img = response.secure_url;
         }
 
@@ -32,8 +63,8 @@ export const createPost = async (req, res, next) => {
         await newPost.save();
         // Always populate user and comments for real-time update
         const populatedPost = await Post.findById(newPost._id)
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
         // Emit real-time event for new post
         try {
             const io = getSocketIO();
@@ -139,8 +170,8 @@ export const likeUnlikePost = async (req, res, next) => {
         }
         // Fetch the updated post to get fresh likes and populate user/comments
         const updatedPost = await Post.findById(postId)
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
         // Emit real-time event for new like (update all feeds) with full post
         try {
             const io = getSocketIO();
@@ -202,8 +233,8 @@ export const commentPost = async (req, res, next) => {
 
         // Always populate user and comments for real-time update
         const updatedPost = await Post.findById(id)
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
 
         // Emit real-time event for new comment (update all feeds) with full post
         try {
@@ -235,7 +266,10 @@ export const deleteComment = async (req, res, next) => {
             return res.status(404).json({ error: "Comment not found or unauthorized" });
         }
 
-        const updatedPost = await Post.findById(postId).populate("comments.user", "-password");
+        const updatedPost = await Post.findById(postId).populate(
+            "comments.user",
+            "username fullName profileImg"
+        );
 
         // Emit real-time event for comment deletion (update all feeds) with full post
         try {
@@ -264,8 +298,8 @@ export const getLikedPosts = async (req, res, next) => {
 
         const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
             .sort({ createdAt: -1 })
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
 
         res.status(200).json(likedPosts);
     } catch (error) {
@@ -284,8 +318,8 @@ export const getFollowingPosts = async (req, res, next) => {
         const followingIds = user.following;
         const followingPosts = await Post.find({ user: { $in: followingIds } })
             .sort({ createdAt: -1 })
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
 
         res.status(200).json(followingPosts);
     } catch (error) {
@@ -303,8 +337,8 @@ export const getUserPosts = async (req, res, next) => {
         }
         const userPosts = await Post.find({ user: user._id })
             .sort({ createdAt: -1 })
-            .populate("user", "-password")
-            .populate("comments.user", "-password");
+            .populate("user", "username fullName profileImg")
+            .populate("comments.user", "username fullName profileImg");
 
         res.status(200).json(userPosts);
     } catch (error) {

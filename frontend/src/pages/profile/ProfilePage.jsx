@@ -13,6 +13,7 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFollow from "../../hooks/useFollow";
+import { createHighQualityCoverImage, createHighQualityProfileImage } from "../../utils/imageUtils";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { formatMemberSinceDate } from "../../utils/date/function";
 
@@ -27,7 +28,15 @@ const ProfilePage = () => {
     const profileImgRef = useRef(null);
 
     const { username } = useParams();
-    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+    const { data: authUser } = useQuery({
+        queryKey: ["authUser"],
+        queryFn: async () => {
+            const res = await fetch("/api/auth/check-auth");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Authentication failed");
+            return data;
+        },
+    });
 
     const { followUnfollow, isPending } = useFollow();
 
@@ -101,7 +110,7 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className="flex-[4_4_0] border-r border-gray-700 h-screen mobile-page-container w-full">
+            <div className="flex-[4_4_0] border-r border-gray-700 page-container mobile-page-container w-full">
                 {/* HEADER */}
                 {isLoading && isRefetching && <ProfileHeaderSkeleton />}
                 {!isLoading && !isRefetching && !user && (
@@ -125,7 +134,9 @@ const ProfilePage = () => {
                             <div className="relative group/cover">
                                 {coverImg || user?.coverImg ? (
                                     <img
-                                        src={coverImg || user?.coverImg}
+                                        src={
+                                            coverImg || createHighQualityCoverImage(user?.coverImg)
+                                        }
                                         className="h-40 sm:h-52 w-full object-cover"
                                         alt="cover image"
                                     />
@@ -163,7 +174,7 @@ const ProfilePage = () => {
                                         <img
                                             src={
                                                 profileImg ||
-                                                user?.profileImg ||
+                                                createHighQualityProfileImage(user?.profileImg) ||
                                                 "/avatar-placeholder.png"
                                             }
                                             alt={user?.fullName}

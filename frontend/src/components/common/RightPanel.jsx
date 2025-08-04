@@ -5,6 +5,7 @@ import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "./LoadingSpinner";
 import UserListSidebar from "./UserListSidebar";
 import { useState } from "react";
+import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const RightPanel = ({ authUser, unreadUsers = [] }) => {
     const location = useLocation();
@@ -33,7 +34,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
             if (!res.ok) throw new Error(data.error);
             return data;
         },
-        enabled: !isMessagesPage, // Skip fetching suggestions on messages page
+        enabled: !isMessagesPage && !!authUser, // Only fetch when user is authenticated and not on messages page
     });
 
     const { followUnfollow, isPending } = useFollow();
@@ -170,8 +171,9 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                                                 <div className="w-8 rounded-full">
                                                     <img
                                                         src={
-                                                            user.profileImg ||
-                                                            "/avatar-placeholder.png"
+                                                            createHighQualityProfileImage(
+                                                                user.profileImg
+                                                            ) || "/avatar-placeholder.png"
                                                         }
                                                         alt={`${user.fullName}'s avatar`}
                                                     />

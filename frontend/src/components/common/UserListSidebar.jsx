@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers = [] }) => {
     const [users, setUsers] = useState([]);
@@ -57,7 +58,7 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers
                                 <div className="flex items-center space-x-3">
                                     {user.profileImg ? (
                                         <img
-                                            src={user.profileImg}
+                                            src={createHighQualityProfileImage(user.profileImg)}
                                             alt={user.username}
                                             className="w-10 h-10 rounded-full object-cover"
                                         />

@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { formatPostDate } from "../../utils/date/function";
 import toast from "react-hot-toast";
+import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
     const queryClient = useQueryClient();
@@ -63,7 +64,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
 
     return (
         <>
-            <div className="flex-[4_4_0] border-r border-gray-700 h-screen mobile-page-container w-full">
+            <div className="flex-[4_4_0] border-r border-gray-700 page-container mobile-page-container w-full">
                 <div className="flex justify-between items-center p-4 border-b border-gray-700 sticky top-0 bg-black/80 backdrop-blur-md z-10">
                     <p className="font-bold">Notifications</p>
                     <div className="dropdown ">
@@ -128,8 +129,9 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                 <div className="w-6 h-6 rounded-full">
                                                     <img
                                                         src={
-                                                            notification.from.profileImg ||
-                                                            "/avatar-placeholder.png"
+                                                            createHighQualityProfileImage(
+                                                                notification.from.profileImg
+                                                            ) || "/avatar-placeholder.png"
                                                         }
                                                         alt={`${notification.from.username}'s avatar`}
                                                     />

@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date/function";
+import { createHighQualityPostImage, createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const Post = ({ post }) => {
     const queryClient = useQueryClient();
@@ -16,7 +17,15 @@ const Post = ({ post }) => {
     const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
     const dialogRef = useRef(null);
     const commentsContainerRef = useRef(null);
-    const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+    const { data: authUser } = useQuery({
+        queryKey: ["authUser"],
+        queryFn: async () => {
+            const res = await fetch("/api/auth/check-auth");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Authentication failed");
+            return data;
+        },
+    });
 
     const postOwner = post.user;
     const isLiked = post.likes.includes(authUser._id);
@@ -134,7 +143,12 @@ const Post = ({ post }) => {
                     to={`/profile/${postOwner.username}`}
                     className="w-8 h-8 rounded-full overflow-hidden"
                 >
-                    <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+                    <img
+                        src={
+                            createHighQualityProfileImage(postOwner.profileImg) ||
+                            "/avatar-placeholder.png"
+                        }
+                    />
                 </Link>
             </div>
 
@@ -169,7 +183,7 @@ const Post = ({ post }) => {
                     <span>{post.text}</span>
                     {post.img && (
                         <img
-                            src={post.img}
+                            src={createHighQualityPostImage(post.img)}
                             className="h-60 sm:h-80 object-contain rounded-lg border border-gray-700 w-full max-w-full"
                             alt=""
                         />
@@ -259,8 +273,9 @@ const Post = ({ post }) => {
                                                 <div className="w-8 rounded-full">
                                                     <img
                                                         src={
-                                                            c.user.profileImg ||
-                                                            "/avatar-placeholder.png"
+                                                            createHighQualityProfileImage(
+                                                                c.user.profileImg
+                                                            ) || "/avatar-placeholder.png"
                                                         }
                                                         alt={`${c.user.fullName}'s avatar`}
                                                     />

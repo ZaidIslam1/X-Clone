@@ -13,19 +13,38 @@ import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import cors from "cors";
 import { initializeSocket } from "./config/socket.js";
+
 dotenv.config();
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const cloudinaryConfig = () => {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+};
+
 const PORT = process.env.PORT;
+const app = express();
+
+// Performance monitoring middleware
+app.use((req, res, next) => {
+    req.startTime = Date.now();
+    res.on("finish", () => {
+        const duration = Date.now() - req.startTime;
+        if (duration > 1000) {
+            // Log slow requests
+            console.log(`Slow request: ${req.method} ${req.path} - ${duration}ms`);
+        }
+    });
+    next();
+});
+
 const __dirname = path.resolve();
+cloudinaryConfig();
 const originUrl =
     process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "http://localhost:3000";
 
-const app = express();
 app.use(
     cors({
         origin: originUrl,
@@ -36,8 +55,20 @@ app.use(
 const httpServer = createServer(app);
 initializeSocket(httpServer, originUrl);
 
-app.use(express.json({ limit: "5mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(
+    express.json({
+        limit: "50mb",
+        parameterLimit: 50000,
+        extended: true,
+    })
+);
+app.use(
+    express.urlencoded({
+        extended: true,
+        limit: "50mb",
+        parameterLimit: 50000,
+    })
+);
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);

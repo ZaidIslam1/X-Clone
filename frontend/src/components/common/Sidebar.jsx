@@ -8,6 +8,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { RiMessageFill, RiUserFollowFill } from "react-icons/ri";
+import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const Sidebar = ({
     authUser,
@@ -123,7 +124,12 @@ const Sidebar = ({
                     >
                         <div className="avatar hidden lg:inline-flex">
                             <div className="w-8 rounded-full">
-                                <img src={authUser?.profileImg || "/avatar-placeholder.png"} />
+                                <img
+                                    src={
+                                        createHighQualityProfileImage(authUser?.profileImg) ||
+                                        "/avatar-placeholder.png"
+                                    }
+                                />
                             </div>
                         </div>
                         <div className="flex justify-between flex-1">
