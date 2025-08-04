@@ -847,16 +847,25 @@ body {
             body,
             #root {
                 height: -webkit-fill-available !important;
+                /* Ensure content doesn't get hidden behind home indicator */
+                padding-bottom: env(safe-area-inset-bottom) !important;
+            }
+            
+            /* iPad-specific viewport units that account for home indicator */
+            .chat-container {
+                height: calc(100vh - env(safe-area-inset-bottom)) !important;
+                height: calc(100dvh - env(safe-area-inset-bottom)) !important;
             }
         }
 
-        /* Chat input fixes for iPad - enhanced positioning */
+        /* Chat input fixes for iPad - enhanced positioning with home indicator support */
         .chat-input-form {
             position: sticky !important;
             position: -webkit-sticky !important; /* Safari fallback */
-            bottom: 0 !important;
+            bottom: env(safe-area-inset-bottom) !important; /* Key fix: position above home indicator */
             padding: 1rem !important;
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important; /* Extra padding for home indicator */
+            margin-bottom: env(safe-area-inset-bottom) !important; /* Additional margin */
             background: rgb(0, 0, 0) !important;
             border-top: 1px solid rgb(107, 114, 128) !important;
             z-index: 100 !important;
@@ -864,6 +873,8 @@ body {
             /* Ensure input stays visible even when keyboard appears */
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
+            /* Prevent overlap with home indicator */
+            min-height: calc(80px + env(safe-area-inset-bottom)) !important;
         }
 
         .chat-input-form input {
@@ -878,17 +889,17 @@ body {
             padding: 12px 24px !important;
         }
 
-        /* Ensure chat container has proper spacing for input */
+        /* Ensure chat container has proper spacing for input and home indicator */
         .chat-container {
             height: 100vh !important;
             height: 100dvh !important;
-            padding-bottom: 80px !important; /* Space for input */
+            padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important; /* Extra space for input + home indicator */
         }
 
-        /* Messages area should not overlap with input */
+        /* Messages area should not overlap with input or home indicator */
         .messages-only-scroll {
-            padding-bottom: 2rem !important;
-            margin-bottom: 80px !important; /* Space for fixed input */
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+            margin-bottom: calc(100px + env(safe-area-inset-bottom)) !important; /* Space for fixed input + home indicator */
         }
 
         /* Sidebar fixes for iPad */
@@ -916,14 +927,8 @@ body {
 
         /* Chat container adjustments for iPad */
         .chat-container > div {
-            height: calc(100vh - 80px) !important; /* Account for input space */
-            height: calc(100dvh - 80px) !important;
-        }
-
-        /* Messages area spacing */
-        .messages-only-scroll {
-            max-height: calc(100vh - 200px) !important; /* Ensure scrollable area */
-            max-height: calc(100dvh - 200px) !important;
+            height: calc(100vh - 120px) !important; /* Account for input space + home indicator */
+            height: calc(100dvh - 120px) !important;
         }
     }
 
