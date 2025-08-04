@@ -49,6 +49,26 @@ function App() {
     const [blinkNotification, setBlinkNotification] = useState(false); // for blinking effect
     const socketRef = useRef(null);
 
+    // Fetch initial unread users when user is authenticated
+    useEffect(() => {
+        if (authUser) {
+            const fetchUnreadUsers = async () => {
+                try {
+                    const res = await fetch("/api/users/unread-users", {
+                        credentials: "include",
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        setUnreadUsers(data);
+                    }
+                } catch (err) {
+                    console.error("Error fetching unread users:", err);
+                }
+            };
+            fetchUnreadUsers();
+        }
+    }, [authUser]);
+
     useEffect(() => {
         // Real-time comment deletion: update posts cache
         const handleDeleteComment = (data) => {

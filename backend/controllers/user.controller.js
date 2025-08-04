@@ -310,6 +310,53 @@ export const getMessages = async (req, res, next) => {
         next(error);
     }
 };
+
+export const markMessagesRead = async (req, res, next) => {
+    try {
+        const currentUserId = req.user._id;
+        const { userId } = req.params;
+
+        const otherUser = await User.findById(userId);
+        if (!otherUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Mark all messages from the other user to current user as read
+        await Message.updateMany(
+            {
+                senderId: userId,
+                receiverId: currentUserId,
+                isRead: false,
+            },
+            { isRead: true }
+        );
+
+        res.status(200).json({ message: "Messages marked as read" });
+    } catch (error) {
+        console.log("Error in markMessagesRead", error.message);
+        res.status(500).json({ error: "Internal server error" });
+        next(error);
+    }
+};
+
+export const getUnreadUsers = async (req, res, next) => {
+    try {
+        const currentUserId = req.user._id;
+
+        // Find all users who have sent unread messages to the current user
+        const unreadMessages = await Message.find({
+            receiverId: currentUserId,
+            isRead: false,
+        }).distinct("senderId");
+
+        res.status(200).json(unreadMessages);
+    } catch (error) {
+        console.log("Error in getUnreadUsers", error.message);
+        res.status(500).json({ error: "Internal server error" });
+        next(error);
+    }
+};
+
 export const getMutual = async (req, res, next) => {
     try {
         const currentUserId = req.user._id;
