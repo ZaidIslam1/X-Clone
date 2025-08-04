@@ -1,5 +1,4 @@
 import Notification from "../models/notification.model.js";
-import { createTinyImageUrl } from "../lib/utils/imageUtils.js";
 
 export const getNotifications = async (req, res, next) => {
     try {
@@ -7,20 +6,8 @@ export const getNotifications = async (req, res, next) => {
         const notifications = await Notification.find({ to: userId })
             .sort({ createdAt: -1 })
             .populate("from", "username profileImg");
-
-        // Optimize notification images for fast scrolling
-        const optimizedNotifications = notifications.map((notification) => ({
-            ...notification._doc,
-            from: {
-                ...notification.from._doc,
-                profileImg: notification.from.profileImg
-                    ? createTinyImageUrl(notification.from.profileImg)
-                    : notification.from.profileImg,
-            },
-        }));
-
         // Do not mark as read here; let frontend do it after display
-        res.status(200).json(optimizedNotifications);
+        res.status(200).json(notifications);
     } catch (error) {
         console.log("Error in getNotifications", error.message);
         next(error);

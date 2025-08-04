@@ -841,22 +841,54 @@ body {
             overflow: hidden !important;
         }
 
-        /* Chat input fixes for iPad - simplified approach */
+        /* iPad Safari viewport handling */
+        @supports (-webkit-touch-callout: none) {
+            html,
+            body,
+            #root {
+                height: -webkit-fill-available !important;
+            }
+        }
+
+        /* Chat input fixes for iPad - enhanced positioning */
         .chat-input-form {
+            position: sticky !important;
+            position: -webkit-sticky !important; /* Safari fallback */
+            bottom: 0 !important;
             padding: 1rem !important;
             padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
             background: rgb(0, 0, 0) !important;
             border-top: 1px solid rgb(107, 114, 128) !important;
+            z-index: 100 !important;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
+            /* Ensure input stays visible even when keyboard appears */
+            transform: translateZ(0) !important;
+            -webkit-transform: translateZ(0) !important;
         }
 
         .chat-input-form input {
             font-size: 16px !important; /* Prevent zoom on iPad */
             min-height: 44px !important; /* Apple's minimum touch target */
+            padding: 12px 16px !important;
         }
 
         .chat-input-form button {
             min-height: 44px !important;
             min-width: 80px !important;
+            padding: 12px 24px !important;
+        }
+
+        /* Ensure chat container has proper spacing for input */
+        .chat-container {
+            height: 100vh !important;
+            height: 100dvh !important;
+            padding-bottom: 80px !important; /* Space for input */
+        }
+
+        /* Messages area should not overlap with input */
+        .messages-only-scroll {
+            padding-bottom: 2rem !important;
+            margin-bottom: 80px !important; /* Space for fixed input */
         }
 
         /* Sidebar fixes for iPad */
@@ -883,14 +915,15 @@ body {
         }
 
         /* Chat container adjustments for iPad */
-        .chat-container {
-            height: 100vh !important;
-            height: 100dvh !important;
+        .chat-container > div {
+            height: calc(100vh - 80px) !important; /* Account for input space */
+            height: calc(100dvh - 80px) !important;
         }
 
         /* Messages area spacing */
         .messages-only-scroll {
-            padding-bottom: 1rem !important;
+            max-height: calc(100vh - 200px) !important; /* Ensure scrollable area */
+            max-height: calc(100dvh - 200px) !important;
         }
     }
 

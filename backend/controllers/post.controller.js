@@ -45,10 +45,10 @@ export const createPost = async (req, res, next) => {
 
         if (img) {
             const response = await cloudinary.uploader.upload(img, {
-                width: 1200,
-                height: 800,
+                width: 1600, // Higher resolution for crisp images
+                height: 1200, // Higher resolution
                 crop: "limit",
-                quality: 90, // Better quality for posts
+                quality: 100, // Maximum quality for crisp posts
                 format: "webp", // More efficient format
             });
             img = response.secure_url;

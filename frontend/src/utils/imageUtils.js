@@ -1,75 +1,61 @@
-/**
- * Frontend utility functions for optimizing Cloudinary image URLs
- */
+// Cloudinary image optimization utilities
 
-/**
- * Transform Cloudinary URLs to use high-quality versions
- * @param {string} imageUrl - Original Cloudinary URL
- * @param {object} options - Optimization options
- * @returns {string} - Optimized URL
- */
-export const optimizeImageUrl = (imageUrl, options = {}) => {
-    if (!imageUrl || !imageUrl.includes("cloudinary.com")) {
-        return imageUrl;
+// Create high-quality post image URL
+export const createHighQualityPostImage = (imageUrl) => {
+    if (!imageUrl) return null;
+
+    // If it's already a Cloudinary URL, optimize it
+    if (imageUrl.includes("cloudinary.com")) {
+        // Extract the public_id from the URL
+        const parts = imageUrl.split("/");
+        const uploadIndex = parts.findIndex((part) => part === "upload");
+        if (uploadIndex !== -1 && uploadIndex < parts.length - 1) {
+            const publicId = parts.slice(uploadIndex + 2).join("/");
+            // Return optimized URL with ultra-high quality settings
+            return `https://res.cloudinary.com/${parts[3]}/image/upload/c_fill,w_1600,h_1200,q_100,f_webp/${publicId}`;
+        }
     }
 
-    const { width = 800, height = 600, quality = 90, format = "webp", crop = "limit" } = options;
-
-    // Insert optimization parameters into Cloudinary URL
-    const cloudinaryTransform = `w_${width},h_${height},c_${crop},q_${quality},f_${format}`;
-
-    // Replace /upload/ with /upload/{transformations}/
-    return imageUrl.replace("/upload/", `/upload/${cloudinaryTransform}/`);
+    // Return original URL if not Cloudinary
+    return imageUrl;
 };
 
-/**
- * Ultra high quality image URLs for post images - maximum crispness
- */
-export const createHighQualityPostImage = (imageUrl) => {
-    return optimizeImageUrl(imageUrl, {
-        width: 1600, // Increased resolution for retina displays
-        height: 1200, // Increased resolution
-        quality: 100, // Maximum quality for crisp images
-        format: "webp",
-        crop: "limit", // Maintains aspect ratio without cropping
-    });
-};
-
-/**
- * Medium quality images for thumbnails and smaller displays
- */
-export const createMediumQualityImage = (imageUrl) => {
-    return optimizeImageUrl(imageUrl, {
-        width: 600,
-        height: 400,
-        quality: 85,
-        format: "webp",
-        crop: "limit",
-    });
-};
-
-/**
- * High quality profile images
- */
+// Create high-quality profile image URL
 export const createHighQualityProfileImage = (imageUrl) => {
-    return optimizeImageUrl(imageUrl, {
-        width: 300,
-        height: 300,
-        quality: 90,
-        format: "webp",
-        crop: "fill",
-    });
+    if (!imageUrl) return null;
+
+    // If it's already a Cloudinary URL, optimize it
+    if (imageUrl.includes("cloudinary.com")) {
+        // Extract the public_id from the URL
+        const parts = imageUrl.split("/");
+        const uploadIndex = parts.findIndex((part) => part === "upload");
+        if (uploadIndex !== -1 && uploadIndex < parts.length - 1) {
+            const publicId = parts.slice(uploadIndex + 2).join("/");
+            // Return optimized URL for profile images (square, smaller size)
+            return `https://res.cloudinary.com/${parts[3]}/image/upload/c_fill,w_400,h_400,q_100,f_webp,g_face/${publicId}`;
+        }
+    }
+
+    // Return original URL if not Cloudinary
+    return imageUrl;
 };
 
-/**
- * High quality cover images
- */
+// Create high-quality cover image URL
 export const createHighQualityCoverImage = (imageUrl) => {
-    return optimizeImageUrl(imageUrl, {
-        width: 1500,
-        height: 500,
-        quality: 95,
-        format: "webp",
-        crop: "fill",
-    });
+    if (!imageUrl) return null;
+
+    // If it's already a Cloudinary URL, optimize it
+    if (imageUrl.includes("cloudinary.com")) {
+        // Extract the public_id from the URL
+        const parts = imageUrl.split("/");
+        const uploadIndex = parts.findIndex((part) => part === "upload");
+        if (uploadIndex !== -1 && uploadIndex < parts.length - 1) {
+            const publicId = parts.slice(uploadIndex + 2).join("/");
+            // Return optimized URL for cover images (wide aspect ratio)
+            return `https://res.cloudinary.com/${parts[3]}/image/upload/c_fill,w_1200,h_400,q_100,f_webp/${publicId}`;
+        }
+    }
+
+    // Return original URL if not Cloudinary
+    return imageUrl;
 };

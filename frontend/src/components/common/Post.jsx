@@ -66,27 +66,18 @@ const Post = ({ post }) => {
             return data;
         },
         onSuccess: (updatedPost) => {
-            onSuccess: (updatedPost) => {
-                queryClient.setQueryData(["posts"], (oldData) =>
-                    oldData.map((p) =>
-                        p._id === post._id ? { ...p, comments: updatedPost.comments } : p
-                    )
-                );
-                // Scroll to bottom of comments after successful comment submission
-                setTimeout(() => {
-                    if (commentsContainerRef.current) {
-                        commentsContainerRef.current.scrollTop =
-                            commentsContainerRef.current.scrollHeight;
-                    }
-                }, 100);
-            },
-                // Scroll to bottom of comments after successful comment submission
-                setTimeout(() => {
-                    if (commentsContainerRef.current) {
-                        commentsContainerRef.current.scrollTop =
-                            commentsContainerRef.current.scrollHeight;
-                    }
-                }, 100);
+            queryClient.setQueryData(["posts"], (oldData) =>
+                oldData.map((p) =>
+                    p._id === post._id ? { ...p, comments: updatedPost.comments } : p
+                )
+            );
+            // Scroll to bottom of comments after successful comment submission
+            setTimeout(() => {
+                if (commentsContainerRef.current) {
+                    commentsContainerRef.current.scrollTop =
+                        commentsContainerRef.current.scrollHeight;
+                }
+            }, 100);
         },
     });
 
@@ -196,7 +187,7 @@ const Post = ({ post }) => {
                             alt=""
                             style={{
                                 imageRendering: "crisp-edges",
-                                imageRendering: "-webkit-optimize-contrast",
+                                WebkitImageRendering: "-webkit-optimize-contrast",
                                 backfaceVisibility: "hidden",
                                 transform: "translateZ(0)",
                             }}
