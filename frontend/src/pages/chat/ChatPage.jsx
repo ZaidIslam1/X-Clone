@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 // import { io } from "socket.io-client"; // Not needed, socketRef is passed from App
 import { FaUserCircle } from "react-icons/fa";
@@ -13,32 +13,64 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [receiverId, setReceiverId] = useState(null);
     const [error, setError] = useState(null);
+    const [isLoadingUser, setIsLoadingUser] = useState(false);
     // socketRef is now passed as a prop from App.jsx
     const messagesEndRef = useRef(null);
+    const debounceTimeoutRef = useRef(null);
+
+    // Debounced user fetching to prevent rapid requests
+    const debouncedFetchReceiverId = useCallback((username) => {
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
+        }
+
+        debounceTimeoutRef.current = setTimeout(() => {
+            fetchReceiverId(username);
+        }, 300); // 300ms debounce
+    }, []);
 
     useEffect(() => {
         setMessages([]);
         setError(null);
         setReceiverId(null);
-        if (username) {
-            fetchReceiverId(username);
+        setIsLoadingUser(false);
+
+        // Clear any pending debounced calls
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
         }
-    }, [username]);
+
+        if (username) {
+            debouncedFetchReceiverId(username);
+        }
+
+        // Cleanup function
+        return () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+        };
+    }, [username, debouncedFetchReceiverId]);
 
     const fetchReceiverId = async (username) => {
         try {
-            setIsLoading(true);
+            setIsLoadingUser(true);
+            setError(null);
+
             const res = await fetch(`/api/users/profile/${username}`);
             const data = await res.json();
+
             if (!res.ok) throw new Error(data.error || "User not found");
+
             setReceiverId(data._id);
             // Remove from unread when opening chat
             setUnreadUsers((prev) => prev.filter((id) => id !== data._id));
         } catch (err) {
             console.error("Fetch receiverId error:", err);
             setError("Failed to load user");
+            setReceiverId(null);
         } finally {
-            setIsLoading(false);
+            setIsLoadingUser(false);
         }
     };
 
@@ -129,12 +161,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
         setInput("");
     };
     return (
-        <div className="flex h-screen mobile-screen-height chat-mobile-container overflow-hidden flex-1 w-full chat-no-scroll">
+        <div className="flex h-screen mobile-screen-height chat-container overflow-hidden flex-1 w-full">
             {/* Chat area (center) */}
-            <div
-                className="flex-1 flex flex-col h-full w-full chat-no-scroll"
-                style={{ paddingBottom: "70px" }}
-            >
+            <div className="flex-1 flex flex-col h-full w-full">
                 {/* Header */}
                 <div className="px-3 sm:px-6 py-4 border-b border-gray-700 flex items-center bg-black flex-shrink-0 z-10">
                     {!username ? (
@@ -151,13 +180,10 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                     )}
                 </div>
 
-                {/* Messages scroll area - more padding for bigger feel */}
-                <div
-                    className="flex-1 px-3 sm:px-6 py-4 space-y-4 messages-only-scroll"
-                    style={{ paddingBottom: "90px" }} // Extra space to prevent overlap with input
-                >
+                {/* Messages scroll area - adjusted padding */}
+                <div className="flex-1 px-3 sm:px-6 py-4 space-y-4 messages-only-scroll overflow-y-auto">
                     {error && <p className="text-center text-red-500 mt-8">{error}</p>}
-                    {isLoading ? (
+                    {isLoading || isLoadingUser ? (
                         <div className="flex justify-center mt-8">
                             <LoadingSpinner size="lg" />
                         </div>
@@ -201,43 +227,38 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                     <div ref={messagesEndRef} style={{ height: 1 }} />
                 </div>
 
-                {/* Input fixed at bottom */}
+                {/* Input at bottom with proper positioning */}
                 {username && receiverId && authUser?.username !== username && (
-                    <form
-                        onSubmit={handleSend}
-                        className="px-3 sm:px-6 py-3 border-t border-gray-700 flex gap-2 sm:gap-3 bg-black flex-shrink-0 chat-input-mobile"
-                        style={{
-                            position: "sticky",
-                            bottom: 0,
-                            zIndex: 100,
-                            backgroundColor: "rgb(0, 0, 0)",
-                            borderTop: "1px solid rgb(107, 114, 128)",
-                        }}
-                    >
-                        <input
-                            type="text"
-                            placeholder="Type your message..."
-                            className="flex-1 rounded-full bg-gray-900 text-white px-4 py-2 text-base focus:outline-none"
-                            style={{ fontSize: "16px" }} // Prevent zoom on iOS
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                        />
-                        <button
-                            type="submit"
-                            className="btn btn-primary rounded-full px-6 py-2 text-base text-white"
-                            disabled={!input.trim()}
+                    <div className="bg-black border-t border-gray-700 flex-shrink-0">
+                        <form
+                            onSubmit={handleSend}
+                            className="px-3 sm:px-6 py-3 flex gap-2 sm:gap-3 chat-input-form"
                         >
-                            Send
-                        </button>
-                    </form>
+                            <input
+                                type="text"
+                                placeholder="Type your message..."
+                                className="flex-1 rounded-full bg-gray-900 text-white px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+                                style={{ fontSize: "16px" }} // Prevent zoom on iOS
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                            />
+                            <button
+                                type="submit"
+                                className="btn btn-primary rounded-full px-6 py-2 text-base text-white min-w-[80px]"
+                                disabled={!input.trim()}
+                            >
+                                Send
+                            </button>
+                        </form>
+                    </div>
                 )}
 
                 {/* Debug info - remove after testing */}
                 {process.env.NODE_ENV === "development" && (
-                    <div className="text-xs text-gray-500 p-2 bg-gray-800">
+                    <div className="text-xs text-gray-500 p-2 bg-gray-800 flex-shrink-0">
                         Debug: username={username ? "Yes" : "No"}, receiverId=
                         {receiverId ? "Yes" : "No"}, authUser={authUser?.username || "None"},
-                        condition=
+                        isLoadingUser={isLoadingUser ? "TRUE" : "FALSE"}, condition=
                         {username && receiverId && authUser?.username !== username
                             ? "TRUE"
                             : "FALSE"}

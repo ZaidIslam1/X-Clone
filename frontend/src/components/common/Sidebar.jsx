@@ -15,7 +15,6 @@ const Sidebar = ({
     unreadUsers = [],
     hasNewNotification = false,
     setHasNewNotification,
-    blinkNotification = false,
 }) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
