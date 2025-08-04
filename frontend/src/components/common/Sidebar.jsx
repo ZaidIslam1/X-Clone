@@ -3,12 +3,13 @@ import XSvg from "../svgs/X";
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { RiMessageFill, RiUserFollowFill } from "react-icons/ri";
 import { createHighQualityProfileImage } from "../../utils/imageUtils";
+import { useState, useEffect } from "react";
 
 const Sidebar = ({
     authUser,
@@ -18,6 +19,39 @@ const Sidebar = ({
 }) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [allUsers, setAllUsers] = useState([]);
+
+    // Fetch users to map userIds to usernames
+    useEffect(() => {
+        async function fetchUsers() {
+            try {
+                const res = await fetch("/api/users/mutual", {
+                    credentials: "include",
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    setAllUsers(data);
+                }
+            } catch (err) {
+                console.error("Error fetching users:", err);
+            }
+        }
+        if (unreadUsers.length > 0) {
+            fetchUsers();
+        }
+    }, [unreadUsers.length]);
+
+    // Check if currently on a chat route
+    const isOnChatRoute = location.pathname.startsWith("/chat/messages/");
+
+    // If on a chat route, extract the active chat username
+    const activeChatUsername = isOnChatRoute ? location.pathname.split("/").pop() : null;
+
+    // Map unreadUsers (userIds) to usernames for route comparison
+    const unreadUsernames = unreadUsers
+        .map((userId) => allUsers?.find((user) => user._id === userId)?.username)
+        .filter(Boolean);
 
     const { mutate: logoutMutation } = useMutation({
         mutationFn: async () => {
@@ -45,7 +79,6 @@ const Sidebar = ({
             toast.error("Logout failed");
         },
     });
-
     return (
         <div className="flex-shrink-0 w-16 lg:w-52 lg:max-w-52 font-semibold">
             <div className="fixed lg:sticky top-0 lg:top-1 left-0 h-screen mobile-screen-height flex flex-col border-r border-gray-700 w-16 lg:w-full bg-black z-40 sidebar-mobile pb-safe">
@@ -54,7 +87,7 @@ const Sidebar = ({
                 </Link>
                 <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
                     <div className="flex-1">
-                        <ul className="flex flex-col gap-3 mt-4 ">
+                        <ul className="flex flex-col gap-3 mt-4">
                             <li className="flex justify-center lg:justify-start">
                                 <Link
                                     to="/"
@@ -109,14 +142,20 @@ const Sidebar = ({
                                 >
                                     <RiMessageFill className="w-6 h-6" />
                                     <span className="text-lg hidden lg:block">Messages</span>
-                                    {unreadUsers && unreadUsers.length > 0 && (
-                                        <span className="absolute -top-1 right-0 lg:right-2 flex items-center">
-                                            <span className="w-2 h-2 rounded-full bg-primary"></span>
-                                            <span className="ml-1 text-primary text-xs font-bold">
-                                                {unreadUsers.length}
+                                    {/* Only show unread bubble if NOT actively chatting with any unread user (by username) */}
+                                    {unreadUsernames &&
+                                        unreadUsernames.length > 0 &&
+                                        !unreadUsernames.some(
+                                            (username) =>
+                                                location.pathname === `/chat/messages/${username}`
+                                        ) && (
+                                            <span className="absolute -top-1 right-0 lg:right-2 flex items-center">
+                                                <span className="w-2 h-2 rounded-full bg-primary"></span>
+                                                <span className="ml-1 text-primary text-xs font-bold">
+                                                    {unreadUsernames.length}
+                                                </span>
                                             </span>
-                                        </span>
-                                    )}
+                                        )}
                                 </div>
                             </li>
                         </ul>

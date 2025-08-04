@@ -12,6 +12,12 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
     const isMessagesPage = location.pathname.startsWith("/chat/messages");
     const [isMobileCollapsed, setIsMobileCollapsed] = useState(true);
 
+    // Extract active chat username from route if present
+    const activeChatUsername =
+        isMessagesPage && location.pathname.split("/chat/messages/")[1]
+            ? location.pathname.split("/chat/messages/")[1]
+            : null;
+
     // Function to handle user selection and auto-collapse
     const handleUserSelect = () => {
         setIsMobileCollapsed(true);
@@ -122,6 +128,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                         <UserListSidebar
                             authUser={authUser}
                             unreadUsers={unreadUsers}
+                            activeChatUsername={activeChatUsername}
                             onUserSelect={handleUserSelect}
                         />
                     </div>

@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
-const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers = [] }) => {
+const UserListSidebar = ({
+    authUser,
+    selectedUsername,
+    onUserSelect,
+    unreadUsers = [],
+    activeChatUsername,
+}) => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -72,12 +78,14 @@ const UserListSidebar = ({ authUser, selectedUsername, onUserSelect, unreadUsers
                                     <div className="relative">
                                         <p className="text-white font-medium flex items-center">
                                             {user.fullName}
-                                            {unreadUsers.includes(user._id) && (
-                                                <span
-                                                    className="ml-2 inline-block w-2.5 h-2.5 rounded-full bg-primary animate-pulse"
-                                                    title="New message"
-                                                ></span>
-                                            )}
+                                            {/* Only show unread bubble if not actively chatting with this user */}
+                                            {unreadUsers.includes(user._id) &&
+                                                activeChatUsername !== user.username && (
+                                                    <span
+                                                        className="ml-2 inline-block w-2.5 h-2.5 rounded-full bg-primary animate-pulse"
+                                                        title="New message"
+                                                    ></span>
+                                                )}
                                         </p>
                                         <p className="text-gray-400 text-sm">@{user.username}</p>
                                     </div>
