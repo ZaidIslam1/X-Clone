@@ -850,7 +850,7 @@ body {
                 /* Ensure content doesn't get hidden behind home indicator */
                 padding-bottom: env(safe-area-inset-bottom) !important;
             }
-            
+
             /* iPad-specific viewport units that account for home indicator */
             .chat-container {
                 height: calc(100vh - env(safe-area-inset-bottom)) !important;
@@ -862,10 +862,18 @@ body {
         .chat-input-form {
             position: sticky !important;
             position: -webkit-sticky !important; /* Safari fallback */
-            bottom: env(safe-area-inset-bottom) !important; /* Key fix: position above home indicator */
+            bottom: env(
+                safe-area-inset-bottom,
+                20px
+            ) !important; /* Key fix: position above home indicator with fallback */
             padding: 1rem !important;
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important; /* Extra padding for home indicator */
-            margin-bottom: env(safe-area-inset-bottom) !important; /* Additional margin */
+            padding-bottom: calc(
+                1.5rem + env(safe-area-inset-bottom, 20px)
+            ) !important; /* Extra padding for home indicator with fallback */
+            margin-bottom: env(
+                safe-area-inset-bottom,
+                20px
+            ) !important; /* Additional margin with fallback */
             background: rgb(0, 0, 0) !important;
             border-top: 1px solid rgb(107, 114, 128) !important;
             z-index: 100 !important;
@@ -874,7 +882,7 @@ body {
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
             /* Prevent overlap with home indicator */
-            min-height: calc(80px + env(safe-area-inset-bottom)) !important;
+            min-height: calc(80px + env(safe-area-inset-bottom, 20px)) !important;
         }
 
         .chat-input-form input {
@@ -893,13 +901,17 @@ body {
         .chat-container {
             height: 100vh !important;
             height: 100dvh !important;
-            padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important; /* Extra space for input + home indicator */
+            padding-bottom: calc(
+                100px + env(safe-area-inset-bottom)
+            ) !important; /* Extra space for input + home indicator */
         }
 
         /* Messages area should not overlap with input or home indicator */
         .messages-only-scroll {
             padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
-            margin-bottom: calc(100px + env(safe-area-inset-bottom)) !important; /* Space for fixed input + home indicator */
+            margin-bottom: calc(
+                100px + env(safe-area-inset-bottom)
+            ) !important; /* Space for fixed input + home indicator */
         }
 
         /* Sidebar fixes for iPad */
