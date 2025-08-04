@@ -858,31 +858,24 @@ body {
             }
         }
 
-        /* Chat input fixes for iPad - enhanced positioning with home indicator support */
+        /* Chat input fixes for iPad - enhanced positioning with aggressive spacing like sidebar */
         .chat-input-form {
-            position: sticky !important;
-            position: -webkit-sticky !important; /* Safari fallback */
-            bottom: env(
-                safe-area-inset-bottom,
-                20px
-            ) !important; /* Key fix: position above home indicator with fallback */
+            position: fixed !important; /* Changed to fixed like sidebar approach */
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
             padding: 1rem !important;
-            padding-bottom: calc(
-                1.5rem + env(safe-area-inset-bottom, 20px)
-            ) !important; /* Extra padding for home indicator with fallback */
-            margin-bottom: env(
-                safe-area-inset-bottom,
-                20px
-            ) !important; /* Additional margin with fallback */
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important; /* More aggressive padding like sidebar */
+            margin-bottom: calc(2rem + env(safe-area-inset-bottom)) !important; /* Aggressive margin like sidebar */
             background: rgb(0, 0, 0) !important;
             border-top: 1px solid rgb(107, 114, 128) !important;
-            z-index: 100 !important;
+            z-index: 1000 !important; /* Higher z-index like sidebar */
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
             /* Ensure input stays visible even when keyboard appears */
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
-            /* Prevent overlap with home indicator */
-            min-height: calc(80px + env(safe-area-inset-bottom, 20px)) !important;
+            /* Prevent overlap with home indicator - aggressive spacing */
+            min-height: calc(100px + env(safe-area-inset-bottom)) !important;
         }
 
         .chat-input-form input {
@@ -897,21 +890,21 @@ body {
             padding: 12px 24px !important;
         }
 
-        /* Ensure chat container has proper spacing for input and home indicator */
+        /* Ensure chat container has proper spacing for fixed input and home indicator */
         .chat-container {
             height: 100vh !important;
             height: 100dvh !important;
             padding-bottom: calc(
-                100px + env(safe-area-inset-bottom)
-            ) !important; /* Extra space for input + home indicator */
+                140px + env(safe-area-inset-bottom)
+            ) !important; /* More space for fixed input + aggressive spacing */
         }
 
-        /* Messages area should not overlap with input or home indicator */
+        /* Messages area should not overlap with fixed input or home indicator */
         .messages-only-scroll {
-            padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(3rem + env(safe-area-inset-bottom)) !important; /* Increased padding */
             margin-bottom: calc(
-                100px + env(safe-area-inset-bottom)
-            ) !important; /* Space for fixed input + home indicator */
+                140px + env(safe-area-inset-bottom)
+            ) !important; /* Space for fixed input + aggressive spacing */
         }
 
         /* Sidebar fixes for iPad */
@@ -991,6 +984,21 @@ body {
         top: 0 !important;
         width: 64px !important; /* w-16 = 64px */
         z-index: 50 !important;
+    }
+
+    /* Mobile chat input - apply same aggressive spacing as iPad */
+    .chat-input-form {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 64px !important; /* Account for sidebar */
+        right: 0 !important;
+        padding: 1rem !important;
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+        margin-bottom: calc(1.5rem + env(safe-area-inset-bottom)) !important;
+        background: rgb(0, 0, 0) !important;
+        border-top: 1px solid rgb(107, 114, 128) !important;
+        z-index: 100 !important;
+        min-height: calc(80px + env(safe-area-inset-bottom)) !important;
     }
 }
 
