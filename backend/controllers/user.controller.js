@@ -27,28 +27,18 @@ export const getSuggestedUsers = async (req, res, next) => {
         const currentUserId = req.user._id;
         const userFollowedByMe = await User.findById(currentUserId).select("following");
 
-        const users = await User.aggregate([
-            {
-                $match: {
-                    _id: { $ne: currentUserId },
-                },
+        // Get users that current user is not following (more efficient query)
+        const users = await User.find({
+            _id: {
+                $ne: currentUserId,
+                $nin: userFollowedByMe.following,
             },
-            {
-                $sample: { size: 10 },
-            },
-        ]);
+        })
+            .select("-password -__v")
+            .limit(10);
 
-        const filteredUsers = users.filter(
-            (user) =>
-                !userFollowedByMe.following.some(
-                    (followingId) => followingId.toString() === user._id.toString()
-                )
-        );
-        const suggestedUsers = filteredUsers.slice(0, 4);
-        suggestedUsers.forEach((user) => {
-            user.password = undefined;
-            user.__v = undefined;
-        });
+        const suggestedUsers = users.slice(0, 4);
+
         if (suggestedUsers.length === 0) {
             return res.status(404).json({ error: "No suggested users found" });
         }

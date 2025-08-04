@@ -59,19 +59,17 @@ function App() {
                       )
                     : true;
                 if (postUserPopulated && allCommentsPopulated) {
-                    // Update both the posts list and the single post cache
-                    queryClient.setQueryData(["posts"], (old) => {
-                        if (!old) return old;
+                    // Update all posts queries with the new data
+                    queryClient.setQueriesData({ queryKey: ["posts"] }, (old) => {
+                        if (!old || !Array.isArray(old)) return old;
                         return old.map((p) => (p._id === data.postId ? data.post : p));
                     });
                     queryClient.setQueryData(["posts", data.postId], data.post);
                 } else {
-                    // If not populated, refetch both caches
-                    queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+                    // If not populated, refetch all posts queries
                     queryClient.invalidateQueries({ queryKey: ["posts"] });
                 }
             } else if (data && data.postId) {
-                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
                 queryClient.invalidateQueries({ queryKey: ["posts"] });
             }
         };
@@ -94,8 +92,8 @@ function App() {
         // Real-time posts: update posts cache on 'new_post' event
         const handleNewPost = (data) => {
             if (data && data.post) {
-                queryClient.setQueryData(["posts"], (old) => {
-                    if (!old) return [data.post];
+                queryClient.setQueriesData({ queryKey: ["posts"] }, (old) => {
+                    if (!old || !Array.isArray(old)) return [data.post];
                     // Avoid duplicate if already present
                     if (old.some((p) => p._id === data.post._id)) return old;
                     return [data.post, ...old];
@@ -109,8 +107,8 @@ function App() {
         // Real-time post deletion: update posts cache
         const handleDeletePost = (data) => {
             if (data && data.postId) {
-                queryClient.setQueryData(["posts"], (old) => {
-                    if (!old) return old;
+                queryClient.setQueriesData({ queryKey: ["posts"] }, (old) => {
+                    if (!old || !Array.isArray(old)) return old;
                     return old.filter((p) => p._id !== data.postId);
                 });
             } else {
@@ -128,12 +126,12 @@ function App() {
             }
             // Update only the commented post in cache if full post is provided
             if (data && data.postId && data.post) {
-                queryClient.setQueryData(["posts"], (old) => {
-                    if (!old) return old;
+                queryClient.setQueriesData({ queryKey: ["posts"] }, (old) => {
+                    if (!old || !Array.isArray(old)) return old;
                     return old.map((p) => (p._id === data.postId ? data.post : p));
                 });
             } else if (data && data.postId) {
-                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+                queryClient.invalidateQueries({ queryKey: ["posts"] });
             }
         };
         const handleNewLike = (data) => {
@@ -144,12 +142,12 @@ function App() {
             }
             // Update only the liked post in cache if full post is provided
             if (data && data.postId && data.post) {
-                queryClient.setQueryData(["posts"], (old) => {
-                    if (!old) return old;
+                queryClient.setQueriesData({ queryKey: ["posts"] }, (old) => {
+                    if (!old || !Array.isArray(old)) return old;
                     return old.map((p) => (p._id === data.postId ? data.post : p));
                 });
             } else if (data && data.postId) {
-                queryClient.invalidateQueries({ queryKey: ["posts", data.postId] });
+                queryClient.invalidateQueries({ queryKey: ["posts"] });
             }
         };
         const handleNewFollow = () => {

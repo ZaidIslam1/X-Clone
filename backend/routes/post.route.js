@@ -25,8 +25,14 @@ router.get("/following", getFollowingPosts);
 router.get("/user/:username", getUserPosts);
 router.get("/all", async (req, res, next) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+
         const posts = await Post.find({})
             .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate("user", "-password")
             .populate("comments.user", "-password");
         res.status(200).json(posts);

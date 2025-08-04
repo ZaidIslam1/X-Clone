@@ -29,7 +29,7 @@ const Posts = ({ feedType, username }) => {
         refetch,
         isRefetching,
     } = useQuery({
-        queryKey: ["posts"],
+        queryKey: ["posts", feedType, username],
         queryFn: async () => {
             try {
                 const res = await fetch(POST_ENDPOINT);
@@ -42,9 +42,9 @@ const Posts = ({ feedType, username }) => {
         },
     });
 
-    useEffect(() => {
-        refetch();
-    }, [refetch, feedType, username]);
+    // Remove the useEffect that was causing infinite loop
+    // The query will automatically refetch when feedType or username changes
+    // because they're now in the queryKey
 
     return (
         <>

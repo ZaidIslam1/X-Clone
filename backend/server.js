@@ -25,7 +25,7 @@ const __dirname = path.resolve();
 const originUrl =
     process.env.NODE_ENV === "production"
         ? process.env.CLIENT_URL || "https://twitter-clone-dfi2.onrender.com"
-        : "http://localhost:5002";
+        : "http://localhost:3000";
 
 const app = express();
 app.use(
