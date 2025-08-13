@@ -422,8 +422,7 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 **Zaid Islam**
 
 -   GitHub: [@ZaidIslam1](https://github.com/ZaidIslam1)
--   LinkedIn: [Your LinkedIn Profile]
--   Portfolio: [Your Portfolio URL]
+-   LinkedIn: https://www.linkedin.com/in/zaid-islam-64a374216/
 
 ---
 
