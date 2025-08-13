@@ -117,14 +117,15 @@ git clone https://github.com/ZaidIslam1/Twitter-Clone.git
 cd Twitter-Clone
 
 # Install dependencies
-npm run build
+npm install
+npm install --prefix frontend
 
 # Set up environment variables
 cp .env.example .env
 # Edit .env with your configuration
 
 # Start development servers
-npm run start
+npm run dev
 ```
 
 ---
