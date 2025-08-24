@@ -22,14 +22,12 @@ export const signup = async (req, res, next) => {
         }
 
         const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{6,}$/;
 
         if (!passwordRegex.test(password)) {
-            return res
-                .status(400)
-                .json({
-                    error: "Password must be at least 6 characters and include uppercase, lowercase, number, and special character.",
-                });
+            return res.status(400).json({
+                error: "Password must be at least 6 characters and include uppercase, lowercase, number, and special character.",
+            });
         }
 
         const salt = await bcrypt.genSalt(10);
