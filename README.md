@@ -1,4 +1,4 @@
-# 🐦 X (Twitter) Clone
+# 🐦 X Clone
 
 A full-stack social media platform that replicates the core functionality of Twitter/X, built with modern web technologies and real-time capabilities.
 
@@ -422,8 +422,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 **Zaid Islam**
 
 -   GitHub: [@ZaidIslam1](https://github.com/ZaidIslam1)
--   LinkedIn: [Your LinkedIn Profile]
--   Portfolio: [Your Portfolio URL]
+
+-   LinkedIn: https://www.linkedin.com/in/zaid-islam-64a374216/
 
 ---
 
