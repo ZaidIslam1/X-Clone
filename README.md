@@ -1,4 +1,4 @@
-# 🐦 X Clone
+# 🐦 X (Twitter) Clone
 
 A full-stack social media platform that replicates the core functionality of Twitter/X, built with modern web technologies and real-time capabilities.
 
