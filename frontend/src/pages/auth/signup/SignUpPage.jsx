@@ -70,14 +70,14 @@ const SignUpPage = () => {
 
             {/* Right side - Signup Form */}
             <div
-                className="flex-[1.2] flex flex-col justify-center items-center p-4 sm:p-8"
+                className="flex-[1.2] flex flex-col justify-start sm:justify-center items-center p-4 sm:p-8"
                 style={{
                     background:
                         "radial-gradient(ellipse at top, rgba(88, 28, 135, 0.15) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 1) 100%)",
                 }}
             >
-                <div className="w-full max-w-md min-w-[320px] -mt-6 sm:mt-0">
-                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-8 py-8 sm:py-12 auth-card auth-card-compact">
+                <div className="w-full max-w-md min-w-[300px] sm:min-w-[320px] mt-0 sm:mt-0">
+                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-8 py-6 sm:py-12 auth-card auth-card-compact">
                         <div className="text-center mb-8">
                             <SocialLogo className="w-16 lg:hidden mx-auto mb-4" />
                             <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
