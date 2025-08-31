@@ -1,3 +1,18 @@
+/* Fix for squished/cut-off signup form fields */
+.signup-form input[type="email"],
+.signup-form input[type="text"],
+.signup-form input[type="password"] {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.signup-form {
+    min-width: 320px;
+    max-width: 420px;
+    width: 100%;
+}
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -15,6 +30,13 @@ body {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     overscroll-behavior: none;
+    /* Instagram-style black background with subtle purple accent */
+    background: radial-gradient(
+        ellipse at center,
+        rgba(88, 28, 135, 0.08) 0%,
+        rgba(17, 17, 17, 0.95) 40%,
+        rgb(0, 0, 0) 100%
+    );
 }
 
 #root {
@@ -24,25 +46,102 @@ body {
     overflow: hidden; /* Prevent root-level scrolling */
 }
 
-/* Custom X Clone Theme */
-@plugin "daisyui/theme" {
-    name: "xclone";
-    default: true;
-
-    --color-primary: rgb(29, 155, 240); /* Twitter blue */
-    --color-secondary: rgb(24, 24, 24); /* Dark gray */
-    --color-accent: rgb(255, 255, 255); /* White accent */
-    --color-base-100: rgb(0, 0, 0); /* Black background */
-    --color-neutral-content: white; /* Text color */
+/* Custom Social App Theme - Purple & Orange */
+:root {
+    /* Purple & Orange Theme */
+    --color-primary: 139 69 255; /* Purple primary */
+    --color-secondary: 255 119 45; /* Orange secondary */
+    --color-accent: 255 215 0; /* Gold accent */
+    --color-base-100: 16 16 20; /* Dark purple-tinted background */
+    --color-base-200: 24 24 32; /* Slightly lighter dark */
+    --color-base-300: 45 45 60; /* Medium dark */
+    --color-neutral-content: 255 255 255; /* White text */
+    --color-success: 34 197 94; /* Green */
+    --color-warning: 251 146 60; /* Orange */
+    --color-error: 239 68 68; /* Red */
 }
 
-@plugin "daisyui/theme" {
-    name: "xlight";
+/* Custom CSS variables for easier theming */
+:root {
+    --primary-color: rgb(139, 69, 255);
+    --secondary-color: rgb(255, 119, 45);
+    --accent-color: rgb(255, 215, 0);
+    --background-color: rgb(16, 16, 20);
+    --surface-color: rgb(24, 24, 32);
+    --text-color: rgb(255, 255, 255);
+    --border-color: rgb(45, 45, 60);
+}
 
-    --color-primary: rgb(29, 155, 240);
-    --color-secondary: rgb(245, 245, 245);
-    --color-base-100: white;
-    --color-neutral-content: black;
+/* Custom Social App Styling */
+.btn-primary {
+    background: linear-gradient(135deg, rgb(139, 69, 255) 0%, rgb(255, 119, 45) 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, rgb(120, 50, 230) 0%, rgb(230, 100, 25) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 69, 255, 0.3);
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, rgb(139, 69, 255) 0%, rgb(255, 119, 45) 100%);
+}
+
+/* Custom Social App Background */
+body {
+    background: radial-gradient(
+        ellipse at top,
+        rgba(88, 28, 135, 0.12) 0%,
+        rgba(0, 0, 0, 0.96) 60%,
+        rgb(0, 0, 0) 100%
+    );
+}
+
+/* Hide scrollbars across all browsers */
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: none;
+    scrollbar-color: transparent transparent;
+}
+
+/* Hide scrollbars for all scrollable elements */
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto,
+.messages-only-scroll {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.overflow-y-auto::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar,
+.messages-only-scroll::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    display: none;
 }
 
 /* Mobile-optimized grays - lighter on mobile for better visibility */
@@ -256,8 +355,8 @@ body {
         color: rgb(255, 255, 255) !important; /* White for better visibility */
     }
 
-    /* Fix SVG icons and logos to be white - except notification icons */
-    svg:not(.notification-icon) {
+    /* Fix SVG icons and logos to be white - except notification icons and the app logo */
+    svg:not(.notification-icon):not(.logo-svg) {
         color: rgb(255, 255, 255) !important;
         fill: rgb(255, 255, 255) !important;
     }
@@ -919,11 +1018,18 @@ body {
         }
 
         /* Profile section at bottom with safe spacing */
-        .sidebar-mobile a:last-child {
+        .sidebar-mobile .profile-card {
             margin-top: auto !important;
             margin-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)) !important;
             min-height: 60px !important; /* Ensure minimum clickable area */
+            display: block !important;
+        }
+        /* Ensure logout button visible and usable on small screens */
+        .sidebar-mobile .profile-card button {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
 
         /* Chat container adjustments for iPad */
@@ -960,10 +1066,11 @@ body {
         font-size: 16px !important; /* Prevents zoom on iOS */
     }
 
-    /* Mobile-specific chat layout fixes */
+    /* Mobile-specific chat layout fixes - center like other pages (main wrapper provides sidebar offset) */
     .chat-container {
-        margin-left: 64px !important; /* Account for mobile sidebar width (w-16 = 64px) */
-        width: calc(100vw - 64px) !important;
+        /* remove explicit left offset so the main layout's margin controls positioning */
+        margin-left: 0 !important;
+        width: 100% !important;
         height: 100dvh !important;
     }
 
@@ -980,15 +1087,77 @@ body {
         top: 0 !important;
         width: 64px !important; /* w-16 = 64px */
         z-index: 50 !important;
+        /* allow horizontal visual overflow (rings/shadows) while preserving vertical scroll */
+        overflow-x: visible !important;
     }
 
-    /* Mobile chat input - minimal styling for mobile phones */
+    /* Anchor the compact profile pill to the bottom center of the fixed sidebar
+       and provide a single centered logout button for small screens */
+    .sidebar-mobile .profile-compact {
+        position: absolute !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* center the pill inside the sidebar */
+        bottom: calc(0.75rem + env(safe-area-inset-bottom)) !important;
+        z-index: 60 !important;
+        margin: 0 !important; /* Ignore margin so absolute positioning is exact */
+        overflow: visible !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0.25rem !important;
+    }
+
+    /* Center and size the logout button inside the compact pill */
+    .sidebar-mobile .profile-compact button {
+        width: 44px !important;
+        height: 44px !important;
+        padding: 0 !important;
+        border-radius: 9999px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        /* default: dark circle with white icon */
+        background-color: rgba(0, 0, 0, 0.6) !important;
+        border: 2px solid rgba(255, 255, 255, 0.08) !important;
+        color: #ffffff !important;
+        transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+    }
+    .sidebar-mobile .profile-compact button:hover {
+        /* sharper, more saturated red */
+        background-color: #ff1f3b !important; /* vivid red */
+        box-shadow: 0 6px 18px rgba(255, 31, 59, 0.22) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* Mobile chat input - more generous spacing for devices with home indicator */
     .chat-input-form {
         background: rgb(0, 0, 0) !important;
-        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)) !important;
+        /* Slightly reduced padding to be less tall while still clearing the home indicator */
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
         min-height: 60px !important;
         display: flex !important;
         align-items: center !important;
+    }
+
+    /* Sticky input that respects iPhone safe area - raised by a visible offset */
+    .chat-input-sticky {
+        position: sticky !important;
+        /* Slightly lower offset so input sits a bit closer to the bottom */
+        bottom: calc(0.75rem + env(safe-area-inset-bottom)) !important;
+        z-index: 80 !important;
+        backdrop-filter: blur(6px) !important;
+        -webkit-backdrop-filter: blur(6px) !important;
+    }
+
+    /* Give messages area much more bottom padding so content isn't hidden under the sticky input */
+    .messages-only-scroll {
+        /* Reduced bottom padding so messages aren't pushed too far up */
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Remove aggressive upward transform (can cause clipping) and rely on padding + sticky offset */
+    .chat-input-form {
+        transform: none !important;
     }
 }
 
@@ -1016,14 +1185,14 @@ body {
         -webkit-overflow-scrolling: auto;
     }
 
-    /* Only apply restrictive scrolling to chat page container */
+    /* Only apply restrictive scrolling to chat page container - allow normal flow so it centers like other pages */
     .chat-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: hidden;
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        overflow: visible;
         touch-action: pan-y;
     }
 

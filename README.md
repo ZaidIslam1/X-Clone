@@ -1,6 +1,6 @@
-# 🐦 X (Twitter) Clone
+# 🌟 Z - Modern Social Media Platform
 
-A full-stack social media platform that replicates the core functionality of Twitter/X, built with modern web technologies and real-time capabilities.
+A full-stack social media platform with real-time communication, featuring a modern purple and orange gradient theme with enhanced user experience and responsive design.
 
 ## 🌐 Live Demo
 

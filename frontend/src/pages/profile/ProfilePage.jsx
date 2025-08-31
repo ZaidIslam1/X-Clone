@@ -61,20 +61,25 @@ const ProfilePage = () => {
         isLoading,
         refetch,
         isRefetching,
+        error,
     } = useQuery({
-        queryKey: ["userProfile"],
+        queryKey: ["userProfile", username],
         queryFn: async () => {
             try {
                 const res = await fetch(`/api/users/profile/${username}`);
                 const data = await res.json();
-                if (data.error) return null;
-                if (!res.ok) throw new Error(data.error);
+                if (data.error) throw new Error(data.error);
+                if (!res.ok) throw new Error(data.error || "Failed to fetch user profile");
                 return data;
             } catch (error) {
-                throw new Error(error);
+                throw new Error(error.message || "Failed to fetch user profile");
             }
         },
+        enabled: !!username, // Only run if username exists
+        retry: 1, // Only retry once on error
     });
+    // Fix: Define amIFollowing to prevent ReferenceError
+    const amIFollowing = authUser && user ? authUser.following?.includes(user._id) : false;
 
     const { mutate: updateProfilePic, isPending: uploadPicPending } = useMutation({
         mutationFn: async () => {
@@ -93,7 +98,7 @@ const ProfilePage = () => {
         },
         onSuccess: async () => {
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+                queryClient.invalidateQueries({ queryKey: ["userProfile", username] }),
                 queryClient.invalidateQueries({ queryKey: ["authUser"] }),
             ]);
             setCoverImg(null);
@@ -106,7 +111,19 @@ const ProfilePage = () => {
     }, [username, refetch]);
 
     const isMyProfile = authUser?._id === user?._id;
+
     const isFollowing = user?.followers?.includes(authUser?._id);
+
+    // Fix: Define handleFollow to prevent ReferenceError
+    const handleFollow = () => {
+        if (!user || !authUser) return;
+        followUnfollow(user._id, {
+            onSuccess: () => {
+                // Optionally refetch or invalidate queries for up-to-date UI
+                refetch();
+            },
+        });
+    };
 
     const handleUpdate = (e) => {
         e.preventDefault();
@@ -125,190 +142,250 @@ const ProfilePage = () => {
     };
 
     return (
-        <>
-            <div className="flex-[4_4_0] border-r border-gray-700 page-container mobile-page-container w-full">
+        <div className="flex w-full bg-gradient-to-t from-black via-gray-900 to-black">
+            <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-2 pt-4 lg:pt-0 mobile-safe-top bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-auto">
                 {/* HEADER */}
-                {isLoading && isRefetching && <ProfileHeaderSkeleton />}
-                {!isLoading && !isRefetching && !user && (
+                {(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
+                {error && (
+                    <div className="text-center text-lg mt-4 p-4">
+                        <p className="text-red-500">Error: {error.message}</p>
+                        <button
+                            onClick={() => refetch()}
+                            className="mt-2 p-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                )}
+                {!isLoading && !isRefetching && !error && !user && (
                     <p className="text-center text-lg mt-4">User not found</p>
                 )}
                 <div className="flex flex-col">
-                    {!isLoading && user && (
+                    {!isLoading && !isRefetching && !error && user && (
                         <>
-                            <div className="flex gap-10 px-4 py-2 items-center sticky top-0 bg-black/80 backdrop-blur-md z-10 border-b border-gray-700">
-                                <Link to="/">
-                                    <FaArrowLeft className="w-4 h-4" />
+                            {/* Top bar - unified with tab style */}
+                            <div className="flex w-full border-b border-gray-800 font-semibold sticky top-0 z-10 bg-gradient-to-r from-purple-600/30 to-orange-600/30 backdrop-blur-xl items-center p-4">
+                                <Link to="/" className="mr-4">
+                                    <FaArrowLeft className="w-5 h-5" />
                                 </Link>
-                                <div className="flex flex-col">
-                                    <p className="font-bold text-lg">{user?.fullName}</p>
-                                    <span className="text-sm text-slate-500">
-                                        {userPosts?.length || 0} posts
+                                <div className="flex flex-col flex-1">
+                                    <span className="text-lg font-semibold text-white leading-tight">
+                                        {user?.fullName}
                                     </span>
                                 </div>
                             </div>
                             {/* COVER IMG */}
-                            <div className="relative group/cover">
-                                {coverImg || user?.coverImg ? (
-                                    <img
-                                        src={
-                                            coverImg || createHighQualityCoverImage(user?.coverImg)
-                                        }
-                                        className="h-40 sm:h-52 w-full object-cover"
-                                        alt="cover image"
-                                    />
-                                ) : (
-                                    <div className="h-40 sm:h-52 w-full flex items-center justify-center bg-gray-800 text-white text-5xl sm:text-7xl font-bold select-none">
-                                        {user?.fullName
-                                            ? user.fullName[0].toUpperCase()
-                                            : user?.username?.[0]?.toUpperCase()}
-                                    </div>
-                                )}
-                                {isMyProfile && (
-                                    <div
-                                        className="absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-100 md:opacity-75 md:group-hover/cover:opacity-100 transition duration-200"
-                                        onClick={() => coverImgRef.current.click()}
-                                    >
-                                        <MdEdit className="w-5 h-5 text-white" />
-                                    </div>
-                                )}
-
-                                <input
-                                    type="file"
-                                    hidden
-                                    ref={coverImgRef}
-                                    onChange={(e) => handleImgChange(e, "coverImg")}
-                                />
-                                <input
-                                    type="file"
-                                    hidden
-                                    ref={profileImgRef}
-                                    onChange={(e) => handleImgChange(e, "profileImg")}
-                                />
-                                {/* USER AVATAR */}
-                                <div className="avatar absolute -bottom-16 left-4">
-                                    <div className="w-32 rounded-full relative group/avatar">
+                            {/* Modern Profile Header */}
+                            <div className="relative">
+                                {/* Cover Image/Background */}
+                                <div className="relative group/cover h-48 sm:h-64 bg-gradient-to-br from-purple-900/10 via-gray-900/10 to-orange-900/10 overflow-hidden">
+                                    {coverImg || user?.coverImg ? (
                                         <img
                                             src={
-                                                profileImg ||
-                                                createHighQualityProfileImage(user?.profileImg) ||
-                                                "/avatar-placeholder.png"
+                                                coverImg ||
+                                                createHighQualityCoverImage(user?.coverImg)
                                             }
-                                            alt={user?.fullName}
+                                            className="h-full w-full object-cover"
+                                            alt="cover image"
                                         />
-                                        <div className="absolute top-5 right-3 p-1 bg-primary rounded-full opacity-100 md:opacity-75 md:group-hover/avatar:opacity-100 cursor-pointer transition duration-200">
+                                    ) : (
+                                        <div className="h-full w-full bg-gradient-to-br from-purple-600/20 via-gray-800 to-orange-600/20 flex items-center justify-center">
+                                            <div className="text-6xl sm:text-8xl font-bold text-white/20 select-none">
+                                                {user?.fullName
+                                                    ? user.fullName[0].toUpperCase()
+                                                    : user?.username?.[0]?.toUpperCase()}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Gradient Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                                    {isMyProfile && (
+                                        <button
+                                            className="absolute top-4 right-4 p-3 bg-black/60 hover:bg-black/80 backdrop-blur-sm rounded-full transition-all duration-200 border border-gray-600/30 hover:border-purple-500/50"
+                                            onClick={() => coverImgRef.current.click()}
+                                        >
+                                            <MdEdit className="w-5 h-5 text-white" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Profile Info Section */}
+                                <div className="relative px-6 pb-6">
+                                    {/* Avatar */}
+                                    <div className="flex items-end justify-between -mt-16 mb-4">
+                                        <div className="relative group/avatar">
+                                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-600 to-orange-500 p-1 shadow-xl">
+                                                <div className="w-full h-full rounded-full overflow-hidden bg-black">
+                                                    <img
+                                                        src={
+                                                            profileImg ||
+                                                            createHighQualityProfileImage(
+                                                                user?.profileImg
+                                                            ) ||
+                                                            "/avatar-placeholder.png"
+                                                        }
+                                                        alt={user?.fullName}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            </div>
                                             {isMyProfile && (
-                                                <MdEdit
-                                                    className="w-4 h-4 text-white"
+                                                <button
+                                                    className="absolute bottom-2 right-2 p-2 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors shadow-lg"
                                                     onClick={() => profileImgRef.current.click()}
-                                                />
+                                                >
+                                                    <MdEdit className="w-4 h-4 text-white" />
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex gap-3 mb-4">
+                                            {isMyProfile && (
+                                                <button
+                                                    className="bg-transparent border-2 border-purple-500 hover:bg-purple-500/10 text-purple-400 font-semibold py-2 px-6 rounded-full transition-all duration-200"
+                                                    onClick={() =>
+                                                        document
+                                                            .getElementById("edit_profile_modal")
+                                                            .showModal()
+                                                    }
+                                                >
+                                                    Edit Profile
+                                                </button>
+                                            )}
+                                            {!isMyProfile && (
+                                                <button
+                                                    className={`font-semibold py-2 px-6 rounded-full transition-all duration-200 ${
+                                                        amIFollowing
+                                                            ? "bg-transparent border-2 border-gray-600 hover:border-red-500 hover:text-red-400 text-gray-400"
+                                                            : "bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white"
+                                                    }`}
+                                                    onClick={handleFollow}
+                                                    disabled={isPending}
+                                                >
+                                                    {isPending
+                                                        ? "Loading..."
+                                                        : amIFollowing
+                                                        ? "Unfollow"
+                                                        : "Follow"}
+                                                </button>
                                             )}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="flex justify-end px-4 mt-5">
-                                {isMyProfile && <EditProfileModal />}
-                                {!isMyProfile && (
-                                    <button
-                                        className="btn btn-outline rounded-full btn-sm"
-                                        onClick={() => followUnfollow(user?._id)}
-                                    >
-                                        {isPending ? (
-                                            <LoadingSpinner size="sm" />
-                                        ) : isFollowing ? (
-                                            "Unfollow"
-                                        ) : (
-                                            "Follow"
-                                        )}
-                                    </button>
-                                )}
-                                {(coverImg || profileImg) && (
-                                    <button
-                                        className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                                        onClick={() => updateProfilePic()}
-                                    >
-                                        {uploadPicPending ? "Updating..." : "Update"}
-                                    </button>
-                                )}
-                            </div>
 
-                            <div className="flex flex-col gap-4 mt-14 px-4">
-                                <div className="flex flex-col">
-                                    <span className="font-bold text-lg">{user?.fullName}</span>
-                                    <span className="text-sm text-slate-500">
-                                        @{user?.username}
-                                    </span>
-                                    <span className="text-sm my-1">{user?.bio}</span>
-                                </div>
-
-                                <div className="flex gap-2 flex-wrap">
-                                    {user?.link && (
-                                        <div className="flex gap-1 items-center ">
-                                            <>
-                                                <FaLink className="w-3 h-3 text-slate-500" />
-                                                <a
-                                                    href={user?.link}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-sm text-blue-500 hover:underline"
-                                                >
-                                                    {user?.link}
-                                                </a>
-                                            </>
+                                    {/* User Info */}
+                                    <div className="space-y-3">
+                                        <div>
+                                            <h1 className="text-2xl font-bold text-white">
+                                                {user?.fullName}
+                                            </h1>
+                                            <p className="text-gray-400">@{user?.username}</p>
                                         </div>
-                                    )}
-                                    <div className="flex gap-2 items-center">
-                                        <IoCalendarOutline className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-slate-500">
-                                            {formatMemberSinceDate(user?.createdAt)}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Link
-                                        to={`/profile/${user?.username}/following`}
-                                        className="flex gap-1 items-center hover:underline cursor-pointer"
-                                    >
-                                        <span className="font-bold text-xs">
-                                            {user?.following.length}
-                                        </span>
-                                        <span className="text-slate-500 text-xs">Following</span>
-                                    </Link>
 
-                                    <Link
-                                        to={`/profile/${user?.username}/followers`}
-                                        className="flex gap-1 items-center hover:underline cursor-pointer"
-                                    >
-                                        <span className="font-bold text-xs">
-                                            {user?.followers.length}
-                                        </span>
-                                        <span className="text-slate-500 text-xs">Followers</span>
-                                    </Link>
+                                        {user?.bio && (
+                                            <p className="text-gray-300 leading-relaxed">
+                                                {user.bio}
+                                            </p>
+                                        )}
+
+                                        <div className="flex items-center gap-6 text-sm text-gray-400">
+                                            {user?.link && (
+                                                <a
+                                                    href={user.link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 hover:text-purple-400 transition-colors"
+                                                >
+                                                    <FaLink className="w-4 h-4" />
+                                                    {user.link}
+                                                </a>
+                                            )}
+                                            <div className="flex items-center gap-1">
+                                                <IoCalendarOutline className="w-4 h-4" />
+                                                <span>
+                                                    {formatMemberSinceDate(user?.createdAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-6 text-sm">
+                                            <Link
+                                                to={`/profile/${user?.username}/following`}
+                                                className="hover:text-purple-400 transition-colors"
+                                            >
+                                                <span className="font-bold text-white">
+                                                    {user?.following?.length || 0}
+                                                </span>
+                                                <span className="text-gray-400 ml-1">
+                                                    Following
+                                                </span>
+                                            </Link>
+                                            <Link
+                                                to={`/profile/${user?.username}/followers`}
+                                                className="hover:text-purple-400 transition-colors"
+                                            >
+                                                <span className="font-bold text-white">
+                                                    {user?.followers?.length || 0}
+                                                </span>
+                                                <span className="text-gray-400 ml-1">
+                                                    Followers
+                                                </span>
+                                            </Link>
+                                        </div>
+                                    </div>
+
+                                    {/* Hidden Inputs */}
+                                    <input
+                                        type="file"
+                                        hidden
+                                        ref={coverImgRef}
+                                        onChange={(e) => handleImgChange(e, "coverImg")}
+                                    />
+                                    <input
+                                        type="file"
+                                        hidden
+                                        ref={profileImgRef}
+                                        onChange={(e) => handleImgChange(e, "profileImg")}
+                                    />
                                 </div>
                             </div>
-                            <div className="flex w-full border-b border-gray-700 mt-4 font-semibold">
-                                <div
-                                    className={`flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer ${
-                                        feedType === "posts" ? "text-white" : "text-gray-500"
+
+                            {(coverImg || profileImg) && (
+                                <div className="flex justify-center p-4 border-t border-gray-800/30">
+                                    <button
+                                        className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        onClick={() => updateProfilePic()}
+                                        disabled={uploadPicPending}
+                                    >
+                                        {uploadPicPending ? "Updating..." : "Update Profile"}
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Tabs - unified with Followers/Following style */}
+                            <div className="flex w-full border-b border-gray-800 font-semibold mt-4 mb-2 bg-black/40">
+                                <button
+                                    className={`flex-1 py-3 text-lg rounded-t-2xl transition-all duration-300 focus:outline-none ${
+                                        feedType === "posts"
+                                            ? "bg-gradient-to-r from-purple-600/30 to-orange-600/30 text-white shadow"
+                                            : "text-gray-400 hover:bg-gray-900/30"
                                     }`}
                                     onClick={() => setFeedType("posts")}
                                 >
                                     Posts
-                                    {feedType === "posts" && (
-                                        <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary" />
-                                    )}
-                                </div>
-                                <div
-                                    className={`flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer ${
-                                        feedType === "likes" ? "text-white" : "text-gray-500"
+                                </button>
+                                <button
+                                    className={`flex-1 py-3 text-lg rounded-t-2xl transition-all duration-300 focus:outline-none ${
+                                        feedType === "likes"
+                                            ? "bg-gradient-to-r from-purple-600/30 to-orange-600/30 text-white shadow"
+                                            : "text-gray-400 hover:bg-gray-900/30"
                                     }`}
                                     onClick={() => setFeedType("likes")}
                                 >
                                     Likes
-                                    {feedType === "likes" && (
-                                        <div className="absolute bottom-0 w-10  h-1 rounded-full bg-primary" />
-                                    )}
-                                </div>
+                                </button>
                             </div>
                         </>
                     )}
@@ -316,7 +393,7 @@ const ProfilePage = () => {
                     <Posts feedType={feedType} username={username} />
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 export default ProfilePage;

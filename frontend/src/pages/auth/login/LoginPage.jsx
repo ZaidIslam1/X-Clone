@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import XSvg from "../../../components/svgs/X";
+import SocialLogo from "../../../components/svgs/SocialLogo";
 
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -58,58 +58,107 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="max-w-screen-xl mx-auto flex h-screen">
-            <div className="flex-1 hidden lg:flex items-center  justify-center">
-                <XSvg className="lg:w-2/3 fill-white" />
+        <div className="min-h-screen flex bg-gradient-to-br from-purple-900/20 via-black to-orange-900/10">
+            {/* Left side - Logo */}
+            <div className="flex-1 hidden lg:flex items-center justify-center">
+                <div className="text-center">
+                    <SocialLogo className="w-2/3 max-w-md mx-auto mb-8" />
+                    <div className="space-y-4">
+                        <h2 className="text-4xl font-bold text-white">Welcome to Z</h2>
+                        <p className="text-gray-400 text-xl">Connect with your world</p>
+                    </div>
+                </div>
             </div>
-            <div className="flex-1 flex flex-col justify-center items-center">
-                <form className="flex gap-4 flex-col" onSubmit={handleSubmit}>
-                    <XSvg className="w-24 lg:hidden fill-white" />
-                    <h1 className="text-3xl font-extrabold text-white">Sign In to X</h1>
-                    <label className="input input-bordered rounded flex items-center gap-2">
-                        <MdOutlineMail />
-                        <input
-                            type="text"
-                            className="grow"
-                            placeholder="username"
-                            name="username"
-                            onChange={handleInputChange}
-                            value={formData.username}
-                        />
-                    </label>
 
-                    <label className="input input-bordered rounded flex items-center gap-2 relative">
-                        <MdPassword />
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            className="grow"
-                            placeholder="Password"
-                            name="password"
-                            onChange={handleInputChange}
-                            value={formData.password}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            tabIndex={-1} // prevent focus
-                            onMouseDown={(e) => e.preventDefault()} // prevent input losing focus
-                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
-                        >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </button>
-                    </label>
-                    <button className="btn rounded-full btn-primary text-white">
-                        {isPending ? "Logging in.." : "Login"}
-                    </button>
-                    {isError && <p className="text-red-500">{error.message}</p>}
-                </form>
-                <div className="flex flex-col gap-2 mt-5">
-                    <p className="text-white text-sm">{"Don't"} have an account?</p>
-                    <Link to="/signup">
-                        <button className="btn rounded-full btn-primary text-white btn-outline w-full">
-                            Sign up
-                        </button>
-                    </Link>
+            {/* Right side - Login Form */}
+            <div className="flex-[1.2] flex flex-col justify-center items-center p-4 sm:p-8">
+                <div className="w-full max-w-md min-w-[320px]">
+                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-10 py-10 sm:py-14">
+                        <div className="text-center mb-8">
+                            <SocialLogo className="w-16 lg:hidden mx-auto mb-4" />
+                            <h1 className="text-3xl font-bold text-white mb-2">Sign In</h1>
+                            <p className="text-gray-400">Welcome back to Z</p>
+                        </div>
+
+                        <form className="space-y-6 w-full" onSubmit={handleSubmit}>
+                            {/* Username Input */}
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-300">
+                                    Username
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <MdOutlineMail className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        placeholder="Enter your username"
+                                        value={formData.username}
+                                        onChange={handleInputChange}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Password Input */}
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-300">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <MdPassword className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        placeholder="Enter your password"
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        className="w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                                    >
+                                        {showPassword ? (
+                                            <FaEyeSlash className="h-5 w-5" />
+                                        ) : (
+                                            <FaEye className="h-5 w-5" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Error Message */}
+                            {isError && (
+                                <div className="p-3 rounded-xl bg-red-900/20 border border-red-500/30">
+                                    <p className="text-red-400 text-sm">{error.message}</p>
+                                </div>
+                            )}
+
+                            {/* Login Button */}
+                            <button
+                                type="submit"
+                                disabled={isPending}
+                                className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-orange-600 hover:from-purple-700 hover:to-orange-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isPending ? "Signing in..." : "Sign In"}
+                            </button>
+                        </form>
+
+                        {/* Sign Up Link */}
+                        <div className="mt-8 text-center">
+                            <p className="text-gray-400 mb-4">Don't have an account?</p>
+                            <Link to="/signup">
+                                <button className="w-full py-3 px-6 bg-transparent border-2 border-purple-600/50 hover:border-purple-500 text-purple-400 hover:text-white font-semibold rounded-xl transition-all duration-300 hover:bg-purple-600/10">
+                                    Create Account
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

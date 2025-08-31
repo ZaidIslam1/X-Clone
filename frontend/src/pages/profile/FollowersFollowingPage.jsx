@@ -71,99 +71,112 @@ const FollowersFollowingPage = () => {
     };
 
     return (
-        <div className="flex-[4_4_0] border-l border-r border-gray-700 h-screen mobile-page-container p-4">
-            {/* NEW: Show profile user name */}
-            {isProfileLoading && <p className="text-center text-gray-400 mb-4">Loading user...</p>}
-            {isProfileError && (
-                <p className="text-center text-red-500 mb-4">Failed to load user profile</p>
-            )}
-            {!isProfileLoading && profileUser && (
-                <h2 className="text-2xl font-bold mb-4">{profileUser.fullName}</h2>
-            )}
+        <div className="flex w-full bg-gradient-to-t from-black via-gray-900 to-black">
+            <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-2 pt-4 lg:pt-0 mobile-safe-top bg-transparent border border-gray-800 shadow-2xl rounded-3xl p-6 backdrop-blur-xl">
+                {/* Profile user name */}
+                {isProfileLoading && (
+                    <p className="text-center text-gray-400 m-4">Loading user...</p>
+                )}
+                {isProfileError && (
+                    <p className="text-center text-red-500 m-4">Failed to load user profile</p>
+                )}
+                {!isProfileLoading && profileUser && (
+                    <h2 className="text-2xl font-bold m-4 text-white text-left">
+                        {profileUser.fullName}
+                    </h2>
+                )}
 
-            {/* Tabs */}
-            <div className="flex w-full border-b border-gray-700 font-semibold mb-4">
-                <div
-                    className={`flex justify-center flex-1 p-3 cursor-pointer relative hover:bg-secondary transition duration-300 ${
-                        activeTab === "followers" ? "white" : "text-gray-500"
-                    }`}
-                    onClick={() => handleTabChange("followers")}
-                >
-                    Followers
-                    {activeTab === "followers" && (
-                        <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary"></div>
-                    )}
+                {/* Tabs */}
+                <div className="flex w-full border-b border-gray-800 font-semibold mb-6">
+                    <button
+                        className={`flex-1 py-3 text-lg rounded-t-2xl transition-all duration-300 focus:outline-none ${
+                            activeTab === "followers"
+                                ? "bg-gradient-to-r from-purple-600/30 to-orange-600/30 text-white shadow"
+                                : "text-gray-400 hover:bg-gray-900/30"
+                        }`}
+                        onClick={() => handleTabChange("followers")}
+                    >
+                        Followers
+                    </button>
+                    <button
+                        className={`flex-1 py-3 text-lg rounded-t-2xl transition-all duration-300 focus:outline-none ${
+                            activeTab === "following"
+                                ? "bg-gradient-to-r from-purple-600/30 to-orange-600/30 text-white shadow"
+                                : "text-gray-400 hover:bg-gray-900/30"
+                        }`}
+                        onClick={() => handleTabChange("following")}
+                    >
+                        Following
+                    </button>
                 </div>
-                <div
-                    className={`flex justify-center flex-1 p-3 cursor-pointer relative hover:bg-secondary transition duration-300 ${
-                        activeTab === "following" ? "white" : "text-gray-500"
-                    }`}
-                    onClick={() => handleTabChange("following")}
-                >
-                    Following
-                    {activeTab === "following" && (
-                        <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary"></div>
-                    )}
-                </div>
-            </div>
 
-            {isLoading && (
-                <div className="flex justify-center mt-10">
-                    <LoadingSpinner size="lg" />
-                </div>
-            )}
+                {isLoading && (
+                    <div className="flex justify-center mt-10">
+                        <LoadingSpinner size="lg" />
+                    </div>
+                )}
 
-            {isError && (
-                <div className="text-center text-red-500 mt-10">Failed to load users 😓</div>
-            )}
+                {isError && (
+                    <div className="text-center text-red-500 mt-10">Failed to load users 😓</div>
+                )}
 
-            {!isLoading && data?.length === 0 && (
-                <div className="text-center text-gray-400 mt-10">No {activeTab} yet 🤔</div>
-            )}
+                {!isLoading && data?.length === 0 && (
+                    <div className="text-center text-gray-400 mt-10">No {activeTab} yet 🤔</div>
+                )}
 
-            <div className="divide-y divide-gray-800">
-                {data?.map((user) => {
-                    const following = isFollowing(user._id);
-
-                    return (
-                        <div
-                            key={user._id}
-                            className="flex justify-between items-center gap-4 p-4 hover:bg-gray-900 transition"
-                        >
-                            <Link
-                                to={`/profile/${user.username}`}
-                                className="flex gap-4 items-center flex-1"
+                <div className="divide-y divide-gray-800 max-h-[78vh] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-700/40 scrollbar-track-transparent">
+                    {data?.map((user) => {
+                        const following = isFollowing(user._id);
+                        return (
+                            <div
+                                key={user._id}
+                                className="flex justify-between items-center gap-4 p-4 rounded-2xl hover:bg-gradient-to-r hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300 mb-2"
                             >
-                                <div className="avatar">
-                                    <div className="w-10 h-10 rounded-full">
-                                        <img src={user.profileImg || "/avatar-placeholder.png"} />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="font-bold">{user.fullName}</span>
-                                    <span className="text-sm text-gray-500">@{user.username}</span>
-                                </div>
-                            </Link>
-
-                            {/* Follow/Unfollow Button */}
-                            {authUser?._id !== user._id && (
-                                <button
-                                    className="btn btn-outline rounded-full btn-sm"
-                                    onClick={() => followUnfollow(user._id)}
-                                    disabled={isPending}
+                                <Link
+                                    to={`/profile/${user.username}`}
+                                    className="flex gap-4 items-center flex-1"
                                 >
-                                    {isPending ? (
-                                        <LoadingSpinner size="sm" />
-                                    ) : following ? (
-                                        "Unfollow"
-                                    ) : (
-                                        "Follow"
-                                    )}
-                                </button>
-                            )}
-                        </div>
-                    );
-                })}
+                                    <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/30 ring-offset-2 ring-offset-black/50 overflow-hidden bg-black group-hover:ring-purple-500/50 transition-colors shadow-lg">
+                                        <img
+                                            src={user.profileImg || "/avatar-placeholder.png"}
+                                            alt={user.fullName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="font-semibold text-white truncate">
+                                            {user.fullName}
+                                        </span>
+                                        <span className="text-sm text-gray-400 truncate">
+                                            @{user.username}
+                                        </span>
+                                    </div>
+                                </Link>
+
+                                {/* Follow/Unfollow Button */}
+                                {authUser?._id !== user._id && (
+                                    <button
+                                        className={`py-2 px-6 rounded-full font-semibold text-sm transition-all duration-300 shadow-lg focus:outline-none bg-gradient-to-r ${
+                                            following
+                                                ? "from-gray-800 to-gray-900 text-gray-300 border border-purple-600/30 hover:from-purple-900/30 hover:to-orange-900/20"
+                                                : "from-purple-600 to-orange-500 text-white hover:from-purple-700 hover:to-orange-600"
+                                        }`}
+                                        onClick={() => followUnfollow(user._id)}
+                                        disabled={isPending}
+                                    >
+                                        {isPending ? (
+                                            <LoadingSpinner size="sm" />
+                                        ) : following ? (
+                                            "Unfollow"
+                                        ) : (
+                                            "Follow"
+                                        )}
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

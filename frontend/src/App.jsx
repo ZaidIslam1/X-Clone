@@ -207,85 +207,145 @@ function App() {
 
     return (
         <div
-            className={`flex max-w-6xl mx-auto h-screen relative bg-black mobile-safe-top mobile-safe-bottom overflow-hidden ${
+            className={`flex w-full h-screen relative bg-gradient-to-br from-black via-gray-950/40 to-purple-950/30 mobile-safe-top mobile-safe-bottom overflow-auto ${
                 isMessagesPage ? "chat-no-scroll" : ""
             }`}
-            style={{ height: "100dvh" }}
+            style={{
+                height: "100dvh",
+                background:
+                    "radial-gradient(ellipse at top, rgba(88, 28, 135, 0.15) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 1) 100%)",
+            }}
         >
+            {/* Left Sidebar - Hidden on mobile, visible on desktop with wider width */}
             {authUser && (
-                <Sidebar
-                    authUser={authUser}
-                    unreadUsers={unreadUsers}
-                    hasNewNotification={hasNewNotification}
-                    setHasNewNotification={setHasNewNotification}
-                    blinkNotification={blinkNotification}
-                />
+                <div className="hidden lg:block pl-4 xl:pl-6">
+                    <Sidebar
+                        authUser={authUser}
+                        unreadUsers={unreadUsers}
+                        hasNewNotification={hasNewNotification}
+                        setHasNewNotification={setHasNewNotification}
+                        blinkNotification={blinkNotification}
+                    />
+                </div>
             )}
-            <div className={`flex-1 flex min-w-0 ${isMessagesPage ? "chat-no-scroll" : ""}`}>
-                <Routes>
-                    <Route path="/" element={authUser ? <Homepage /> : <Navigate to="/login" />} />
-                    <Route
-                        path="/notifications"
-                        element={
-                            authUser ? (
-                                <NotificationPage
-                                    setHasNewNotification={setHasNewNotification}
-                                    setBlinkNotification={setBlinkNotification}
-                                />
-                            ) : (
-                                <Navigate to="/login" />
-                            )
-                        }
-                    />
-                    <Route
-                        path="/profile/:username/:tab"
-                        element={authUser ? <FollowersFollowingPage /> : <Navigate to="/login" />}
-                    />
-                    <Route
-                        path="/profile/:username"
-                        element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
-                    />
-                    <Route
-                        path="/chat/messages"
-                        element={
-                            authUser ? (
-                                <ChatPage
-                                    authUser={authUser}
-                                    unreadUsers={unreadUsers}
-                                    setUnreadUsers={setUnreadUsers}
-                                    socketRef={socketRef}
-                                />
-                            ) : (
-                                <Navigate to="/login" />
-                            )
-                        }
-                    />
-                    <Route
-                        path="/chat/messages/:username"
-                        element={
-                            authUser ? (
-                                <ChatPage
-                                    authUser={authUser}
-                                    unreadUsers={unreadUsers}
-                                    setUnreadUsers={setUnreadUsers}
-                                    socketRef={socketRef}
-                                />
-                            ) : (
-                                <Navigate to="/login" />
-                            )
-                        }
-                    />
-                    <Route
-                        path="/login"
-                        element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-                    />
-                    <Route
-                        path="/signup"
-                        element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-                    />
-                </Routes>
-                {authUser && <RightPanel authUser={authUser} unreadUsers={unreadUsers} />}
+
+            {/* Main Content Area - Fixed width in center */}
+            <div
+                className={`flex-1 flex justify-center min-w-0 ${
+                    isMessagesPage ? "chat-no-scroll" : ""
+                } ${authUser ? "ml-20 sm:ml-16 md:ml-20 lg:ml-0" : ""}`}
+            >
+                <div
+                    className={
+                        authUser
+                            ? "w-full max-w-2xl lg:max-w-xl xl:max-w-2xl pt-4 lg:pt-0 mobile-safe-top"
+                            : "w-full pt-4 lg:pt-0 mobile-safe-top"
+                    }
+                    style={
+                        authUser
+                            ? {
+                                  background:
+                                      "linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(17, 24, 39, 0.4) 50%, rgba(88, 28, 135, 0.1) 100%)",
+                              }
+                            : undefined
+                    }
+                >
+                    {/* Mobile Sidebar - Only show on mobile when not on messages page */}
+                    {authUser && (
+                        <div className="lg:hidden">
+                            <Sidebar
+                                authUser={authUser}
+                                unreadUsers={unreadUsers}
+                                hasNewNotification={hasNewNotification}
+                                setHasNewNotification={setHasNewNotification}
+                                blinkNotification={blinkNotification}
+                            />
+                        </div>
+                    )}
+
+                    {/* Mobile RightPanel mount so its toggle is available on small screens */}
+                    {authUser && (
+                        <div className="lg:hidden">
+                            <RightPanel authUser={authUser} unreadUsers={unreadUsers} />
+                        </div>
+                    )}
+
+                    <Routes>
+                        <Route
+                            path="/"
+                            element={authUser ? <Homepage /> : <Navigate to="/login" />}
+                        />
+                        <Route
+                            path="/notifications"
+                            element={
+                                authUser ? (
+                                    <NotificationPage
+                                        setHasNewNotification={setHasNewNotification}
+                                        setBlinkNotification={setBlinkNotification}
+                                    />
+                                ) : (
+                                    <Navigate to="/login" />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/profile/:username/:tab"
+                            element={
+                                authUser ? <FollowersFollowingPage /> : <Navigate to="/login" />
+                            }
+                        />
+                        <Route
+                            path="/profile/:username"
+                            element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+                        />
+                        <Route
+                            path="/chat/messages"
+                            element={
+                                authUser ? (
+                                    <ChatPage
+                                        authUser={authUser}
+                                        unreadUsers={unreadUsers}
+                                        setUnreadUsers={setUnreadUsers}
+                                        socketRef={socketRef}
+                                    />
+                                ) : (
+                                    <Navigate to="/login" />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/chat/messages/:username"
+                            element={
+                                authUser ? (
+                                    <ChatPage
+                                        authUser={authUser}
+                                        unreadUsers={unreadUsers}
+                                        setUnreadUsers={setUnreadUsers}
+                                        socketRef={socketRef}
+                                    />
+                                ) : (
+                                    <Navigate to="/login" />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/login"
+                            element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+                        />
+                        <Route
+                            path="/signup"
+                            element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+                        />
+                    </Routes>
+                </div>
             </div>
+
+            {/* Right Panel - visible on large+ screens; mobile version mounted in main content so toggle appears */}
+            {authUser && (
+                <div className="hidden lg:block pr-4 xl:pr-6">
+                    <RightPanel authUser={authUser} unreadUsers={unreadUsers} />
+                </div>
+            )}
         </div>
     );
 }

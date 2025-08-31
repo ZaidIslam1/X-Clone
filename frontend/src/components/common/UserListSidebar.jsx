@@ -43,10 +43,7 @@ const UserListSidebar = ({
 
     return (
         <>
-            <div className="flex-1 border-gray-700 bg-black h-screen p-3 sm:p-4 flex flex-col">
-                <h2 className="text-base sm:text-lg font-semibold text-white mb-4 flex-shrink-0">
-                    Messages
-                </h2>
+            <div className="flex-1 min-w-[500px] max-w-md border-purple-800/30 bg-transparent backdrop-blur-sm h-screen p-7 sm:p-6 flex flex-col">
                 {isLoading ? (
                     <div className="flex justify-center mt-10 flex-shrink-0">
                         <LoadingSpinner size="sm" />

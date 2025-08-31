@@ -25,7 +25,7 @@ const useFollow = () => {
             const promises = [
                 queryClient.invalidateQueries({ queryKey: ["suggested"] }),
                 queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-                queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+                queryClient.invalidateQueries({ queryKey: ["userProfile"] }), // Invalidate all userProfile queries
                 queryClient.invalidateQueries({ queryKey: ["posts"] }),
                 targetUsername
                     ? queryClient.invalidateQueries({ queryKey: ["followers", targetUsername] })
