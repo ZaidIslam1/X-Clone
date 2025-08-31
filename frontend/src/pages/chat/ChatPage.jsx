@@ -190,9 +190,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
     };
     return (
         <div className="flex h-screen mobile-screen-height chat-container overflow-hidden flex-1 w-full bg-gradient-to-t from-black via-gray-900 to-black">
-            <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-2 pt-4 lg:pt-0 pb-20 lg:pb-0 mobile-safe-top mobile-safe-bottom">
+            <div className="flex-1 flex flex-col h-full w-full max-w-2xl lg:max-w-xl xl:max-w-2xl mx-auto my-0 pt-0 lg:pt-0 pb-20 lg:pb-0 mobile-safe-top mobile-safe-bottom">
                 {/* Modern Card Chat Area */}
-                <div className="flex flex-col flex-1 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden">
+                <div className="flex flex-col flex-1 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden main-card">
                     {/* Header */}
                     <div className="px-6 py-5 border-b border-gray-800/50 flex items-center bg-gradient-to-r from-purple-900/40 via-black/80 to-orange-900/20 backdrop-blur-xl z-10">
                         {!username ? (
@@ -234,8 +234,8 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                                     <div
                                         className={`max-w-[75%] px-6 py-4 rounded-2xl break-words shadow-lg ${
                                             msg.isOwn
-                                                ? "bg-gradient-to-r from-purple-600 to-orange-500 text-white mr-2 md:mr-6"
-                                                : "bg-gradient-to-r from-gray-800/80 to-gray-900/60 text-gray-200 ml-0"
+                                                ? "bg-gradient-to-r from-purple-600 to-orange-500 text-white mr-2 md:mr-6 main-card"
+                                                : "bg-gradient-to-r from-gray-800/80 to-gray-900/60 text-gray-200 ml-0 main-card"
                                         }`}
                                     >
                                         <p className="text-base leading-relaxed">{msg.content}</p>

@@ -72,7 +72,7 @@ const FollowersFollowingPage = () => {
 
     return (
         <div className="flex w-full bg-gradient-to-t from-black via-gray-900 to-black">
-            <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-2 pt-4 lg:pt-0 mobile-safe-top bg-transparent border border-gray-800 shadow-2xl rounded-3xl p-6 backdrop-blur-xl">
+            <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-0 pt-0 lg:pt-0 mobile-safe-top bg-transparent border border-gray-800 shadow-2xl rounded-3xl p-6 backdrop-blur-xl main-card">
                 {/* Profile user name */}
                 {isProfileLoading && (
                     <p className="text-center text-gray-400 m-4">Loading user...</p>
@@ -130,7 +130,7 @@ const FollowersFollowingPage = () => {
                         return (
                             <div
                                 key={user._id}
-                                className="flex justify-between items-center gap-4 p-4 rounded-2xl hover:bg-gradient-to-r hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300 mb-2"
+                                className="flex justify-between items-center gap-4 p-4 rounded-2xl hover:bg-gradient-to-r hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300 mb-2 main-card"
                             >
                                 <Link
                                     to={`/profile/${user.username}`}

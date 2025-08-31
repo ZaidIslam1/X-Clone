@@ -216,7 +216,7 @@ const Post = ({ post }) => {
     return (
         <>
             {/* Post container */}
-            <div className="mb-8 mx-2 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10 transition-all duration-300">
+            <div className="mb-8 mx-2 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10 transition-all duration-300 main-card">
                 {/* Header: Avatar, Name, Username, Time */}
                 <div className="flex items-center gap-3 px-6 py-4">
                     <Link

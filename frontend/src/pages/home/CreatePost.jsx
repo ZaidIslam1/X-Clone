@@ -110,7 +110,7 @@ const CreatePost = () => {
     }, []);
 
     return (
-        <div className="mb-6 mx-2 mt-4 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10">
+        <div className="mb-6 mx-2 mt-4 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10 main-card">
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-800/30">
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">

@@ -73,7 +73,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
 
     return (
         <div className="flex-1 page-container mobile-page-container w-full bg-gradient-to-br from-black via-gray-900 to-black min-h-screen flex justify-center items-start">
-            <div className="flex flex-col flex-1 w-full max-w-3xl my-8 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden">
+            <div className="flex flex-col flex-1 w-full max-w-3xl my-0 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden main-card">
                 {/* Modern Header */}
                 <div className="p-6 sticky top-0 bg-gradient-to-r from-black/60 via-gray-900/40 to-purple-950/20 backdrop-blur-lg z-10">
                     <div className="flex justify-between items-center">
@@ -127,7 +127,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                 )}
 
                 {/* Notifications Container */}
-                <div className="p-4 space-y-4">
+                <div className="p-4 space-y-4 flex flex-col flex-1 justify-between">
                     {notifications?.length === 0 && (
                         <div className="text-center py-12">
                             <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center">

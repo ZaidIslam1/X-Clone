@@ -178,9 +178,10 @@ body {
     .sidebar-mobile .profile-compact button,
     .sidebar-mobile .group > div.w-12,
     .sidebar-mobile .group > div.rounded-xl {
+        /* Only replace the bright white border; keep original background/hover behavior */
         border-color: rgba(156, 163, 175, 0.12) !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42) !important;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(8, 8, 10, 0.62)) !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32) !important;
+        background: unset !important;
     }
 
     /* RightPanel compact buttons (use same subtle border) */
@@ -1123,6 +1124,21 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Utility for main page cards: provide consistent right-side separation
+   so central feed/cards have a small gap to the right similar to the
+   homepage spacing. Uses logical property so it works in LTR/RTL.
+*/
+.main-card {
+    /* small default spacing that looks good on mobile and desktop */
+    margin-inline-end: 0.75rem; /* right gap */
+}
+
+@media (min-width: 768px) {
+    .main-card {
+        margin-inline-end: 1rem;
+    }
 }
 
 /* Prevent zoom on input focus for iOS */
