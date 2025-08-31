@@ -113,8 +113,14 @@ const Post = ({ post }) => {
         if (!authUser) return toast.error("You must be logged in to like posts");
         likeMutation.mutate();
     };
-    const handleRepost = () => {};
-    const handleBookmark = () => {};
+    const handleRepost = () => {
+        // Inform user the feature is not implemented yet
+        toast("Feature coming soon — Repost 🚧");
+    };
+    const handleBookmark = () => {
+        // Inform user the feature is not implemented yet
+        toast("Feature coming soon — Bookmark 🚧");
+    };
 
     const isLiked = Array.isArray(post.likes) && post.likes.includes(authUser?._id);
 
