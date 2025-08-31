@@ -56,7 +56,7 @@ const SignUpPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex">
+        <div className="min-h-screen flex bg-gradient-to-br from-purple-900/20 via-black to-orange-900/10">
             {/* Left side - Logo */}
             <div className="flex-[0.8] hidden lg:flex items-center justify-center bg-gradient-to-br from-orange-900/20 via-black to-purple-900/10">
                 <div className="text-center">
@@ -69,15 +69,9 @@ const SignUpPage = () => {
             </div>
 
             {/* Right side - Signup Form */}
-            <div
-                className="flex-[1.2] flex flex-col justify-center items-center p-4 sm:p-8"
-                style={{
-                    background:
-                        "radial-gradient(ellipse at top, rgba(88, 28, 135, 0.15) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 1) 100%)",
-                }}
-            >
+            <div className="flex-[1.2] flex flex-col justify-center items-center p-4 sm:p-8">
                 <div className="w-full max-w-md min-w-[300px] sm:min-w-[320px] mt-2 sm:mt-0">
-                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-8 py-4 sm:py-10 auth-card auth-card-compact">
+                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-10 py-4 sm:py-12 auth-card auth-card-raise">
                         <div className="text-center mb-8">
                             <SocialLogo className="w-16 lg:hidden mx-auto mb-4" />
                             <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>

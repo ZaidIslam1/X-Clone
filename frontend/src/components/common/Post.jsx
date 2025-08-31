@@ -270,36 +270,36 @@ const Post = ({ post }) => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-2 px-6 py-4 border-t border-gray-700/30 bg-black/10">
-                    <div className="flex justify-center gap-6 flex-wrap">
+                    <div className="flex justify-center gap-3 flex-nowrap">
                         <button
-                            className="flex items-center gap-2 group cursor-pointer px-4 py-2 rounded-full bg-gradient-to-r from-purple-900/30 to-blue-900/10 hover:from-purple-800/40 hover:to-blue-800/20 transition-all duration-200 shadow-sm hover:scale-105"
+                            className="flex items-center gap-1 group cursor-pointer px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/30 to-blue-900/10 hover:from-purple-800/40 hover:to-blue-800/20 transition-all duration-200 shadow-sm hover:scale-105"
                             onClick={openCommentsModal}
                             title="Comments"
                             type="button"
                         >
-                            <FaRegComment className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                            <FaRegComment className="w-4 h-4 text-gray-400 group-hover:text-blue-400 transition-colors" />
                             <span className="text-sm text-gray-400 group-hover:text-blue-400 transition-colors">
                                 {post.comments.length}
                             </span>
                         </button>
                         <button
-                            className="flex items-center gap-2 group cursor-pointer px-4 py-2 rounded-full bg-gradient-to-r from-purple-900/30 to-green-900/10 hover:from-purple-800/40 hover:to-green-800/20 transition-all duration-200 shadow-sm hover:scale-105"
+                            className="flex items-center gap-1 group cursor-pointer px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/30 to-green-900/10 hover:from-purple-800/40 hover:to-green-800/20 transition-all duration-200 shadow-sm hover:scale-105"
                             onClick={handleRepost}
                             title="Repost"
                             type="button"
                         >
-                            <BiRepost className="w-6 h-6 text-gray-400 group-hover:text-green-400 transition-colors" />
+                            <BiRepost className="w-4 h-4 text-gray-400 group-hover:text-green-400 transition-colors" />
                         </button>
                         <button
-                            className="flex items-center gap-2 group cursor-pointer px-4 py-2 rounded-full bg-gradient-to-r from-purple-900/30 to-pink-900/10 hover:from-purple-800/40 hover:to-pink-800/20 transition-all duration-200 shadow-sm hover:scale-105"
+                            className="flex items-center gap-1 group cursor-pointer px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/30 to-pink-900/10 hover:from-purple-800/40 hover:to-pink-800/20 transition-all duration-200 shadow-sm hover:scale-105"
                             onClick={handleLikePost}
                             title="Like"
                             type="button"
                         >
                             {isLiked ? (
-                                <FaHeart className="w-5 h-5 text-pink-500" />
+                                <FaHeart className="w-4 h-4 text-pink-500" />
                             ) : (
-                                <FaRegHeart className="w-5 h-5 text-gray-400 group-hover:text-pink-400 transition-colors" />
+                                <FaRegHeart className="w-4 h-4 text-gray-400 group-hover:text-pink-400 transition-colors" />
                             )}
                             <span
                                 className={`text-sm transition-colors ${
@@ -312,12 +312,12 @@ const Post = ({ post }) => {
                             </span>
                         </button>
                         <button
-                            className="group cursor-pointer px-4 py-2 rounded-full bg-gradient-to-r from-purple-900/30 to-purple-900/10 hover:from-purple-800/40 hover:to-purple-800/20 transition-all duration-200 shadow-sm hover:scale-105 flex items-center"
+                            className="group cursor-pointer px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/30 to-purple-900/10 hover:from-purple-800/40 hover:to-purple-800/20 transition-all duration-200 shadow-sm hover:scale-105 flex items-center"
                             onClick={handleBookmark}
                             title="Bookmark"
                             type="button"
                         >
-                            <FaRegBookmark className="w-5 h-5 text-gray-400 group-hover:text-purple-400 transition-colors" />
+                            <FaRegBookmark className="w-4 h-4 text-gray-400 group-hover:text-purple-400 transition-colors" />
                         </button>
                     </div>
                 </div>
