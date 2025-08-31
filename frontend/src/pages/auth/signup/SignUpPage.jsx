@@ -76,8 +76,8 @@ const SignUpPage = () => {
                         "radial-gradient(ellipse at top, rgba(88, 28, 135, 0.15) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 1) 100%)",
                 }}
             >
-                <div className="w-full max-w-md min-w-[320px]">
-                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-10 py-10 sm:py-14">
+                <div className="w-full max-w-md min-w-[320px] -mt-6 sm:mt-0">
+                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-8 py-8 sm:py-12 auth-card auth-card-compact">
                         <div className="text-center mb-8">
                             <SocialLogo className="w-16 lg:hidden mx-auto mb-4" />
                             <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>

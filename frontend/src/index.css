@@ -146,6 +146,74 @@ body {
 
 /* Mobile-optimized grays - lighter on mobile for better visibility */
 @media (max-width: 768px) {
+    /* Make auth cards use the same dark borders as large screens and reduce bright white edges */
+    .bg-transparent.border.border-gray-800,
+    .auth-card,
+    .modal-box,
+    .bg-transparent.border {
+        border-color: rgba(45, 45, 60, 0.6) !important; /* darker subtle border */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(8, 8, 10, 0.7)) !important;
+    }
+
+    /* Auth card size tweaks: raise login card, slightly shrink signup padding to avoid scrolling */
+    .auth-card-raise {
+        margin-top: -2rem !important;
+    }
+
+    .auth-card-compact {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    /* Tame bright utility borders produced by Tailwind on mobile */
+    .border-white\/10,
+    .border-white\/20,
+    .border-gray-800\/30,
+    .border-gray-800\/50 {
+        border-color: rgba(156, 163, 175, 0.12) !important;
+    }
+
+    /* Narrower sidebar overrides: target small icon containers and compact pill only so hover colors remain */
+    .sidebar-mobile .profile-compact button,
+    .sidebar-mobile .group > div.w-12,
+    .sidebar-mobile .group > div.rounded-xl {
+        border-color: rgba(156, 163, 175, 0.12) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42) !important;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(8, 8, 10, 0.62)) !important;
+    }
+
+    /* RightPanel compact buttons (use same subtle border) */
+    .right-panel .bg-gradient-to-r.border-white\/10,
+    .bg-gradient-to-r.border-white\/10 {
+        border-color: rgba(156, 163, 175, 0.12) !important;
+    }
+
+    /* Ensure inner rounded items (like follower rows and post elements) match darker borders */
+    .rounded-2xl.border,
+    .rounded-xl.border,
+    .post-card .rounded-2xl,
+    .followers-list .rounded-2xl {
+        border-color: rgba(156, 163, 175, 0.14) !important;
+    }
+
+    /* Force darker, LG-like borders for all card elements on small screens */
+    .border {
+        border-color: rgba(156, 163, 175, 0.28) !important;
+    }
+
+    /* Slightly subtler border for large rounded cards */
+    .rounded-3xl.border,
+    .rounded-xl.border {
+        border-color: rgba(156, 163, 175, 0.22) !important;
+    }
+
+    /* Make border-bottoms subtler so they don't produce bright white separators */
+    .border-b,
+    .border-b[class*="border-gray"] {
+        border-bottom-color: rgba(156, 163, 175, 0.12) !important;
+    }
+
     .text-gray-700 {
         color: rgb(156, 163, 175) !important; /* Much lighter gray for mobile */
     }

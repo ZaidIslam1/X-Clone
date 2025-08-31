@@ -72,8 +72,8 @@ const LoginPage = () => {
 
             {/* Right side - Login Form */}
             <div className="flex-[1.2] flex flex-col justify-center items-center p-4 sm:p-8">
-                <div className="w-full max-w-md min-w-[320px]">
-                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-10 py-10 sm:py-14">
+                <div className="w-full max-w-md min-w-[320px] -mt-8 sm:mt-0">
+                    <div className="bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl px-6 sm:px-10 py-10 sm:py-14 auth-card auth-card-raise">
                         <div className="text-center mb-8">
                             <SocialLogo className="w-16 lg:hidden mx-auto mb-4" />
                             <h1 className="text-3xl font-bold text-white mb-2">Sign In</h1>
