@@ -142,7 +142,7 @@ const ProfilePage = () => {
     };
 
     return (
-        <div className="flex w-full bg-gradient-to-t from-black via-gray-900 to-black">
+        <div className="flex w-full bg-gradient-to-t from-black via-gray-900 to-black min-h-full">
             <div className="flex-1 flex flex-col h-full w-full max-w-3xl mx-auto my-0 pt-0 lg:pt-0 mobile-safe-top bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-auto main-card">
                 {/* HEADER */}
                 {(isLoading || isRefetching) && <ProfileHeaderSkeleton />}

@@ -7,7 +7,7 @@ const HomePage = () => {
     const [feedType, setFeedType] = useState("forYou");
 
     return (
-        <div className="flex-1 page-container mobile-page-container w-full bg-gradient-to-br from-black via-gray-900 to-black min-h-screen flex justify-center items-start">
+        <div className="flex-1 page-container mobile-page-container w-full bg-gradient-to-br from-black via-gray-900 to-black min-h-full flex justify-center items-start">
             <div className="flex flex-col flex-1 w-full max-w-3xl my-0 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden">
                 {/* Header */}
                 {/* Tabs - unified with Followers/Following style */}

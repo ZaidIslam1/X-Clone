@@ -231,15 +231,15 @@ function App() {
 
             {/* Main Content Area - Fixed width in center */}
             <div
-                className={`flex-1 flex justify-center min-w-0 ${
+                className={`flex-1 flex justify-center items-stretch min-h-0 ${
                     isMessagesPage ? "chat-no-scroll" : ""
                 } ${authUser ? "ml-20 sm:ml-16 md:ml-20 lg:ml-0" : ""}`}
             >
                 <div
                     className={
                         authUser
-                            ? "w-full max-w-2xl lg:max-w-xl xl:max-w-2xl pt-4 lg:pt-0 mobile-safe-top"
-                            : "w-full pt-4 lg:pt-0 mobile-safe-top"
+                            ? "w-full max-w-2xl lg:max-w-xl xl:max-w-2xl pt-4 lg:pt-0 mobile-safe-top min-h-full flex flex-col"
+                            : "w-full pt-4 lg:pt-0 mobile-safe-top min-h-full flex flex-col"
                     }
                     style={
                         authUser
