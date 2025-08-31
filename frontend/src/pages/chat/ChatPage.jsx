@@ -218,6 +218,9 @@ const ChatPage = ({ authUser, unreadUsers, setUnreadUsers, socketRef }) => {
                                 <p className="text-center text-gray-400 text-lg">
                                     Select a user to start chatting
                                 </p>
+                                <p className="text-center text-sm text-gray-500 mt-2 max-w-xs">
+                                    Note: Users must follow each other to start a chat.
+                                </p>
                             </div>
                         ) : messages.length === 0 ? (
                             <p className="text-center text-gray-400 mt-12 text-lg">
