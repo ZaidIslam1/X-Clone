@@ -216,38 +216,13 @@ const Post = ({ post }) => {
         // intentionally avoid invalidating all posts queries to prevent full refetch
     });
 
-    const { mutate: deletePost } = useMutation({
-        mutationFn: async () => {
-            const res = await fetch(`/api/posts/${post._id}`, {
-                method: "DELETE",
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Delete failed");
-            return data;
-        },
-        onSuccess: () => {
-            // remove the post from all posts queries
-            const queries = queryClient.getQueriesData(["posts"]);
-            queries.forEach(([queryKey, data]) => {
-                if (!Array.isArray(data)) return;
-                const newData = data.filter((p) => p._id !== post._id);
-                queryClient.setQueryData(queryKey, newData);
-            });
-            toast.success("Post deleted");
-        },
-        onError: (err) => {
-            toast.error(err.message || "Could not delete post");
-        },
-    });
-
     const postOwner = post.user;
     const formattedDate = formatPostDate(post.createdAt);
 
     return (
         <>
             {/* Post container */}
-            <div className="mb-8 mx-2 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10 transition-all duration-300 main-card relative">
+            <div className="mb-8 mx-2 sm:mx-4 bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl shadow-purple-950/10 transition-all duration-300 main-card">
                 {/* Header: Avatar, Name, Username, Time */}
                 <div className="flex items-center gap-3 px-6 py-4">
                     <Link
@@ -273,20 +248,6 @@ const Post = ({ post }) => {
                             @{postOwner.username} · {formattedDate}
                         </span>
                     </div>
-                    {authUser && authUser._id === post.user._id && (
-                        <button
-                            className="absolute top-3 right-3 group cursor-pointer px-3 py-3 rounded-full bg-gradient-to-r from-red-900/30 to-red-600/10 hover:from-red-800/40 hover:to-red-500/20 transition-all duration-200 shadow-sm z-30 flex items-center"
-                            onClick={() => {
-                                if (confirm("Delete this post? This action cannot be undone.")) {
-                                    deletePost();
-                                }
-                            }}
-                            title="Delete post"
-                            type="button"
-                        >
-                            <FaTrash className="w-4 h-4 text-red-400 group-hover:text-red-300 transition-colors" />
-                        </button>
-                    )}
                 </div>
 
                 {/* Post content */}
