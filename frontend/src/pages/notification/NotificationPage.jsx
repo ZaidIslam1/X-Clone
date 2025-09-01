@@ -173,6 +173,9 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                 {notification.type === "follow" && (
                                                     <FaUser className="w-5 h-5 text-purple-400" />
                                                 )}
+                                                {notification.type === "welcome" && (
+                                                    <FaUser className="w-5 h-5 text-yellow-400" />
+                                                )}
                                                 {notification.type === "like" && (
                                                     <FaHeart className="w-5 h-5 text-red-400" />
                                                 )}
@@ -210,6 +213,8 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                                 ? "followed you"
                                                                 : notification.type === "comment"
                                                                 ? "commented on your post"
+                                                                : notification.type === "welcome"
+                                                                ? "Welcome to Z —  Thanks for joining!"
                                                                 : "liked your post"}
                                                         </span>
                                                     </div>
