@@ -42,6 +42,8 @@ const SignUpPage = () => {
         onSuccess: () => {
             toast.success("Account created successfully");
             queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            // ensure notifications are refetched so the welcome notification appears immediately
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
         },
     });
     useQuery;

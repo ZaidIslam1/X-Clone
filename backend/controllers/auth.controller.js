@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 
@@ -43,6 +44,17 @@ export const signup = async (req, res, next) => {
         if (newUser) {
             generateTokenAndSetCookie(newUser._id, res);
             await newUser.save();
+
+            // create a welcome notification for the newly created user
+            try {
+                await Notification.create({
+                    from: newUser._id, // system-like notification; use user's id to satisfy ref
+                    to: newUser._id,
+                    type: "welcome",
+                });
+            } catch (notifErr) {
+                console.error("Failed to create welcome notification:", notifErr.message);
+            }
 
             res.status(201).json({
                 _id: newUser._id,
