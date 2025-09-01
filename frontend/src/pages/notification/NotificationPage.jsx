@@ -5,6 +5,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { BiSolidCommentDots } from "react-icons/bi";
+import { HiSparkles } from "react-icons/hi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { formatPostDate } from "../../utils/date/function";
@@ -174,7 +175,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                     <FaUser className="w-5 h-5 text-purple-400" />
                                                 )}
                                                 {notification.type === "welcome" && (
-                                                    <FaUser className="w-5 h-5 text-yellow-400" />
+                                                    <HiSparkles className="w-5 h-5 text-yellow-400" />
                                                 )}
                                                 {notification.type === "like" && (
                                                     <FaHeart className="w-5 h-5 text-red-400" />
