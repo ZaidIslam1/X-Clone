@@ -27,7 +27,7 @@ createRoot(document.getElementById("root")).render(
                 className: "app-toast", // ensure we can target to override mobile styles
                 duration: 4000,
                 style: {
-                    background: "rgba(255,255,255,0.96)",
+                    background: "#ffffff",
                     color: "#111827",
                     boxShadow: "0 6px 24px rgba(0,0,0,0.12)",
                     padding: "0.5rem 0.75rem",

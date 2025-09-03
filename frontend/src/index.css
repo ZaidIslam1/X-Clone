@@ -1359,7 +1359,7 @@ img {
 /* Ensure toast text is dark on all screen sizes (override any mobile utilities) */
 .app-toast {
     color: #111827 !important;
-    background: rgba(255, 255, 255, 0.96) !important;
+    background: #ffffff !important;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
     padding: 0.5rem 0.75rem !important;
     border-radius: 0.5rem !important;
@@ -1401,6 +1401,26 @@ img {
     align-items: center !important;
     justify-content: center !important;
     margin: 2.25rem auto !important;
+}
+
+/* Backup selectors: target react-hot-toast container and toast elements directly in case className isn't applied */
+.react-hot-toast,
+.react-hot-toast > div,
+.react-hot-toast > div *,
+.ReactHotToast__toast,
+.ReactHotToast__toast * {
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* SVGs inside toasts */
+.react-hot-toast svg,
+.react-hot-toast svg *,
+.ReactHotToast__toast svg,
+.ReactHotToast__toast svg * {
+    fill: currentColor !important;
+    color: inherit !important;
 }
 
 .notifications-empty .illustration,
