@@ -72,28 +72,6 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
         },
     });
 
-    // Who to follow suggestions (show up to 7 users)
-    const {
-        data: suggestions = [],
-        isLoading: isLoadingSuggestions,
-    } = useQuery({
-        queryKey: ["whoToFollow"],
-        queryFn: async () => {
-            try {
-                const res = await fetch("/api/users/suggestions?limit=7", {
-                    method: "GET",
-                    credentials: "include",
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Failed to load suggestions");
-                return data;
-            } catch (error) {
-                throw new Error(error);
-            }
-        },
-        staleTime: 1000 * 60 * 5,
-    });
-
     return (
         <div className="flex-1 page-container mobile-page-container w-full bg-gradient-to-br from-black via-gray-900 to-black min-h-full flex justify-center items-start">
             <div className="flex flex-col flex-1 w-full max-w-3xl my-0 bg-transparent border border-gray-800 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden main-card">
@@ -134,163 +112,117 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                     </div>
                 )}
 
-                {/* Main content + Right sidebar (who to follow) */}
-                <div className="p-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
-                    {/* Left / Main column: Notifications */}
-                    <div className="space-y-4 flex flex-col">
-                        {notifications?.length === 0 && (
-                            <div className="text-center py-12">
-                                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center">
-                                    <IoNotificationsOutline className="w-12 h-12 text-purple-400" />
-                                </div>
-                                <p className="text-gray-400 text-lg font-medium">
-                                    No notifications yet
-                                </p>
-                                <p className="text-gray-500 text-sm">
-                                    When you get notifications, they'll appear here
-                                </p>
+                {/* Notifications Container */}
+                <div className="p-4 space-y-4 flex flex-col flex-1 justify-between">
+                    {notifications?.length === 0 && (
+                        <div className="text-center py-12">
+                            <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center">
+                                <IoNotificationsOutline className="w-12 h-12 text-purple-400" />
                             </div>
-                        )}
+                            <p className="text-gray-400 text-lg font-medium">
+                                No notifications yet
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                                When you get notifications, they'll appear here
+                            </p>
+                        </div>
+                    )}
 
-                        {notifications?.map((notification) => {
-                            let linkTo = `/profile/${notification.from.username}`;
-                            if (
-                                (notification.type === "comment" || notification.type === "like") &&
-                                notification.post
-                            ) {
-                                linkTo = `/post/${notification.post}`;
-                            }
-                            return (
-                                <Link to={linkTo} key={notification._id} className="block group">
-                                    <div className="p-4 rounded-2xl bg-gradient-to-r from-black/40 to-gray-900/40 hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300">
-                                        <div className="flex gap-4 items-start">
-                                            <div className="flex-shrink-0 mt-1">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center ring-2 ring-purple-600/30">
-                                                    {notification.type === "follow" && (
-                                                        <FaUser className="w-5 h-5 text-purple-400" />
-                                                    )}
-                                                    {notification.type === "welcome" && (
-                                                        <HiSparkles className="w-5 h-5 text-yellow-400" />
-                                                    )}
-                                                    {notification.type === "like" && (
-                                                        <FaHeart className="w-5 h-5 text-red-400" />
-                                                    )}
-                                                    {notification.type === "comment" && (
-                                                        <BiSolidCommentDots className="w-5 h-5 text-green-400" />
-                                                    )}
-                                                </div>
+                    {notifications?.map((notification) => {
+                        // For comment/like, link to the post; for follow, link to profile
+                        let linkTo = `/profile/${notification.from.username}`;
+                        if (
+                            (notification.type === "comment" || notification.type === "like") &&
+                            notification.post
+                        ) {
+                            linkTo = `/post/${notification.post}`;
+                        }
+                        return (
+                            <Link to={linkTo} key={notification._id} className="block group">
+                                <div className="p-4 rounded-2xl bg-gradient-to-r from-black/40 to-gray-900/40 hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300">
+                                    <div className="flex gap-4 items-start">
+                                        {/* Notification Icon */}
+                                        <div className="flex-shrink-0 mt-1">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center ring-2 ring-purple-600/30">
+                                                {notification.type === "follow" && (
+                                                    <FaUser className="w-5 h-5 text-purple-400" />
+                                                )}
+                                                {notification.type === "welcome" && (
+                                                    <HiSparkles className="w-5 h-5 text-yellow-400" />
+                                                )}
+                                                {notification.type === "like" && (
+                                                    <FaHeart className="w-5 h-5 text-red-400" />
+                                                )}
+                                                {notification.type === "comment" && (
+                                                    <BiSolidCommentDots className="w-5 h-5 text-green-400" />
+                                                )}
                                             </div>
+                                        </div>
 
-                                            <div className="flex-shrink-0">
-                                                <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/30 overflow-hidden">
-                                                    <img
-                                                        src={
-                                                            createHighQualityProfileImage(
-                                                                notification.from.profileImg
-                                                            ) || "/avatar-placeholder.png"
-                                                        }
-                                                        alt={`${notification.from.username}'s avatar`}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
+                                        {/* Avatar */}
+                                        <div className="flex-shrink-0">
+                                            <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/30 overflow-hidden">
+                                                <img
+                                                    src={
+                                                        createHighQualityProfileImage(
+                                                            notification.from.profileImg
+                                                        ) || "/avatar-placeholder.png"
+                                                    }
+                                                    alt={`${notification.from.username}'s avatar`}
+                                                    className="w-full h-full object-cover"
+                                                />
                                             </div>
+                                        </div>
 
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-start justify-between">
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="font-semibold text-white group-hover:text-purple-300 transition-colors">
-                                                                @{notification.from.username}
-                                                            </span>
-                                                            <span className="text-gray-400">
-                                                                {notification.type === "follow"
-                                                                    ? "followed you"
-                                                                    : notification.type === "comment"
-                                                                    ? "commented on your post"
-                                                                    : notification.type === "welcome"
-                                                                    ? "Welcome to Z —  Thanks for joining!"
-                                                                    : "liked your post"}
-                                                            </span>
-                                                        </div>
-
-                                                        {(notification.type === "comment" ||
-                                                            notification.type === "like") &&
-                                                            notification.post && (
-                                                                <div className="mt-2">
-                                                                    <span className="inline-flex items-center text-purple-400 hover:text-orange-400 text-sm font-medium transition-colors">
-                                                                        View post →
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                    </div>
-
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-gray-500 text-sm">
-                                                            {formatPostDate(notification.createdAt)}
+                                        {/* Main Content */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="font-semibold text-white group-hover:text-purple-300 transition-colors">
+                                                            @{notification.from.username}
                                                         </span>
-
-                                                        {!notification.read && (
-                                                            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-orange-500 ring-2 ring-purple-500/30"></div>
-                                                        )}
+                                                        <span className="text-gray-400">
+                                                            {notification.type === "follow"
+                                                                ? "followed you"
+                                                                : notification.type === "comment"
+                                                                ? "commented on your post"
+                                                                : notification.type === "welcome"
+                                                                ? "Welcome to Z —  Thanks for joining!"
+                                                                : "liked your post"}
+                                                        </span>
                                                     </div>
+
+                                                    {/* Action Button (if applicable) */}
+                                                    {(notification.type === "comment" ||
+                                                        notification.type === "like") &&
+                                                        notification.post && (
+                                                            <div className="mt-2">
+                                                                <span className="inline-flex items-center text-purple-400 hover:text-orange-400 text-sm font-medium transition-colors">
+                                                                    View post →
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                </div>
+
+                                                <div className="flex items-center gap-3">
+                                                    {/* Time */}
+                                                    <span className="text-gray-500 text-sm">
+                                                        {formatPostDate(notification.createdAt)}
+                                                    </span>
+
+                                                    {/* Unread Indicator */}
+                                                    {!notification.read && (
+                                                        <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-orange-500 ring-2 ring-purple-500/30"></div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-
-                    {/* Right column: Who to follow */}
-                    <aside className="hidden lg:block">
-                        <div className="p-4 rounded-2xl bg-gradient-to-r from-black/40 to-gray-900/40 border border-gray-800/30">
-                            <div className="flex items-center justify-between mb-3">
-                                <h2 className="text-lg font-semibold text-white">Who to follow</h2>
-                                <Link to="/explore" className="text-sm text-purple-400 hover:text-orange-400">
-                                    View all
-                                </Link>
-                            </div>
-
-                            {isLoadingSuggestions ? (
-                                <div className="flex items-center justify-center py-6">
-                                    <LoadingSpinner size="sm" />
                                 </div>
-                            ) : suggestions?.length ? (
-                                <ul className="space-y-3">
-                                    {suggestions.slice(0, 7).map((user) => (
-                                        <li key={user._id} className="flex items-center justify-between">
-                                            <Link to={`/profile/${user.username}`} className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-purple-600/30">
-                                                    <img
-                                                        src={createHighQualityProfileImage(user.profileImg) || "/avatar-placeholder.png"}
-                                                        alt={`${user.username}'s avatar`}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <div className="text-sm font-semibold text-white truncate">
-                                                        @{user.username}
-                                                    </div>
-                                                    <div className="text-xs text-gray-400 truncate">{user.name || ""}</div>
-                                                </div>
-                                            </Link>
-                                            <div>
-                                                <button
-                                                    onClick={(e) => e.preventDefault()}
-                                                    className="btn btn-sm bg-purple-600 hover:bg-orange-500 text-white rounded-full"
-                                                >
-                                                    Follow
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-sm text-gray-500">No suggestions right now</p>
-                            )}
-                        </div>
-                    </aside>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
         </div>

@@ -1,13 +1,12 @@
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
-import { useRef, useState, lazy, Suspense } from "react";
+import { useRef, useState, useEffect } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { createHighQualityProfileImage } from "../../utils/imageUtils";
-
-// Lazy load emoji picker for better perf
-const EmojiPicker = lazy(() => import("emoji-picker-react"));
+import Picker from "@emoji-mart/react";
+import emojiData from "@emoji-mart/data";
 
 const CreatePost = () => {
     const [text, setText] = useState("");
@@ -95,14 +94,28 @@ const CreatePost = () => {
         }, 0);
     };
 
+    const handleEmoji = (emoji) => {
+        setText((prev) => prev + emoji.native);
+        // Close picker after selecting emoji
+        setShowEmojiPicker(false);
+    };
+
     // Close emoji picker on outside click
     const wrapperRef = useRef(null);
-    useState(() => {
+    const pickerRef = useRef(null);
+
+    useEffect(() => {
         const handleClickOutside = (event) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+            const clickedInsideWrapper =
+                wrapperRef.current && wrapperRef.current.contains(event.target);
+            const clickedInsidePicker =
+                pickerRef.current && pickerRef.current.contains(event.target);
+
+            if (!clickedInsideWrapper && !clickedInsidePicker) {
                 setShowEmojiPicker(false);
             }
         };
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -202,19 +215,24 @@ const CreatePost = () => {
                                         <span className="text-sm hidden sm:block">Emoji</span>
                                     </button>
                                     {showEmojiPicker && (
-                                        <Suspense fallback={<div>Loading emojis...</div>}>
-                                            <div
-                                                className="absolute top-full mt-2 left-0 z-50"
-                                                style={{ width: 300, height: 350 }}
-                                            >
-                                                <EmojiPicker
-                                                    onEmojiClick={insertEmoji}
+                                        <div className="z-50" ref={pickerRef}>
+                                            {/* Mobile: fixed bottom sheet covering bottom half */}
+                                            <div className="sm:hidden fixed bottom-0 left-0 right-0 h-[50vh] bg-black/95 border-t border-gray-700/40 p-2 rounded-t-xl overflow-auto shadow-lg">
+                                                <Picker
+                                                    data={emojiData}
+                                                    onEmojiSelect={handleEmoji}
                                                     theme="dark"
-                                                    height={350}
-                                                    width={300}
                                                 />
                                             </div>
-                                        </Suspense>
+                                            {/* Desktop: positioned picker with proper width and centering */}
+                                            <div className="hidden sm:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-[400px] max-w-[90vw] max-h-[400px] bg-black/95 border border-gray-700/40 rounded-xl overflow-auto shadow-lg">
+                                                <Picker
+                                                    data={emojiData}
+                                                    onEmojiSelect={handleEmoji}
+                                                    theme="dark"
+                                                />
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </div>
