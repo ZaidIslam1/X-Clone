@@ -137,6 +137,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
 
             {/* Right Panel */}
             <div
+                ref={panelRef}
                 className={`
                     ${isMobileCollapsed ? "translate-x-full lg:translate-x-0" : "translate-x-0"}
                     fixed lg:relative top-0 lg:top-0 right-0 z-50 lg:z-auto
