@@ -136,11 +136,11 @@ const FollowersFollowingPage = () => {
                                     to={`/profile/${user.username}`}
                                     className="flex gap-4 items-center flex-1"
                                 >
-                                    <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/30 ring-offset-2 ring-offset-black/50 overflow-hidden bg-black group-hover:ring-purple-500/50 transition-colors shadow-lg">
+                                    <div className="w-14 h-14 rounded-full ring-2 ring-purple-600/30 ring-offset-2 ring-offset-black/50 overflow-hidden bg-black group-hover:ring-purple-500/50 transition-colors shadow-lg flex-shrink-0">
                                         <img
                                             src={user.profileImg || "/avatar-placeholder.png"}
                                             alt={user.fullName}
-                                            className="w-full h-full object-cover rounded-full"
+                                            className="w-full h-full object-cover object-center rounded-full"
                                         />
                                     </div>
                                     <div className="flex flex-col min-w-0">
