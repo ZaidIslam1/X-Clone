@@ -19,7 +19,8 @@ const useFollow = () => {
             }
         },
         onSuccess: async (data) => {
-            const targetUsername = data.user.username;
+            // Safety: server might return data without a user object in some edge cases.
+            const targetUsername = data?.user?.username;
             const currentUsername = queryClient.getQueryData(["authUser"])?.username;
 
             const promises = [

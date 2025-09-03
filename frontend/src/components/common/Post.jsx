@@ -241,7 +241,14 @@ const Post = ({ post }) => {
         },
     });
 
-    const postOwner = post.user;
+    // Safety: post.user may be null (deleted account). Provide a safe fallback so
+    // the UI does not crash when reading properties like username or _id.
+    const postOwner = post.user ?? {
+        username: "unknown",
+        fullName: "Unknown",
+        profileImg: null,
+        _id: null,
+    };
     const formattedDate = formatPostDate(post.createdAt);
 
     return (
@@ -273,7 +280,7 @@ const Post = ({ post }) => {
                             @{postOwner.username} · {formattedDate}
                         </span>
                     </div>
-                    {authUser && authUser._id === post.user._id && (
+                    {authUser && authUser._id === post.user?._id && (
                         <button
                             className="absolute top-3 right-3 group cursor-pointer px-3 py-3 rounded-full bg-gradient-to-r from-red-900/30 to-red-600/10 hover:from-red-800/40 hover:to-red-500/20 transition-all duration-200 shadow-sm z-30 flex items-center"
                             onClick={() => {
@@ -392,7 +399,15 @@ const Post = ({ post }) => {
                                     </p>
                                 )}
                                 {post.comments.map((c) => {
-                                    const isMyComment = c.user._id === authUser?._id;
+                                    // Safety: c.user may be null (deleted account). Use a fallback
+                                    // object so reading properties like username won't throw.
+                                    const commentUser = c.user ?? {
+                                        fullName: "Unknown",
+                                        username: "unknown",
+                                        profileImg: null,
+                                        _id: null,
+                                    };
+                                    const isMyComment = commentUser._id === authUser?._id;
                                     return (
                                         <div
                                             key={c._id}
@@ -404,20 +419,20 @@ const Post = ({ post }) => {
                                                         <img
                                                             src={
                                                                 createHighQualityProfileImage(
-                                                                    c.user.profileImg
+                                                                    commentUser.profileImg
                                                                 ) || "/avatar-placeholder.png"
                                                             }
-                                                            alt={`${c.user.fullName}'s avatar`}
+                                                            alt={`${commentUser.fullName}'s avatar`}
                                                         />
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <div className="flex items-center gap-1">
                                                         <span className="font-bold">
-                                                            {c.user.fullName}
+                                                            {commentUser.fullName}
                                                         </span>
                                                         <span className="text-gray-700 text-sm">
-                                                            @{c.user.username}
+                                                            @{commentUser.username}
                                                         </span>
                                                     </div>
                                                     <div className="text-sm">{c.text}</div>

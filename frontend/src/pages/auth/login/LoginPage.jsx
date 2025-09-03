@@ -58,7 +58,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-gradient-to-br from-purple-900/20 via-black to-orange-900/10">
+        <div className="h-screen min-h-[100dvh] flex bg-gradient-to-br from-purple-900/20 via-black to-orange-900/10">
             {/* Left side - Logo */}
             <div className="flex-1 hidden lg:flex items-center justify-center">
                 <div className="text-center">

@@ -129,14 +129,24 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                     )}
 
                     {notifications?.map((notification) => {
-                        // For comment/like, link to the post; for follow, link to profile
-                        let linkTo = `/profile/${notification.from.username}`;
+                        // Safety: notification.from can be null (deleted user or system notification).
+                        // Use a safe fallback so the UI doesn't crash when reading properties like username.
+                        const fromUser = notification.from ?? {
+                            username: "unknown",
+                            profileImg: null,
+                        };
+
+                        // For comment/like, link to the post; otherwise try the profile link if available.
+                        let linkTo = "/";
                         if (
                             (notification.type === "comment" || notification.type === "like") &&
                             notification.post
                         ) {
                             linkTo = `/post/${notification.post}`;
+                        } else if (fromUser.username) {
+                            linkTo = `/profile/${fromUser.username}`;
                         }
+
                         return (
                             <Link to={linkTo} key={notification._id} className="block group">
                                 <div className="p-4 rounded-2xl bg-gradient-to-r from-black/40 to-gray-900/40 hover:from-purple-900/20 hover:to-orange-900/10 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300">
@@ -165,10 +175,10 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                 <img
                                                     src={
                                                         createHighQualityProfileImage(
-                                                            notification.from.profileImg
+                                                            fromUser.profileImg
                                                         ) || "/avatar-placeholder.png"
                                                     }
-                                                    alt={`${notification.from.username}'s avatar`}
+                                                    alt={`${fromUser.username}'s avatar`}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
@@ -180,7 +190,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2 mb-1">
                                                         <span className="font-semibold text-white group-hover:text-purple-300 transition-colors">
-                                                            @{notification.from.username}
+                                                            @{fromUser.username}
                                                         </span>
                                                         <span className="text-gray-400">
                                                             {notification.type === "follow"
