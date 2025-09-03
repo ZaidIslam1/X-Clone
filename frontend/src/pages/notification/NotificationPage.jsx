@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoSettingsOutline, IoNotificationsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { BiSolidCommentDots } from "react-icons/bi";
@@ -80,25 +80,10 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-                                <svg
+                                <IoNotificationsOutline
                                     className="w-5 h-5 text-white"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 17h5l-5 5v-5z"
-                                    />
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 12l2 2 4-4"
-                                    />
-                                </svg>
+                                    aria-hidden="true"
+                                />
                             </div>
                             <h1 className="text-2xl font-bold text-white">Notifications</h1>
                         </div>
@@ -132,19 +117,7 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                     {notifications?.length === 0 && (
                         <div className="text-center py-12">
                             <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-600/20 to-orange-600/20 flex items-center justify-center">
-                                <svg
-                                    className="w-12 h-12 text-purple-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M15 17h5l-5 5v-5z"
-                                    />
-                                </svg>
+                                <IoNotificationsOutline className="w-12 h-12 text-purple-400" />
                             </div>
                             <p className="text-gray-400 text-lg font-medium">
                                 No notifications yet

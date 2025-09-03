@@ -1359,8 +1359,8 @@ img {
 /* Ensure toast text is dark on all screen sizes (override any mobile utilities) */
 .app-toast {
     color: #111827 !important;
-    background: rgba(255,255,255,0.96) !important;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.12) !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
     padding: 0.5rem 0.75rem !important;
     border-radius: 0.5rem !important;
     font-size: 0.95rem !important;
@@ -1375,5 +1375,72 @@ img {
 @media (max-width: 640px) {
     .app-toast {
         color: #111827 !important;
+    }
+}
+
+/* Notifications empty-state illustration - fix size, centering and icon color */
+.notifications-empty,
+.no-notifications,
+.no-notifications-illustration,
+.notifications-empty .illustration {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 2.25rem auto !important;
+}
+
+.notifications-empty .illustration,
+.no-notifications-illustration {
+    width: 128px !important;
+    height: 128px !important;
+    min-width: 96px !important;
+    min-height: 96px !important;
+    border-radius: 9999px !important;
+    background: radial-gradient(
+        circle at 30% 25%,
+        rgba(139, 69, 255, 0.18),
+        rgba(255, 119, 45, 0.12) 50%,
+        rgba(0, 0, 0, 0.25) 100%
+    ) !important;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45) inset, 0 6px 22px rgba(0, 0, 0, 0.45) !important;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* Force the SVG inside the illustration to be visible and correctly sized */
+.notifications-empty .illustration svg,
+.no-notifications-illustration svg,
+.notifications-empty svg,
+.no-notifications svg {
+    width: 44px !important;
+    height: 44px !important;
+    max-width: 60% !important;
+    max-height: 60% !important;
+    fill: #ffffff !important; /* white triangle/shape */
+    color: #ffffff !important;
+    stroke: none !important;
+    display: block !important;
+}
+
+/* If the icon is created with an element (not SVG), ensure pseudo/inner shapes are white */
+.notifications-empty .illustration *,
+.no-notifications-illustration * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Keep layout responsive on small screens */
+@media (max-width: 640px) {
+    .notifications-empty .illustration,
+    .no-notifications-illustration {
+        width: 96px !important;
+        height: 96px !important;
+        margin: 1.5rem auto !important;
+    }
+
+    .notifications-empty .illustration svg,
+    .no-notifications-illustration svg {
+        width: 36px !important;
+        height: 36px !important;
     }
 }
