@@ -140,7 +140,7 @@ const FollowersFollowingPage = () => {
                                         <img
                                             src={user.profileImg || "/avatar-placeholder.png"}
                                             alt={user.fullName}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover rounded-full"
                                         />
                                     </div>
                                     <div className="flex flex-col min-w-0">
