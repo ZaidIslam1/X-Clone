@@ -186,13 +186,14 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
 
                                         {/* Main Content */}
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex-1">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                                                <div className="flex-1 min-w-0 pr-2">
                                                     <div className="flex items-center gap-2 mb-1">
-                                                        <span className="font-semibold text-white group-hover:text-purple-300 transition-colors">
-                                                            @{fromUser.username}
+                                                        <span className="font-semibold text-white group-hover:text-purple-300 transition-colors truncate">
+                                                            {/* long names should truncate */}@
+                                                            {fromUser.username}
                                                         </span>
-                                                        <span className="text-gray-400">
+                                                        <span className="text-gray-400 break-words">
                                                             {notification.type === "follow"
                                                                 ? "followed you"
                                                                 : notification.type === "comment"
@@ -215,9 +216,9 @@ const NotificationPage = ({ setHasNewNotification, setBlinkNotification }) => {
                                                         )}
                                                 </div>
 
-                                                <div className="flex items-center gap-3">
+                                                <div className="mt-2 sm:mt-0 flex items-center gap-3 flex-shrink-0">
                                                     {/* Time */}
-                                                    <span className="text-gray-500 text-sm">
+                                                    <span className="text-gray-500 text-sm whitespace-nowrap">
                                                         {formatPostDate(notification.createdAt)}
                                                     </span>
 
