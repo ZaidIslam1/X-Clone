@@ -111,8 +111,8 @@ const UserListSidebar = ({
                     <p className="text-gray-400 text-center">No mutual users found</p>
                 </div>
             ) : (
-                <div className="flex-1 overflow-y-auto">
-                    <ul className="space-y-2 p-4">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain" style={{WebkitOverflowScrolling: 'touch'}}>
+                    <ul className="space-y-2 p-4 pb-20">
                         {users.map((user) => (
                             <li
                                 key={user._id}
