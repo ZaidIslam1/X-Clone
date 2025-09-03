@@ -1375,6 +1375,20 @@ img {
 @media (max-width: 640px) {
     .app-toast {
         color: #111827 !important;
+        background: rgba(255, 255, 255, 0.96) !important;
+    }
+
+    /* Extra-force: make sure no child or svg overrides text color */
+    .app-toast,
+    .app-toast * {
+        color: #111827 !important;
+        background: transparent !important;
+    }
+
+    .app-toast svg,
+    .app-toast svg * {
+        color: inherit !important;
+        fill: currentColor !important;
     }
 }
 
