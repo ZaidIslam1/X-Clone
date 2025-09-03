@@ -4,13 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "./LoadingSpinner";
 import UserListSidebar from "./UserListSidebar";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createHighQualityProfileImage } from "../../utils/imageUtils";
 
 const RightPanel = ({ authUser, unreadUsers = [] }) => {
     const location = useLocation();
     const isMessagesPage = location.pathname.startsWith("/chat/messages");
     const [isMobileCollapsed, setIsMobileCollapsed] = useState(true);
+    const panelRef = useRef(null);
+    const toggleRef = useRef(null);
 
     // mobile panel width: small collapsed pill vs expanded drawer
     const mobilePanelWidthClass = isMobileCollapsed
@@ -53,6 +55,23 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
     const { followUnfollow, isPending } = useFollow();
     const noSuggestions = !isLoading && (!suggestedUsers || suggestedUsers.length === 0);
 
+    // Close panel when clicking or touching outside the panel or toggle
+    useEffect(() => {
+        if (isMobileCollapsed) return;
+        const handler = (e) => {
+            // If click was inside panel or on the toggle button, ignore
+            if (panelRef.current && panelRef.current.contains(e.target)) return;
+            if (toggleRef.current && toggleRef.current.contains(e.target)) return;
+            setIsMobileCollapsed(true);
+        };
+        document.addEventListener("mousedown", handler);
+        document.addEventListener("touchstart", handler);
+        return () => {
+            document.removeEventListener("mousedown", handler);
+            document.removeEventListener("touchstart", handler);
+        };
+    }, [isMobileCollapsed]);
+
     return (
         <>
             {/* Mobile Toggle Button */}
@@ -63,6 +82,7 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
             >
                 <button
                     className="bg-gradient-to-r from-purple-600 to-orange-500 text-white p-2 rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 backdrop-blur-sm border border-purple-500/30 flex items-center justify-center w-10 h-10"
+                    ref={toggleRef}
                     onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
                     aria-label={getTooltipText()}
                     aria-expanded={!isMobileCollapsed}
