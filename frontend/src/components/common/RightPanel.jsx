@@ -149,16 +149,13 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                     }
                     flex flex-col my-0 lg:my-2 mx-0 lg:mx-2 ${mobilePanelWidthClass} h-screen gap-4
                     bg-black lg:bg-transparent
-                    ${isMessagesPage ? "chat-no-scroll" : "overflow-y-auto"}
                     transform transition-transform duration-300 ease-in-out
-                    px-1 sm:px-2 md:px-4 lg:px-0 py-2 lg:py-2 min-h-0 overflow-y-auto
+                    px-1 sm:px-2 md:px-4 lg:px-0 py-2 lg:py-2
                 `}
             >
-                {/* close button moved into panel headers and styled with gradient */}
-
                 {isMessagesPage ? (
-                    <div className="relative bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl flex-1">
-                        <div className="p-4 border-b border-gray-800/30 relative">
+                    <div className="relative bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl flex flex-col h-full">
+                        <div className="p-4 border-b border-gray-800/30 relative flex-shrink-0">
                             {/* Mobile close inside panel (messages) */}
                             <button
                                 className="lg:hidden absolute top-3 right-3 bg-gradient-to-r from-purple-600 to-orange-500 text-white p-2 rounded-full shadow-lg border border-white/10 w-9 h-9 flex items-center justify-center"
@@ -184,16 +181,18 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                                 Messages
                             </h3>
                         </div>
-                        <UserListSidebar
-                            authUser={authUser}
-                            unreadUsers={unreadUsers}
-                            activeChatUsername={activeChatUsername}
-                            onUserSelect={handleUserSelect}
-                        />
+                        <div className="flex-1 min-h-0">
+                            <UserListSidebar
+                                authUser={authUser}
+                                unreadUsers={unreadUsers}
+                                activeChatUsername={activeChatUsername}
+                                onUserSelect={handleUserSelect}
+                            />
+                        </div>
                     </div>
                 ) : (
-                    <div className="relative bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl flex flex-col">
-                        <div className="p-6 border-b border-gray-800/30 relative">
+                    <div className="relative bg-gradient-to-br from-black/80 via-gray-900/50 to-purple-950/20 border border-purple-800/20 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl flex flex-col h-full">
+                        <div className="p-6 border-b border-gray-800/30 relative flex-shrink-0">
                             {/* Mobile close inside panel (who-to-follow) */}
                             <button
                                 className="lg:hidden absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-orange-500 text-white p-2 rounded-full shadow-lg border border-white/10 w-9 h-9 flex items-center justify-center"
@@ -220,109 +219,111 @@ const RightPanel = ({ authUser, unreadUsers = [] }) => {
                             </h3>
                         </div>
 
-                        <div className="p-6 space-y-4 flex-grow">
-                            {isLoading && (
-                                <div className="space-y-4">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div
-                                            key={i}
-                                            className="animate-pulse flex items-center gap-3"
-                                        >
-                                            <div className="w-12 h-12 bg-gray-700 rounded-full"></div>
-                                            <div className="flex-1">
-                                                <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                                                <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                        <div className="flex-1 overflow-y-auto">
+                            <div className="p-6 space-y-4">
+                                {isLoading && (
+                                    <div className="space-y-4">
+                                        {[1, 2, 3, 4].map((i) => (
+                                            <div
+                                                key={i}
+                                                className="animate-pulse flex items-center gap-3"
+                                            >
+                                                <div className="w-12 h-12 bg-gray-700 rounded-full"></div>
+                                                <div className="flex-1">
+                                                    <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                                                    <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                                                </div>
+                                                <div className="w-16 h-8 bg-gray-700 rounded-full"></div>
                                             </div>
-                                            <div className="w-16 h-8 bg-gray-700 rounded-full"></div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {!isLoading && noSuggestions && (
+                                    <div className="text-center py-8 text-gray-400">
+                                        <svg
+                                            className="w-16 h-16 mx-auto mb-4 opacity-50"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17 20h5v-2a3 3 0 00-5.196-2.196M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.196-2.196M7 20v-2c0-.656.126-1.283.356-1.857M16 7a4 4 0 11-8 0 4 4 0 018 0z"
+                                            />
+                                        </svg>
+                                        <p>No suggestions available</p>
+                                    </div>
+                                )}
+
+                                {!isLoading &&
+                                    suggestedUsers?.length > 0 &&
+                                    suggestedUsers.map((user) => (
+                                        <div
+                                            key={user._id}
+                                            className="group flex items-center gap-4 p-4 rounded-xl bg-black/20 hover:bg-black/40 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300"
+                                        >
+                                            <Link
+                                                to={`/profile/${user.username}`}
+                                                className="flex items-center gap-3 flex-1"
+                                            >
+                                                <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/20 ring-offset-2 ring-offset-black/50 overflow-hidden group-hover:ring-purple-500/40 transition-colors">
+                                                    <img
+                                                        src={
+                                                            createHighQualityProfileImage(
+                                                                user.profileImg
+                                                            ) || "/avatar-placeholder.png"
+                                                        }
+                                                        alt={`${user.fullName}'s avatar`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col flex-1 min-w-0">
+                                                    <span className="font-semibold text-white truncate">
+                                                        {user.fullName}
+                                                    </span>
+                                                    <span className="text-sm text-gray-400 truncate">
+                                                        @{user.username}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                            <button
+                                                className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg text-sm"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    followUnfollow(user._id);
+                                                }}
+                                                disabled={isPending}
+                                            >
+                                                {isPending ? (
+                                                    <svg
+                                                        className="animate-spin h-4 w-4"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <circle
+                                                            className="opacity-25"
+                                                            cx="12"
+                                                            cy="12"
+                                                            r="10"
+                                                            stroke="currentColor"
+                                                            strokeWidth="4"
+                                                        ></circle>
+                                                        <path
+                                                            className="opacity-75"
+                                                            fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                        ></path>
+                                                    </svg>
+                                                ) : (
+                                                    "Follow"
+                                                )}
+                                            </button>
                                         </div>
                                     ))}
-                                </div>
-                            )}
-
-                            {!isLoading && noSuggestions && (
-                                <div className="text-center py-8 text-gray-400">
-                                    <svg
-                                        className="w-16 h-16 mx-auto mb-4 opacity-50"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M17 20h5v-2a3 3 0 00-5.196-2.196M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.196-2.196M7 20v-2c0-.656.126-1.283.356-1.857M16 7a4 4 0 11-8 0 4 4 0 018 0z"
-                                        />
-                                    </svg>
-                                    <p>No suggestions available</p>
-                                </div>
-                            )}
-
-                            {!isLoading &&
-                                suggestedUsers?.length > 0 &&
-                                suggestedUsers.map((user) => (
-                                    <div
-                                        key={user._id}
-                                        className="group flex items-center gap-4 p-4 rounded-xl bg-black/20 hover:bg-black/40 border border-gray-800/30 hover:border-purple-600/30 transition-all duration-300"
-                                    >
-                                        <Link
-                                            to={`/profile/${user.username}`}
-                                            className="flex items-center gap-3 flex-1"
-                                        >
-                                            <div className="w-12 h-12 rounded-full ring-2 ring-purple-600/20 ring-offset-2 ring-offset-black/50 overflow-hidden group-hover:ring-purple-500/40 transition-colors">
-                                                <img
-                                                    src={
-                                                        createHighQualityProfileImage(
-                                                            user.profileImg
-                                                        ) || "/avatar-placeholder.png"
-                                                    }
-                                                    alt={`${user.fullName}'s avatar`}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col flex-1 min-w-0">
-                                                <span className="font-semibold text-white truncate">
-                                                    {user.fullName}
-                                                </span>
-                                                <span className="text-sm text-gray-400 truncate">
-                                                    @{user.username}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                        <button
-                                            className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg text-sm"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                followUnfollow(user._id);
-                                            }}
-                                            disabled={isPending}
-                                        >
-                                            {isPending ? (
-                                                <svg
-                                                    className="animate-spin h-4 w-4"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <circle
-                                                        className="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        strokeWidth="4"
-                                                    ></circle>
-                                                    <path
-                                                        className="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    ></path>
-                                                </svg>
-                                            ) : (
-                                                "Follow"
-                                            )}
-                                        </button>
-                                    </div>
-                                ))}
+                            </div>
                         </div>
                     </div>
                 )}
