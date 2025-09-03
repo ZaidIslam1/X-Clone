@@ -136,7 +136,7 @@ const FollowersFollowingPage = () => {
                                     to={`/profile/${user.username}`}
                                     className="flex gap-4 items-center flex-1"
                                 >
-                                    <div className="w-14 h-14 rounded-full ring-2 ring-purple-600/30 ring-offset-2 ring-offset-black/50 overflow-hidden bg-black group-hover:ring-purple-500/50 transition-colors shadow-lg flex-shrink-0">
+                                    <div className="w-11 h-11 rounded-full ring-2 ring-purple-600/30 ring-offset-2 ring-offset-black/50 overflow-hidden bg-black group-hover:ring-purple-500/50 transition-colors shadow-lg flex-shrink-0">
                                         <img
                                             src={user.profileImg || "/avatar-placeholder.png"}
                                             alt={user.fullName}
