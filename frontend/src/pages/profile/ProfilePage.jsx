@@ -21,6 +21,7 @@ const ProfilePage = () => {
     const [coverImg, setCoverImg] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [feedType, setFeedType] = useState("posts");
+    const [showEditProfileModal, setShowEditProfileModal] = useState(false);
 
     const coverImgRef = useRef(null);
     const profileImgRef = useRef(null);
@@ -246,11 +247,7 @@ const ProfilePage = () => {
                                             {isMyProfile && (
                                                 <button
                                                     className="bg-transparent border-2 border-purple-500 hover:bg-purple-500/10 text-purple-400 font-semibold py-2 px-6 rounded-full transition-all duration-200"
-                                                    onClick={() =>
-                                                        document
-                                                            .getElementById("edit_profile_modal")
-                                                            .showModal()
-                                                    }
+                                                    onClick={() => setShowEditProfileModal(true)}
                                                 >
                                                     Edit Profile
                                                 </button>
@@ -393,6 +390,13 @@ const ProfilePage = () => {
                     <Posts feedType={feedType} username={username} />
                 </div>
             </div>
+
+            {showEditProfileModal && (
+                <EditProfileModal
+                    isOpen={showEditProfileModal}
+                    onClose={() => setShowEditProfileModal(false)}
+                />
+            )}
         </div>
     );
 };

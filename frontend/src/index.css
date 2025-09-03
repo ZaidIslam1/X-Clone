@@ -1355,3 +1355,25 @@ img {
         image-rendering: crisp-edges;
     }
 }
+
+/* Ensure toast text is dark on all screen sizes (override any mobile utilities) */
+.app-toast {
+    color: #111827 !important;
+    background: rgba(255,255,255,0.96) !important;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12) !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.95rem !important;
+}
+
+/* make sure inner elements (icons/text) inherit the color */
+.app-toast * {
+    color: inherit !important;
+}
+
+/* explicit mobile rule */
+@media (max-width: 640px) {
+    .app-toast {
+        color: #111827 !important;
+    }
+}
