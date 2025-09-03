@@ -148,6 +148,22 @@ export const updateUserProfile = async (req, res, next) => {
     let { profileImg, coverImg } = req.body;
     const currentUserId = req.user._id;
 
+    // DEBUG: temporary — inspect raw incoming password chars/encoding (remove in production)
+    try {
+        const masked = newPassword
+            ? newPassword
+                  .split("")
+                  .map((c) => (c === "_" ? "_" : "*"))
+                  .join("")
+            : null;
+        console.log("[DEBUG] updateUserProfile - newPassword mask:", masked);
+        if (newPassword) {
+            console.log("[DEBUG] newPassword hex:", Buffer.from(newPassword).toString("hex"));
+        }
+    } catch (dbgErr) {
+        console.log("[DEBUG] updateUserProfile debug error", dbgErr);
+    }
+
     try {
         // Add size validation for images
         if (profileImg && profileImg.length > 10 * 1024 * 1024) {

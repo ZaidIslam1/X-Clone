@@ -22,8 +22,11 @@ export const signup = async (req, res, next) => {
             return res.status(400).json({ error: "Email is already taken" });
         }
 
-        const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{6,}$/;
+        // old (example) — disallows underscore:
+        // const passwordRegex = /^[A-Za-z0-9!@#$%^&*()\-+=]{6,}$/;
+
+        // replace with (allows underscore)
+        const passwordRegex = /^[\w!@#$%^&*()\-+=]{6,}$/;
 
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
