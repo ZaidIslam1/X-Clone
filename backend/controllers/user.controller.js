@@ -38,7 +38,7 @@ export const getSuggestedUsers = async (req, res, next) => {
             .select("username fullName profileImg bio") // Exclude large coverImg and other fields
             .limit(10);
 
-        const suggestedUsers = users.slice(0, 4).map((user) => ({
+        const suggestedUsers = users.slice(0, 7).map((user) => ({
             ...user._doc,
             profileImg: user.profileImg ? createTinyImageUrl(user.profileImg) : user.profileImg,
         }));
